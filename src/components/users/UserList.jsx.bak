@@ -1,0 +1,225 @@
+import React from 'react';
+import { UserIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
+import { useUserList } from '../../hooks/useUserList';
+import { formatFullDateTime } from '../../utils/usersHelpers';
+import { DEFAULT_VALUES } from '../../constants/usersConstants';
+import UserStatCards from './UserStatCards';
+import UserFilters from './UserFilters';
+import UserTableRow from './UserTableRow';
+
+const UserList = ({ onEdit, onView, onDelete }) => {
+  const { t } = useTranslation();
+  const {
+    users,
+    stats,
+    roleStats,
+    roles,
+    showFilters,
+    filters,
+    handleSearch,
+    handleFilterChange,
+    handleStatusToggle,
+    handlePasswordReset,
+    clearFilters,
+    setShowFilters,
+    hasActiveFilters
+  } = useUserList();
+
+  const onPasswordReset = (userId) => {
+    if (window.confirm(t('users.list.confirmPasswordReset'))) {
+      handlePasswordReset(userId, null, (password) => {
+        alert(t('users.list.passwordResetSuccess', { password }));
+      });
+    }
+  };
+
+  const getFormattedLastLogin = (lastLogin) => {
+    const formatted = formatFullDateTime(lastLogin);
+    return formatted || t('users.list.never');
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Estadísticas */}
+      <UserStatCards roleStats={roleStats} />
+
+      {/* Barra de búsqueda y filtros */}
+      <UserFilters
+        filters={filters}
+        roles={roles}
+        showFilters={showFilters}
+        onSearch={handleSearch}
+        onFilterChange={handleFilterChange}
+        onToggleFilters={() => setShowFilters(!showFilters)}
+        onClearFilters={clearFilters}
+        hasActiveFilters={hasActiveFilters()}
+      />
+
+      {/* Tabla de usuarios */}
+      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('users.list.user')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('users.list.role')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('users.list.companyType')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('users.list.status')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('users.list.lastLogin')}
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('common.actions')}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {users.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <img
+                        src={user.avatar}
+                        alt={user.firstName}
+                        className="h-10 w-10 rounded-full"
+                      />
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {user.firstName} {user.lastName}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {user.email}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          @{user.username}
+                        </div>
+                        {user.role === 'agencia' && user.ruc && (
+                          <div className="text-xs text-gray-400">
+                            RUC: {user.ruc}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${getRoleColor(user.role, roles)}-100 text-${getRoleColor(user.role, roles)}-800`}>
+                      {getRoleName(user.role, roles)}
+                    </span>
+                    {user.role === 'guia' && user.guideType && (
+                      <div className="mt-1">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                          user.guideType === GUIDE_TYPES.PLANT 
+                            ? 'bg-purple-100 text-purple-800' 
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {user.guideType === GUIDE_TYPES.PLANT ? t('users.guideType.plant') : t('users.guideType.freelance')}
+                        </span>
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="text-sm font-medium">{user.company}</div>
+                    {user.role === 'guia' && user.specialties && (
+                      <div className="text-xs text-gray-500">
+                        {user.specialties.slice(0, 2).join(', ')}
+                        {user.specialties.length > 2 && '...'}
+                      </div>
+                    )}
+                    {user.role === 'agencia' && user.address && (
+                      <div className="text-xs text-gray-500">
+                        {user.address}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClasses(user.status)}`}>
+                      {user.status === USER_STATUS.ACTIVE ? t('users.status.active') : t('users.status.inactive')}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {getFormattedLastLogin(user.lastLogin)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex items-center justify-end space-x-2">
+                      <button
+                        onClick={() => onView && onView(user)}
+                        className="text-gray-600 hover:text-gray-900 p-1 rounded"
+                        title={t('users.list.viewDetails')}
+                      >
+                        <EyeIcon className="h-4 w-4" />
+                      </button>
+                      
+                      <button
+                        onClick={() => onEdit && onEdit(user)}
+                        className="text-blue-600 hover:text-blue-900 p-1 rounded"
+                        title={t('users.list.editUser')}
+                      >
+                        <PencilIcon className="h-4 w-4" />
+                      </button>
+                      
+                      <button
+                        onClick={() => handlePasswordReset(user.id)}
+                        className="text-yellow-600 hover:text-yellow-900 p-1 rounded"
+                        title={t('users.list.resetPassword')}
+                      >
+                        <KeyIcon className="h-4 w-4" />
+                      </button>
+                      
+                      <button
+                        onClick={() => handleStatusToggle(user.id)}
+                        className={`p-1 rounded ${
+                          user.status === 'activo'
+                            ? 'text-red-600 hover:text-red-900'
+                            : 'text-green-600 hover:text-green-900'
+                        }`}
+                        title={user.status === USER_STATUS.ACTIVE ? t('users.list.deactivate') : t('users.list.activate')}
+                      >
+                        {user.status === 'activo' ? (
+                          <XCircleIcon className="h-4 w-4" />
+                        ) : (
+                          <CheckCircleIcon className="h-4 w-4" />
+                        )}
+                      </button>
+                      
+                      <button
+                        onClick={() => onDelete && onDelete(user)}
+                        className="text-red-600 hover:text-red-900 p-1 rounded"
+                        title={t('users.list.deleteUser')}
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {users.length === 0 && (
+          <div className="text-center py-12">
+            <UserIcon className="mx-auto h-12 w-12 text-gray-400" />
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('users.list.noUsers')}</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              {Object.values(filters).some(v => v !== '')
+                ? t('users.list.noUsersWithFilters')
+                : t('users.list.createFirstUser')
+              }
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default UserList;

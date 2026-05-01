@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Limpiar Storage - Futurismo</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .container {
+      background: white;
+      padding: 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 500px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin: 0.5rem;
+    }
+    button:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    button.secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+    button.secondary:hover {
+      background: #d1d5db;
+    }
+    .success {
+      background: #10b981;
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      display: none;
+    }
+    .info {
+      background: #eff6ff;
+      border: 2px solid #3b82f6;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 Limpiar Storage de Futurismo</h1>
+
+    <div class="info">
+      <strong>⚠️ Nota:</strong> Esto eliminará todos los datos guardados localmente (filtros, preferencias, etc.).
+      No afecta los datos del servidor.
+    </div>
+
+    <p>
+      Si experimentas errores con proveedores, guías, o vehículos, limpiar el localStorage
+      puede resolver problemas de datos corruptos o desactualizados.
+    </p>
+
+    <div>
+      <button onclick="clearAllStorage()">
+        🗑️ Limpiar Todo el Storage
+      </button>
+      <button onclick="clearProvidersOnly()" class="secondary">
+        📦 Solo Proveedores
+      </button>
+    </div>
+
+    <div id="success" class="success">
+      ✅ Storage limpiado exitosamente! Recarga la página.
+    </div>
+
+    <div style="margin-top: 2rem;">
+      <button onclick="window.location.href='/'" class="secondary">
+        ← Volver al inicio
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function clearAllStorage() {
+      if (confirm('¿Estás seguro? Esto eliminará todos los datos locales guardados.')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        document.getElementById('success').style.display = 'block';
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 2000);
+      }
+    }
+
+    function clearProvidersOnly() {
+      if (confirm('¿Limpiar solo los datos de proveedores?')) {
+        localStorage.removeItem('providers-store');
+        document.getElementById('success').style.display = 'block';
+        document.getElementById('success').textContent = '✅ Datos de proveedores limpiados! Recarga la página.';
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 2000);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+/* Layout Principal - Mobile First */
+.layoutRoot {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr;
+  background-color: #f9fafb;
+}
+
+/* Desktop: Sidebar + Content */
+@media (min-width: 1024px) {
+  .layoutRoot {
+    grid-template-rows: 1fr;
+    grid-template-columns: auto 1fr;
+  }
+}
+
+/* Sidebar Container */
+.sidebarContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 1s ease-in-out;
+  width: 16rem; /* 256px */
+}
+
+.sidebarContainer.open {
+  transform: translateX(0);
+}
+
+/* Desktop Sidebar */
+@media (min-width: 1024px) {
+  .sidebarContainer {
+    position: relative;
+    transform: translateX(0);
+    grid-row: 1;
+    grid-column: 1;
+  }
+  
+  .sidebarContainer.collapsed {
+    width: 5rem; /* 80px */
+  }
+}
+
+/* Main Content Area */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Content Container */
+.contentContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Page Content */
+.pageContent {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Overlay para móvil */
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1s ease-in-out;
+}
+
+.mobileOverlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Map Container específico */
+.mapContainer {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  min-height: calc(100vh - 4rem); /* Resta altura del header */
+}
+
+.mapContainer .leafletMap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Utilities */
+.noScroll {
+  overflow: hidden;
+}
+
+/* Print styles */
+@media print {
+  .sidebarContainer,
+  .header {
+    display: none;
+  }
+  
+  .mainContent {
+    grid-column: 1 / -1;
+  }
+}
