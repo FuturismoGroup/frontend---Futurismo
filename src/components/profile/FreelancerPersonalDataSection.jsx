@@ -104,20 +104,21 @@ const FreelancerPersonalDataSection = () => {
     }
 
     try {
+      // No duplicar profile_photo en `avatar`: la foto es un data URL en base64
+      // que puede pesar varios MB, y duplicarla sobrepasa el límite de 15 MB
+      // del body parser de Express. El backend ya acepta `profile_photo` como
+      // campo principal con fallback a `avatar`, así que con uno solo basta.
       const updateData = {
         first_name: formData.firstName,
         last_name: formData.lastName,
         email: formData.email,
         phone: formData.phone,
-        contact_phone: formData.phone,
         documents: {
           type: formData.documentType,
           dni: formData.documentNumber
         },
-        dni: formData.documentNumber,
         city: formData.city,
-        profile_photo: formData.profilePhoto,
-        avatar: formData.profilePhoto
+        profile_photo: formData.profilePhoto
       };
 
       await updateGuide(currentGuide.id, updateData);
@@ -150,22 +151,36 @@ const FreelancerPersonalDataSection = () => {
 
   const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
-    if (file) {
-      setIsUploadingPhoto(true);
-      
-      // Simular subida de foto
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setTimeout(() => {
-          setFormData(prev => ({
-            ...prev,
-            profilePhoto: e.target.result
-          }));
-          setIsUploadingPhoto(false);
-        }, 1000);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error(t('profile.photo.invalidType', { defaultValue: 'El archivo debe ser una imagen' }));
+      return;
     }
+
+    const MAX_BYTES = 8 * 1024 * 1024; // 8 MB binarios (~10.7 MB en base64, dentro del límite de 15 MB del backend)
+    if (file.size > MAX_BYTES) {
+      toast.error(t('profile.photo.tooLarge', {
+        defaultValue: 'La imagen supera los 8 MB. Reduce el tamaño e intenta de nuevo.'
+      }));
+      return;
+    }
+
+    setIsUploadingPhoto(true);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setFormData(prev => ({
+        ...prev,
+        profilePhoto: e.target.result
+      }));
+      setIsUploadingPhoto(false);
+    };
+    reader.onerror = () => {
+      setIsUploadingPhoto(false);
+      toast.error(t('errors.unexpectedError'));
+    };
+    reader.readAsDataURL(file);
   };
 
   return (

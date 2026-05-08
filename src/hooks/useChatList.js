@@ -55,6 +55,16 @@ const useChatList = () => {
     loadChats();
   }, [loadChats]);
 
+  // Inicializar onlineUsers con el snapshot cacheado por el WebSocket service.
+  // El backend manda presence:initial al conectar el socket (en el login),
+  // por lo que al montar este hook ese evento ya pasó y hay que leer el cache.
+  useEffect(() => {
+    const cached = webSocketService.getOnlineUserIds();
+    if (cached.length > 0) {
+      setOnlineUsers(new Set(cached));
+    }
+  }, []);
+
   // WebSocket: Escuchar eventos para actualizar lista de chats
   useEffect(() => {
     // Escuchar nuevos mensajes para actualizar ultimo mensaje
@@ -123,6 +133,17 @@ const useChatList = () => {
       }
     });
 
+    // Snapshot inicial de presencia: usuarios que ya estaban online al conectar
+    const unsubInitial = webSocketService.on('presence:initial', (data) => {
+      const ids = Array.isArray(data?.onlineUserIds) ? data.onlineUserIds : [];
+      setOnlineUsers(new Set(ids));
+      setChats((prev) =>
+        prev.map((chat) =>
+          ids.includes(chat.participantId) ? { ...chat, online: true } : chat
+        )
+      );
+    });
+
     // Escuchar usuarios online
     const unsubOnline = webSocketService.on('user:online', (data) => {
       setOnlineUsers((prev) => new Set([...prev, data.userId]));
@@ -173,6 +194,7 @@ const useChatList = () => {
       unsubMessage();
       unsubUnread();
       unsubRead();
+      unsubInitial();
       unsubOnline();
       unsubOffline();
       unsubTyping();

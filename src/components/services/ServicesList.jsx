@@ -287,7 +287,7 @@ const ServicesList = ({
                   onClick={() => handleSort('price')}
                 >
                   <div className="flex items-center">
-                    {t('reservations.comp.pricePerPerson')}
+                    {t('reservations.pricePerPerson')}
                     <ChevronUpDownIcon className="ml-1 h-4 w-4" />
                   </div>
                 </th>

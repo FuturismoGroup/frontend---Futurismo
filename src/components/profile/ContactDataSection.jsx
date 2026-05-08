@@ -260,7 +260,7 @@ const ContactDataSection = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email *
+                      {t('profile.comp.email')} *
                     </label>
                     {isEditing ? (
                       <input
@@ -352,7 +352,7 @@ const ContactDataSection = () => {
                   <div>
                     <input
                       type="email"
-                      placeholder="Email *"
+                      placeholder={`${t('profile.comp.email')} *`}
                       value={newContact.email}
                       onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

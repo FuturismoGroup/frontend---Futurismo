@@ -34,7 +34,7 @@ const ChatWindow = ({ chat, onClose }) => {
             {t('chat.selectToStart')}
           </h3>
           <p className="text-slate-500 text-sm max-w-xs mx-auto">
-            Selecciona una conversación de la lista para comenzar a chatear
+            {t('chat.selectFromList')}
           </p>
         </div>
       </div>
@@ -62,7 +62,7 @@ const ChatWindow = ({ chat, onClose }) => {
         {messages.length > 0 && (
           <div className="flex justify-center mb-6">
             <span className="px-4 py-1.5 bg-white/80 backdrop-blur-sm text-xs font-medium text-slate-500 rounded-full shadow-sm border border-slate-200/50">
-              Hoy
+              {t('chat.today')}
             </span>
           </div>
         )}
@@ -103,8 +103,8 @@ const ChatWindow = ({ chat, onClose }) => {
               <div className="flex items-center gap-2">
                 <span className="text-xs text-slate-500">
                   {typingUsers.length === 1
-                    ? `${typingUsers[0].userName} esta escribiendo`
-                    : `${typingUsers.length} personas estan escribiendo`}
+                    ? t('chat.personTyping', { name: typingUsers[0].userName })
+                    : t('chat.peopleTyping', { count: typingUsers.length })}
                 </span>
                 <div className="flex items-center gap-1">
                   <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms', animationDuration: '600ms' }} />

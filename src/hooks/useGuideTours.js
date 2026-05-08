@@ -83,10 +83,8 @@ const useGuideTours = () => {
 
         setTours(mappedTours);
 
-        // Buscar tour activo
-        const active = mappedTours.find(tour =>
-          ['en_camino', 'iniciado', 'en_progreso'].includes(tour.status)
-        );
+        // Buscar tour activo (estado canónico del backend)
+        const active = mappedTours.find(tour => tour.status === 'in_progress');
         setActiveTour(active?.id || null);
       } else {
         throw new Error(response.message || i18next.t('errors.unexpectedError'));
@@ -177,13 +175,13 @@ const useGuideTours = () => {
     return tours.filter(tour => tour.status === status);
   };
 
-  // Estadísticas básicas
+  // Estadísticas básicas (alineadas a los estados canónicos del backend)
   const getStats = () => {
     return {
       total: tours.length,
-      pending: tours.filter(t => t.status === 'asignado').length,
-      active: tours.filter(t => ['en_camino', 'iniciado', 'en_progreso'].includes(t.status)).length,
-      completed: tours.filter(t => t.status === 'finalizado').length,
+      pending: tours.filter(t => t.status === 'pending' || t.status === 'confirmed').length,
+      active: tours.filter(t => t.status === 'in_progress').length,
+      completed: tours.filter(t => t.status === 'completed').length,
       totalTourists: tours.reduce((sum, tour) => sum + (tour.tourists || 0), 0)
     };
   };

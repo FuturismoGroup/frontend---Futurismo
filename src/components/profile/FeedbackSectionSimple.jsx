@@ -64,7 +64,7 @@ const FeedbackSectionSimple = ({ userRole = 'agency' }) => {
       setSubmitting(true);
       const response = await api.post('/feedback', {
         feedbackType: 'general',
-        subject: `Feedback de ${user?.name || 'Agencia'}`,
+        subject: t('profile.comp.feedbackSubject', { name: user?.name || t('profile.comp.agencyDefaultLabel') }),
         message: message.trim(),
         rating: rating,
         priority: 'normal'
@@ -211,7 +211,7 @@ const FeedbackSectionSimple = ({ userRole = 'agency' }) => {
           {userRole === 'admin' && !canAddFeedback && (
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-6">
               <h4 className="text-md font-semibold text-gray-900 mb-2">
-                👁️ Vista de administrador
+                {t('profile.comp.adminViewLabel')}
               </h4>
               <p className="text-sm text-gray-600">
                 {t('profile.comp.adminFeedbackNote')}

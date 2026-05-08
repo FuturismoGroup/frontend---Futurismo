@@ -226,10 +226,10 @@ const ReservationManagement = () => {
     if (filters.searchTerm) {
       const searchTerm = filters.searchTerm.toLowerCase();
       filtered = filtered.filter(res =>
-        res.agencyName.toLowerCase().includes(searchTerm) ||
-        res.agencyEmail.toLowerCase().includes(searchTerm) ||
-        res.tourName.toLowerCase().includes(searchTerm) ||
-        res.id.toLowerCase().includes(searchTerm)
+        (res.agencyName || '').toLowerCase().includes(searchTerm) ||
+        (res.agencyEmail || '').toLowerCase().includes(searchTerm) ||
+        (res.tourName || '').toLowerCase().includes(searchTerm) ||
+        (res.id || '').toLowerCase().includes(searchTerm)
       );
     }
 
@@ -935,7 +935,7 @@ const ReservationManagement = () => {
                               {reservation.agencyName}
                             </div>
                             <div className="text-xs text-gray-400 truncate">
-                              {reservation.id.slice(0, 8)}...
+                              {reservation.id ? `${reservation.id.slice(0, 8)}...` : '—'}
                             </div>
                           </div>
                         </div>
@@ -1083,7 +1083,7 @@ const ReservationManagement = () => {
                             {reservation.agencyName}
                           </div>
                           <div className="text-xs text-gray-400">
-                            ID: {reservation.id.slice(0, 8)}...
+                            ID: {reservation.id ? `${reservation.id.slice(0, 8)}...` : '—'}
                           </div>
                         </div>
                       </div>

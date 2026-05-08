@@ -28,23 +28,24 @@ const ContactTypeManager = ({ onContactTypesChanged }) => {
   const [errors, setErrors] = useState({});
 
   // Iconos disponibles para contactos
+  // Nota: las traducciones ya incluyen el emoji, NO volver a anteponerlo aquí.
   const availableIcons = [
-    { value: '📞', label: `📞 ${t('emergency.comp.contactIconOptions.phone')}` },
-    { value: '🚨', label: `🚨 ${t('emergency.comp.contactIconOptions.emergency')}` },
-    { value: '🏥', label: `🏥 ${t('emergency.comp.contactIconOptions.medical')}` },
-    { value: '👮', label: `👮 ${t('emergency.comp.contactIconOptions.police')}` },
-    { value: '👤', label: `👤 ${t('emergency.comp.contactIconOptions.person')}` },
-    { value: '💼', label: `💼 ${t('emergency.comp.contactIconOptions.company')}` },
-    { value: '🛡️', label: `🛡️ ${t('emergency.comp.contactIconOptions.insurance')}` },
-    { value: '🚗', label: `🚗 ${t('emergency.comp.contactIconOptions.vehicle')}` },
-    { value: '⛈️', label: `⛈️ ${t('emergency.comp.contactIconOptions.weather')}` },
-    { value: '🏘️', label: `🏘️ ${t('emergency.comp.contactIconOptions.local')}` },
-    { value: '📋', label: `📋 ${t('emergency.comp.contactIconOptions.operations')}` },
-    { value: '🚒', label: `🚒 ${t('emergency.comp.contactIconOptions.firefighters')}` },
-    { value: '🏛️', label: `🏛️ ${t('emergency.comp.contactIconOptions.embassy')}` },
-    { value: '⛑️', label: `⛑️ ${t('emergency.comp.contactIconOptions.rescue')}` },
-    { value: '📡', label: `📡 ${t('emergency.comp.contactIconOptions.communication')}` },
-    { value: '🔧', label: `🔧 ${t('emergency.comp.contactIconOptions.techSupport')}` }
+    { value: '📞', label: t('emergency.comp.contactIconOptions.phone') },
+    { value: '🚨', label: t('emergency.comp.contactIconOptions.emergency') },
+    { value: '🏥', label: t('emergency.comp.contactIconOptions.medical') },
+    { value: '👮', label: t('emergency.comp.contactIconOptions.police') },
+    { value: '👤', label: t('emergency.comp.contactIconOptions.person') },
+    { value: '💼', label: t('emergency.comp.contactIconOptions.company') },
+    { value: '🛡️', label: t('emergency.comp.contactIconOptions.insurance') },
+    { value: '🚗', label: t('emergency.comp.contactIconOptions.vehicle') },
+    { value: '⛈️', label: t('emergency.comp.contactIconOptions.weather') },
+    { value: '🏘️', label: t('emergency.comp.contactIconOptions.local') },
+    { value: '📋', label: t('emergency.comp.contactIconOptions.operations') },
+    { value: '🚒', label: t('emergency.comp.contactIconOptions.firefighters') },
+    { value: '🏛️', label: t('emergency.comp.contactIconOptions.embassy') },
+    { value: '⛑️', label: t('emergency.comp.contactIconOptions.rescue') },
+    { value: '📡', label: t('emergency.comp.contactIconOptions.communication') },
+    { value: '🔧', label: t('emergency.comp.contactIconOptions.techSupport') }
   ];
 
   // Colores predefinidos

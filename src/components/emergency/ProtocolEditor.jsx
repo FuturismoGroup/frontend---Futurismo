@@ -23,6 +23,7 @@ const ProtocolEditor = ({ protocol, onClose, onSave }) => {
     setValue,
     errors,
     onSubmit,
+    onInvalid,
     stepFields,
     appendStep,
     removeStep,
@@ -58,7 +59,7 @@ const ProtocolEditor = ({ protocol, onClose, onSave }) => {
 
         {/* Content */}
         <div className="overflow-y-auto max-h-[calc(90vh-140px)]">
-          <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+          <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="p-6 space-y-6">
             {/* Basic info */}
             <ProtocolBasicInfo
               register={register}
@@ -103,6 +104,7 @@ const ProtocolEditor = ({ protocol, onClose, onSave }) => {
             <ProtocolContacts
               contactFields={contactFields}
               register={register}
+              errors={errors}
               appendContact={appendContact}
               removeContact={removeContact}
               contactTypes={contactTypes}
@@ -146,7 +148,7 @@ const ProtocolEditor = ({ protocol, onClose, onSave }) => {
               {t('common.cancel')}
             </button>
             <button
-              onClick={handleSubmit(onSubmit)}
+              onClick={handleSubmit(onSubmit, onInvalid)}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
             >
               <DocumentCheckIcon className="w-4 h-4" />

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon, PlusIcon, ArrowDownTrayIcon, DocumentTextIcon, ShieldCheckIcon, ExclamationTriangleIcon, PhoneIcon, CheckCircleIcon, CogIcon, FunnelIcon, EyeIcon, PencilIcon, TrashIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import toast from 'react-hot-toast';
 import useEmergencyStore from '../stores/emergencyStore';
 import ProtocolViewer from '../components/emergency/ProtocolViewer';
 import ProtocolEditor from '../components/emergency/ProtocolEditor';
@@ -25,17 +26,30 @@ const EmergencyProtocols = () => {
   const createProtocol = useEmergencyStore((state) => state.createProtocol);
   const deleteProtocol = useEmergencyStore((state) => state.deleteProtocol);
 
+  // Estado para distinguir "lista vacia" de "fetch fallo".
+  const [loadError, setLoadError] = useState(null);
+  const [isLoadingProtocols, setIsLoadingProtocols] = useState(true);
+
+  const loadData = async () => {
+    try {
+      setIsLoadingProtocols(true);
+      setLoadError(null);
+      await initialize();
+      await fetchProtocols();
+    } catch (error) {
+      console.error('Error cargando protocolos:', error);
+      const msg = error?.message || 'Error al cargar los protocolos';
+      setLoadError(msg);
+      toast.error(msg);
+    } finally {
+      setIsLoadingProtocols(false);
+    }
+  };
+
   // Cargar protocolos al montar el componente
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        await initialize();
-        await fetchProtocols();
-      } catch (error) {
-        console.error('Error cargando protocolos:', error);
-      }
-    };
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialize, fetchProtocols]);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -63,16 +77,20 @@ const EmergencyProtocols = () => {
       await emergencyPDFService.downloadProtocolPDF(protocol);
     } catch (error) {
       console.error('Error descargando protocolo:', error);
-      alert('Error al generar el PDF del protocolo');
+      toast.error('Error al generar el PDF del protocolo');
     }
   };
 
   const handleDownloadAllProtocols = async () => {
+    if (!filteredProtocols || filteredProtocols.length === 0) {
+      toast('No hay protocolos para descargar', { icon: 'ℹ️' });
+      return;
+    }
     try {
       await emergencyPDFService.downloadAllProtocolsPDF(filteredProtocols);
     } catch (error) {
       console.error('Error descargando todos los protocolos:', error);
-      alert('Error al generar el PDF de todos los protocolos');
+      toast.error('Error al generar el PDF de todos los protocolos');
     }
   };
 
@@ -81,7 +99,7 @@ const EmergencyProtocols = () => {
       await emergencyPDFService.downloadGuideEmergencyKit();
     } catch (error) {
       console.error('Error descargando kit de guía:', error);
-      alert('Error al generar el PDF del kit de emergencia');
+      toast.error('Error al generar el PDF del kit de emergencia');
     }
   };
 
@@ -206,14 +224,17 @@ const EmergencyProtocols = () => {
         </div>
 
         <div className="flex items-center space-x-3">
-          {/* Botones de descarga */}
-          <button
-            onClick={handleDownloadAllProtocols}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
-          >
-            <DocumentTextIcon className="w-4 h-4" />
-            <span>Todos los Protocolos</span>
-          </button>
+          {/* Boton de descarga: solo se muestra si HAY protocolos. */}
+          {Array.isArray(filteredProtocols) && filteredProtocols.length > 0 && (
+            <button
+              onClick={handleDownloadAllProtocols}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
+              title="Descargar PDF con todos los protocolos"
+            >
+              <ArrowDownTrayIcon className="w-4 h-4" />
+              <span>Descargar Todos</span>
+            </button>
+          )}
 
           <button
             onClick={() => setShowMaterials(true)}
@@ -297,15 +318,45 @@ const EmergencyProtocols = () => {
       </div>
 
       {/* Lista de protocolos */}
-      {filteredProtocols.length === 0 ? (
+      {isLoadingProtocols ? (
+        <div className="text-center py-12 bg-gray-50 rounded-lg">
+          <ArrowPathIcon className="mx-auto h-10 w-10 text-gray-400 animate-spin" />
+          <p className="mt-3 text-sm text-gray-500">Cargando protocolos...</p>
+        </div>
+      ) : loadError ? (
+        <div className="text-center py-12 bg-red-50 border border-red-200 rounded-lg">
+          <ExclamationTriangleIcon className="mx-auto h-12 w-12 text-red-400" />
+          <h3 className="mt-2 text-sm font-medium text-red-900">
+            No se pudieron cargar los protocolos
+          </h3>
+          <p className="mt-1 text-sm text-red-700">{loadError}</p>
+          <button
+            onClick={loadData}
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            <ArrowPathIcon className="w-4 h-4" />
+            Reintentar
+          </button>
+        </div>
+      ) : filteredProtocols.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
           <ExclamationTriangleIcon className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">
-            No se encontraron protocolos
+            {(protocols && protocols.length > 0) ? 'Ningun protocolo coincide con los filtros' : 'Aun no hay protocolos creados'}
           </h3>
           <p className="mt-1 text-sm text-gray-500">
-            Ajusta los filtros de búsqueda o crea un nuevo protocolo.
+            {(protocols && protocols.length > 0)
+              ? 'Limpia el buscador o cambia el filtro de categoria.'
+              : 'Cuando un administrador cree protocolos de emergencia, apareceran aqui.'}
           </p>
+          {(searchQuery || selectedCategory) && (
+            <button
+              onClick={() => { setSearchQuery(''); setSelectedCategory(''); }}
+              className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium"
+            >
+              Limpiar filtros
+            </button>
+          )}
         </div>
       ) : viewMode === 'cards' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

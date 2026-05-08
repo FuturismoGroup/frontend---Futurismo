@@ -41,6 +41,8 @@ const NewServiceModal = ({ isOpen, onClose, onSave, selectedCategory, categories
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Evitar que el submit del modal (renderizado por portal) burbujee al form padre
+    e.stopPropagation();
     if (!validate()) return;
 
     setSaving(true);

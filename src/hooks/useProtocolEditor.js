@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 import useEmergencyStore from '../stores/emergencyStore';
 import { getStorageKey } from '../config/app.config';
 
@@ -188,6 +189,28 @@ const useProtocolEditor = (protocol, onSave) => {
     loadContactTypes();
   }, []);
 
+  // Handler que se invoca cuando handleSubmit detecta errores de validacion.
+  // Sin esto el submit fallaba en silencio (modal abierto, sin feedback).
+  const onInvalid = (validationErrors) => {
+    const flatten = (obj, path = '') => {
+      const out = [];
+      for (const k of Object.keys(obj || {})) {
+        const v = obj[k];
+        const next = path ? `${path}.${k}` : k;
+        if (v && typeof v === 'object' && !v.message && !Array.isArray(v)) {
+          out.push(...flatten(v, next));
+        } else if (Array.isArray(v)) {
+          v.forEach((item, i) => out.push(...flatten(item, `${next}.${i}`)));
+        } else if (v?.message) {
+          out.push(v.message);
+        }
+      }
+      return out;
+    };
+    const messages = flatten(validationErrors);
+    toast.error(messages[0] || t('validation.formHasErrors', { defaultValue: 'Revise los campos del formulario' }));
+  };
+
   const onSubmit = (data) => {
     // Transformar steps al formato que espera el backend
     const stepsForBackend = data.steps
@@ -236,6 +259,7 @@ const useProtocolEditor = (protocol, onSave) => {
     setValue,
     errors,
     onSubmit,
+    onInvalid,
 
     // Field arrays
     stepFields,

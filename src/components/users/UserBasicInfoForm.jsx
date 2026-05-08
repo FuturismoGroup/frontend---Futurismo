@@ -756,11 +756,11 @@ const UserBasicInfoForm = ({
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t('users.form.specialtiesLabel')}
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {GUIDE_SPECIALTIES.map((spec) => (
                     <label
                       key={spec.value}
-                      className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
+                      className={`flex items-center justify-center text-center px-2 py-2 border rounded-lg cursor-pointer transition-colors min-w-0 ${
                         selectedSpecialties.includes(spec.value)
                           ? 'border-orange-500 bg-orange-50 text-orange-700'
                           : 'border-gray-200 hover:border-gray-300'
@@ -772,7 +772,7 @@ const UserBasicInfoForm = ({
                         onChange={() => handleSpecialtyToggle(spec.value)}
                         className="sr-only"
                       />
-                      <span className="text-sm font-medium">{spec.labelKey ? t(spec.labelKey) : spec.label}</span>
+                      <span className="text-sm font-medium truncate">{spec.labelKey ? t(spec.labelKey) : spec.label}</span>
                     </label>
                   ))}
                 </div>

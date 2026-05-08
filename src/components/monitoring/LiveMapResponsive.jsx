@@ -9,6 +9,9 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
   const { viewport, sidebarOpen } = useLayout();
   const [selectedService, setSelectedService] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  // Flag para forzar la re-corrida del useEffect de marcadores cuando el mapa
+  // termina de inicializarse (caso: tab que se desmonta y remonta).
+  const [mapReady, setMapReady] = useState(false);
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
   const markersRef = useRef({});
@@ -73,6 +76,8 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
         leafletMapRef.current.remove();
         leafletMapRef.current = null;
       }
+      markersRef.current = {};
+      setMapReady(false);
     };
   }, []);
 
@@ -117,6 +122,10 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
       console.log('✅ Capa de tiles agregada');
 
       leafletMapRef.current = map;
+      // Permitir el ajuste inicial al fitBounds tras el remount.
+      initialFitDoneRef.current = false;
+      // Disparar el useEffect que pinta los marcadores (importante al remontar).
+      setMapReady(true);
 
       // IMPORTANTE: Forzar redimensionamiento después de inicializar
       // Esto asegura que Leaflet calcule correctamente el tamaño del contenedor
@@ -195,9 +204,11 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
     };
   }, [leafletMapRef.current]);
 
-  // Actualizar marcadores en tiempo real cuando cambian los servicios activos
+  // Actualizar marcadores en tiempo real cuando cambian los servicios activos.
+  // Depende de `mapReady` para que se re-ejecute cuando el mapa termina de
+  // inicializarse despues de un remount (tab Mapa <-> Mis Tours).
   useEffect(() => {
-    if (!leafletMapRef.current || !window.L) return;
+    if (!mapReady || !leafletMapRef.current || !window.L) return;
 
     console.log('🗺️ Actualizando marcadores del mapa:', services.length, 'servicios');
 
@@ -303,11 +314,11 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
         leafletMapRef.current.setView([-12.0464, -77.0428], viewport.isMobile ? 11 : 12);
       }
     }
-  }, [services, viewport]);
+  }, [services, viewport, mapReady]);
 
   // Centrar mapa en un servicio específico cuando cambia focusServiceId
   useEffect(() => {
-    if (!focusServiceId || !leafletMapRef.current || !markersRef.current[focusServiceId]) return;
+    if (!mapReady || !focusServiceId || !leafletMapRef.current || !markersRef.current[focusServiceId]) return;
     const marker = markersRef.current[focusServiceId];
     const latLng = marker.getLatLng();
     leafletMapRef.current.setView(latLng, 15, { animate: true });
@@ -315,7 +326,7 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
     // Buscar el servicio correspondiente y seleccionarlo
     const service = services.find(s => s.id === focusServiceId);
     if (service) setSelectedService(service);
-  }, [focusServiceId, services]);
+  }, [focusServiceId, services, mapReady]);
 
   // Funciones de control
   const handleZoom = (direction) => {

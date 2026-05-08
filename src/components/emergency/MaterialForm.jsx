@@ -33,10 +33,12 @@ const MaterialForm = ({ material, categories, onSave, onCancel }) => {
   });
 
   const onSubmit = (data) => {
+    const isMandatory = Boolean(data.mandatory);
     const materialData = {
       name: data.name,
       category: data.category,
-      mandatory: data.mandatory,
+      mandatory: isMandatory,
+      isMandatory,
       items: data.items.map(item => item.name).filter(name => name.trim() !== '')
     };
 

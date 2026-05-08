@@ -259,15 +259,26 @@ const ServiceTypesSettings = () => {
                   onChange={(e) => setFormData({ ...formData, color: e.target.value })}
                   className="w-12 h-10 border border-gray-300 rounded-lg cursor-pointer"
                 />
-                <select
-                  value={formData.color}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {PREDEFINED_COLORS.map(color => (
-                    <option key={color.value} value={color.value}>{color.label}</option>
-                  ))}
-                </select>
+                <div className="flex-1 flex flex-wrap items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg bg-white">
+                  {PREDEFINED_COLORS.map(color => {
+                    const isSelected = (formData.color || '').toLowerCase() === color.value.toLowerCase();
+                    return (
+                      <button
+                        key={color.value}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, color: color.value })}
+                        title={color.label}
+                        aria-label={color.label}
+                        className={`w-7 h-7 rounded-full border-2 transition-all ${
+                          isSelected
+                            ? 'border-gray-900 scale-110 ring-2 ring-offset-1 ring-gray-400'
+                            : 'border-gray-200 hover:border-gray-400'
+                        }`}
+                        style={{ backgroundColor: color.value }}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>

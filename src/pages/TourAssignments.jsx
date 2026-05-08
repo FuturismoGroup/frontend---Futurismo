@@ -30,6 +30,28 @@ import toast from 'react-hot-toast';
 import exportService from '../services/exportService';
 import toursService from '../services/toursService';
 import assignmentPdfService from '../services/assignmentPdfService';
+import { getLanguageName, normalizeLanguageCode } from '../config/languages';
+
+// Parse a value that might be: array, JSON string, or double-encoded JSON string
+const parseJsonField = (value) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value !== 'string') return [];
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) return parsed;
+    if (typeof parsed === 'string') {
+      try {
+        const inner = JSON.parse(parsed);
+        return Array.isArray(inner) ? inner : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  } catch {
+    return [];
+  }
+};
 
 const TourAssignments = () => {
   const navigate = useNavigate();
@@ -919,20 +941,23 @@ const TourAssignments = () => {
                     >
                       <option value="">Seleccione un guia</option>
                       {availableGuides.map((guide) => {
-                        // Formatear idiomas abreviados - manejar formato mixto (string u objeto {code, level})
-                        const langs = Array.isArray(guide.languages) && guide.languages.length > 0
-                          ? guide.languages.map(l => {
-                              const langValue = typeof l === 'string' ? l : l?.code;
-                              if (!langValue) return null;
-                              const abbrev = { 'Español': 'ES', 'Inglés': 'EN', 'Francés': 'FR', 'Portugués': 'PT', 'Alemán': 'DE', 'Italiano': 'IT', 'Japonés': 'JA', 'Chino': 'ZH', 'Ruso': 'RU' };
-                              return abbrev[langValue] || langValue?.substring(0, 2)?.toUpperCase() || langValue;
-                            }).filter(Boolean).join(', ')
-                          : null;
-                        // Formatear museos
-                        const museumsList = Array.isArray(guide.museums) && guide.museums.length > 0
-                          ? guide.museums.join(', ')
-                          : null;
-                        // Construir etiqueta
+                        // Idiomas: soporta array de strings, array de {code, level}, o JSON string (incl. doble-codificado)
+                        const rawLangs = parseJsonField(guide.languages);
+                        const langs = rawLangs
+                          .map(l => {
+                              const code = typeof l === 'string' ? l : l?.code;
+                              const iso = normalizeLanguageCode(code);
+                              if (!iso) return null;
+                              return iso.length <= 3 ? iso.toUpperCase() : getLanguageName(iso);
+                          })
+                          .filter(Boolean)
+                          .join(', ') || null;
+                        // Museos: soporta array de strings o de objetos {name, years, expertise}
+                        const rawMuseums = parseJsonField(guide.museums);
+                        const museumsList = rawMuseums
+                          .map(m => (typeof m === 'string' ? m : m?.name))
+                          .filter(Boolean)
+                          .join(', ') || null;
                         const details = [langs, museumsList].filter(Boolean).join(' | ');
                         return (
                           <option key={guide.id} value={guide.id}>

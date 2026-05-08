@@ -2,12 +2,17 @@ import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MapPinIcon, PlusIcon, MagnifyingGlassIcon, FunnelIcon, Squares2X2Icon, ListBulletIcon, BuildingOffice2Icon } from '@heroicons/react/24/outline';
 import useProvidersStore from '../../stores/providersStore';
+import useAuthStore from '../../stores/authStore';
 import ProviderCard from './ProviderCard';
 import ProviderForm from './ProviderForm';
 import LocationTree from './LocationTree';
 
 const ProvidersManager = () => {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  // Solo el admin puede gestionar (crear/editar/eliminar) proveedores.
+  // Los guías (planta o freelance) tienen el módulo en modo solo lectura.
+  const canManage = user?.role === 'admin' || user?.role === 'administrator';
   const {
     locations,
     categories,
@@ -90,11 +95,13 @@ const ProvidersManager = () => {
   }, [providers, searchQuery, filters]);
 
   const handleAddProvider = () => {
+    if (!canManage) return;
     setEditingProvider(null);
     setShowForm(true);
   };
 
   const handleEditProvider = async (provider) => {
+    if (!canManage) return;
     try {
       // Fetch del proveedor completo con servicios
       const fullProvider = await actions.fetchProviderById(provider.id);
@@ -109,6 +116,7 @@ const ProvidersManager = () => {
   };
 
   const handleDeleteProvider = async (providerId) => {
+    if (!canManage) return;
     if (window.confirm(t('providers.confirm.delete'))) {
       try {
         await actions.deleteProvider(providerId);
@@ -119,6 +127,7 @@ const ProvidersManager = () => {
   };
 
   const handleSaveProvider = async (providerData) => {
+    if (!canManage) return;
     try {
       if (editingProvider) {
         await actions.updateProvider(editingProvider.id, providerData);
@@ -129,6 +138,9 @@ const ProvidersManager = () => {
       setEditingProvider(null);
     } catch (error) {
       console.error('Error saving provider:', error);
+      // Re-lanzar para que el form pueda mostrar toast de error
+      // y NO se cierre dejando creer al usuario que se guardó
+      throw error;
     }
   };
 
@@ -169,13 +181,15 @@ const ProvidersManager = () => {
             </div>
           </div>
 
-          <button
-            onClick={handleAddProvider}
-            className="bg-white text-blue-600 hover:bg-blue-50 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2"
-          >
-            <PlusIcon className="w-5 h-5" />
-            <span>{t('providers.actions.new')}</span>
-          </button>
+          {canManage && (
+            <button
+              onClick={handleAddProvider}
+              className="bg-white text-blue-600 hover:bg-blue-50 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2"
+            >
+              <PlusIcon className="w-5 h-5" />
+              <span>{t('providers.actions.new')}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -290,8 +304,9 @@ const ProvidersManager = () => {
                       provider={provider}
                       locationName={getLocationName(provider.location)}
                       categoryInfo={getCategoryInfo(provider.category)}
-                      onEdit={() => handleEditProvider(provider)}
-                      onDelete={() => handleDeleteProvider(provider.id)}
+                      onEdit={canManage ? () => handleEditProvider(provider) : undefined}
+                      onDelete={canManage ? () => handleDeleteProvider(provider.id) : undefined}
+                      canManage={canManage}
                     />
                   ))}
                 </div>
@@ -303,8 +318,9 @@ const ProvidersManager = () => {
                       provider={provider}
                       locationName={getLocationName(provider.location)}
                       categoryInfo={getCategoryInfo(provider.category)}
-                      onEdit={() => handleEditProvider(provider)}
-                      onDelete={() => handleDeleteProvider(provider.id)}
+                      onEdit={canManage ? () => handleEditProvider(provider) : undefined}
+                      onDelete={canManage ? () => handleDeleteProvider(provider.id) : undefined}
+                      canManage={canManage}
                       layout="list"
                     />
                   ))}
@@ -322,15 +338,19 @@ const ProvidersManager = () => {
                   <p className="text-gray-600 mb-8 max-w-md mx-auto">
                     {searchQuery || filters.location || filters.category
                       ? t('providers.empty.filterHint')
-                      : t('providers.empty.startHint')}
+                      : canManage
+                        ? t('providers.empty.startHint')
+                        : t('providers.empty.title')}
                   </p>
-                  <button
-                    onClick={handleAddProvider}
-                    className="bg-blue-600 text-white hover:bg-blue-700 font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 inline-flex items-center space-x-2"
-                  >
-                    <PlusIcon className="w-5 h-5" />
-                    <span>{t('providers.actions.add')}</span>
-                  </button>
+                  {canManage && (
+                    <button
+                      onClick={handleAddProvider}
+                      className="bg-blue-600 text-white hover:bg-blue-700 font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 inline-flex items-center space-x-2"
+                    >
+                      <PlusIcon className="w-5 h-5" />
+                      <span>{t('providers.actions.add')}</span>
+                    </button>
+                  )}
                 </div>
               )}
             </>
@@ -338,8 +358,8 @@ const ProvidersManager = () => {
         </div>
       </div>
 
-      {/* Modales */}
-      {showForm && (
+      {/* Modales — solo accesibles para administradores */}
+      {canManage && showForm && (
         <ProviderForm
           key={editingProvider?.id || 'new-provider'}
           provider={editingProvider}

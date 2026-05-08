@@ -13,6 +13,10 @@ class WebSocketService {
     this.isConnecting = false;
     this.activeRooms = new Set(); // Tracking de rooms activas para re-join
     this.pendingJoins = []; // Callbacks pendientes de conexion
+    // Cache del último presence:initial para re-emitir a suscriptores tardíos.
+    // El backend solo lo manda al conectar el socket; los hooks que montan después
+    // (ej: navegar a /chat) lo perderían sin este cache.
+    this.lastPresenceSnapshot = null;
   }
 
   /**
@@ -155,13 +159,32 @@ class WebSocketService {
 
     // === Eventos de Presencia ===
 
+    // Snapshot inicial de usuarios online (al conectarse)
+    this.socket.on('presence:initial', (data) => {
+      // Mantener una copia mutable del snapshot — los user:online/offline
+      // posteriores actualizan este Set para que suscriptores tardíos vean
+      // el estado real al momento de subscribirse.
+      const ids = Array.isArray(data?.onlineUserIds) ? data.onlineUserIds : [];
+      this.lastPresenceSnapshot = {
+        onlineUserIds: new Set(ids),
+        timestamp: data?.timestamp || new Date().toISOString()
+      };
+      this.emit('presence:initial', data);
+    });
+
     // Usuario conectado
     this.socket.on('user:online', (data) => {
+      if (this.lastPresenceSnapshot && data?.userId) {
+        this.lastPresenceSnapshot.onlineUserIds.add(data.userId);
+      }
       this.emit('user:online', data);
     });
 
     // Usuario desconectado
     this.socket.on('user:offline', (data) => {
+      if (this.lastPresenceSnapshot && data?.userId) {
+        this.lastPresenceSnapshot.onlineUserIds.delete(data.userId);
+      }
       this.emit('user:offline', data);
     });
 
@@ -427,6 +450,17 @@ class WebSocketService {
    */
   isConnected() {
     return this.socket?.connected || false;
+  }
+
+  /**
+   * Devuelve el snapshot actual de usuarios online (si ya se recibió presence:initial).
+   * Necesario para hooks que se montan DESPUÉS del login: el evento
+   * presence:initial ya se disparó y se perdería sin este cache.
+   * @returns {string[]} Array de userIds online
+   */
+  getOnlineUserIds() {
+    if (!this.lastPresenceSnapshot) return [];
+    return Array.from(this.lastPresenceSnapshot.onlineUserIds);
   }
 
   /**

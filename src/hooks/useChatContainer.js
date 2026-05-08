@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import i18next from 'i18next';
 import { useAuthStore } from '../stores/authStore';
 import chatService from '../services/chatService';
+import webSocketService from '../services/websocket';
 
 const useChatContainer = () => {
   const { user } = useAuthStore();
@@ -18,6 +19,45 @@ const useChatContainer = () => {
       setIsMobileView(true);
     }
   };
+
+  // Mantener selectedChat.online sincronizado con la presencia en tiempo real.
+  // Sin esto, el estado online del header queda congelado en el momento en que
+  // se seleccionó el chat y nunca refleja conexiones/desconexiones posteriores.
+  useEffect(() => {
+    const applyOnline = (online) => (data) => {
+      const targetId = data?.userId;
+      if (!targetId) return;
+      setSelectedChat((prev) => {
+        if (!prev || prev.participantId !== targetId) return prev;
+        return { ...prev, online };
+      });
+    };
+
+    const applyInitial = (data) => {
+      const ids = Array.isArray(data?.onlineUserIds) ? data.onlineUserIds : [];
+      setSelectedChat((prev) => {
+        if (!prev || !prev.participantId) return prev;
+        return { ...prev, online: ids.includes(prev.participantId) };
+      });
+    };
+
+    // Hidratar con el snapshot cacheado: el WebSocket pudo haberse conectado
+    // antes de que este hook montara, perdiendo el evento presence:initial.
+    const cachedIds = webSocketService.getOnlineUserIds();
+    if (cachedIds.length > 0) {
+      applyInitial({ onlineUserIds: cachedIds });
+    }
+
+    const unsubInitial = webSocketService.on('presence:initial', applyInitial);
+    const unsubOnline = webSocketService.on('user:online', applyOnline(true));
+    const unsubOffline = webSocketService.on('user:offline', applyOnline(false));
+
+    return () => {
+      unsubInitial();
+      unsubOnline();
+      unsubOffline();
+    };
+  }, []);
 
   const handleCloseChat = () => {
     setSelectedChat(null);
@@ -54,7 +94,8 @@ const useChatContainer = () => {
           lastMessage: conversation.last_message?.content || i18next.t('chat.sendMessage', { defaultValue: 'Iniciar conversación' }),
           lastMessageTime: conversation.last_message ? new Date(conversation.last_message.created_at) : new Date(),
           unreadCount: 0,
-          online: false,
+          participantId: guideId,
+          online: webSocketService.getOnlineUserIds().includes(guideId),
           typing: false,
           isFromAgenda: true,
           _conversationData: conversation
@@ -112,7 +153,8 @@ const useChatContainer = () => {
         lastMessage: conversation.last_message?.content || i18next.t('chat.sendMessage', { defaultValue: 'Iniciar conversación' }),
         lastMessageTime: conversation.last_message ? new Date(conversation.last_message.created_at) : new Date(),
         unreadCount: 0,
-        online: false,
+        participantId: userId,
+        online: webSocketService.getOnlineUserIds().includes(userId),
         typing: false,
         _conversationData: conversation
       };

@@ -431,7 +431,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <CurrencyDollarIcon className="inline w-4 h-4 mr-1 text-gray-500" />
-                {t('reservations.comp.pricePerPerson')} *
+                {t('reservations.pricePerPerson')} *
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">S/.</span>

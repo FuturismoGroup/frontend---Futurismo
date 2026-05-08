@@ -40,7 +40,7 @@ const AppSidebarEnhanced = () => {
         {
           section: t('navigation.sections.marketplace'),
           items: [
-            { path: '/marketplace', icon: MagnifyingGlassIcon, label: t('navigation.searchGuides') },
+            { path: '/marketplace', icon: MagnifyingGlassIcon, label: t('navigation.searchGuides'), end: true },
             { path: '/marketplace/requests', icon: ClipboardDocumentListIcon, label: t('navigation.myRequests') },
             { path: '/agency/rewards', icon: GiftIcon, label: t('navigation.rewardsStore') }
           ]
@@ -156,7 +156,7 @@ const AppSidebarEnhanced = () => {
       {
         section: t('navigation.sections.marketplace'),
         items: [
-          { path: '/marketplace', icon: MagnifyingGlassIcon, label: t('navigation.marketplace') },
+          { path: '/marketplace', icon: MagnifyingGlassIcon, label: t('navigation.marketplace'), end: true },
           { path: '/admin/rewards', icon: GiftIcon, label: t('navigation.rewardsSystem') }
         ]
       },
@@ -217,6 +217,7 @@ const AppSidebarEnhanced = () => {
                   <li key={item.path}>
                     <NavLink
                       to={item.path}
+                      end={item.end}
                       onClick={handleNavClick}
                       className={({ isActive }) => `
                         flex items-center gap-2.5 sm:gap-3 px-2 sm:px-3 py-2.5 sm:py-3 

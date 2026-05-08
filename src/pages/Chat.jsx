@@ -1,7 +1,9 @@
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ChatContainer from '../components/chat/ChatContainer';
 
 const Chat = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const guideName = searchParams.get('name');
   const isFromAgenda = searchParams.get('guide');
@@ -9,12 +11,11 @@ const Chat = () => {
   return (
     <div className="flex flex-col" style={{ height: 'calc(100vh - 7rem)' }}>
       <div className="flex-shrink-0 mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Chat</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('chat.pageTitle')}</h1>
         <p className="text-gray-600 mt-2">
-          {isFromAgenda && guideName ?
-            `Coordinación con ${decodeURIComponent(guideName)}` :
-            'Comunícate con guías turísticos y clientes en tiempo real'
-          }
+          {isFromAgenda && guideName
+            ? t('chat.coordinationWith', { name: decodeURIComponent(guideName) })
+            : t('chat.subtitle')}
         </p>
       </div>
 

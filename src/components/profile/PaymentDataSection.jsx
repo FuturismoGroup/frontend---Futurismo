@@ -62,8 +62,8 @@ const PaymentDataSection = () => {
             {paymentMethods.length === 0 && !loading && (
               <div className="text-center py-8 text-gray-500">
                 <CreditCardIcon className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <p className="font-medium">No hay métodos de pago registrados</p>
-                <p className="text-sm mt-1">Agregue un método de pago usando el formulario de abajo</p>
+                <p className="font-medium">{t('profile.comp.noPaymentMethods')}</p>
+                <p className="text-sm mt-1">{t('profile.comp.addPaymentMethodHint')}</p>
               </div>
             )}
 

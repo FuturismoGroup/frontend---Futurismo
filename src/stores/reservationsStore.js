@@ -14,6 +14,28 @@ import {
   VALIDATION_MESSAGES
 } from '../constants/reservationsConstants';
 
+// Normaliza una reserva del backend al shape que la UI espera
+// (mismo mapeo usado por listReservations y createReservation,
+// para que una reserva recién creada renderice igual que las del listado).
+const mapReservation = (r) => ({
+  ...r,
+  tourName: r.tour?.name || r.tourName || 'Sin tour',
+  destination: r.tour?.name || r.destination || 'Sin destino',
+  tourType: r.tour?.tourType || r.tourType || r.tour_type || 'Sin categoría',
+  agencyName: r.agency?.businessName || r.agency?.business_name || r.agencyName || 'Sin agencia',
+  agencyEmail: r.agency?.email || r.agency?.agency_email || '',
+  agencyPhone: r.agency?.phone || r.agency?.agency_phone || '',
+  total: parseFloat(r.totalAmount) || r.total || 0,
+  date: r.date,
+  time: r.time
+    ? (typeof r.time === 'string' && r.time.includes('T')
+        ? r.time.split('T')[1].substring(0, 5)
+        : typeof r.time === 'string'
+          ? r.time
+          : new Date(r.time).toTimeString().substring(0, 5))
+    : ''
+});
+
 const useReservationsStore = create((set, get) => ({
   // Estado
   formData: INITIAL_FORM_DATA,
@@ -172,20 +194,24 @@ const useReservationsStore = create((set, get) => ({
       if (!result.success) {
         throw new Error(result.error || i18next.t('errors.unexpectedError'));
       }
-      
+
+      // Normalizar la reserva nueva al mismo shape que las del listado
+      // para que renderice sin crashear (ver mapReservation arriba).
+      const newReservation = mapReservation(result.data);
+
       set((state) => ({
-        reservations: [result.data, ...state.reservations],
+        reservations: [newReservation, ...state.reservations],
         formState: FORM_STATES.SUCCESS,
         isSubmitting: false,
-        currentReservation: result.data
+        currentReservation: newReservation
       }));
-      
+
       // Limpiar formulario después de éxito
       setTimeout(() => {
         get().resetForm();
       }, 2000);
-      
-      return { success: true, reservation: result.data };
+
+      return { success: true, reservation: newReservation };
     } catch (error) {
       set({ 
         formState: FORM_STATES.ERROR,
@@ -235,29 +261,8 @@ const useReservationsStore = create((set, get) => ({
       const reservationsArray = backendData.data || backendData.reservations || [];
 
       // Mapear campos del backend a campos esperados por el frontend
-      const mappedReservations = reservationsArray.map(r => ({
-        ...r,
-        // Campos mapeados para compatibilidad con useReservationFilters y ReservationList
-        tourName: r.tour?.name || r.tourName || 'Sin tour',
-        destination: r.tour?.name || r.destination || 'Sin destino',
-        // Tipo de tour (para filtros)
-        tourType: r.tour?.tourType || r.tourType || r.tour_type || 'Sin categoría',
-        // Agencia (el backend envía agency.businessName en camelCase)
-        agencyName: r.agency?.businessName || r.agency?.business_name || r.agencyName || 'Sin agencia',
-        agencyEmail: r.agency?.email || r.agency?.agency_email || '',
-        agencyPhone: r.agency?.phone || r.agency?.agency_phone || '',
-        total: parseFloat(r.totalAmount) || r.total || 0,
-        // Mantener fecha como string para evitar problemas de timezone
-        date: r.date,
-        // Formatear hora si viene como Date
-        time: r.time ? (
-          typeof r.time === 'string' && r.time.includes('T')
-            ? r.time.split('T')[1].substring(0, 5)
-            : typeof r.time === 'string'
-              ? r.time
-              : new Date(r.time).toTimeString().substring(0, 5)
-        ) : ''
-      }));
+      // (mismo mapeo usado en submitReservation, ver mapReservation arriba).
+      const mappedReservations = reservationsArray.map(mapReservation);
 
       set({
         reservations: mappedReservations,
@@ -307,27 +312,32 @@ const useReservationsStore = create((set, get) => ({
 
   updateReservationStatus: async (id, status, reason = null) => {
     set({ isLoading: true, error: null });
-    
+
     try {
-      const result = await reservationsService.updateReservationStatus(id, status, reason);
-      
+      // El método del service se llama updateStatus (no updateReservationStatus)
+      const result = await reservationsService.updateStatus(id, status, reason);
+
       if (!result.success) {
         throw new Error(result.error || i18next.t('errors.unexpectedError'));
       }
-      
+
+      // El backend solo devuelve { id, status, pointsAwarded, updatedAt }, NO la
+      // reserva completa. Si reemplazamos r por result.data perdemos tour, agencia,
+      // grupos, fecha, etc. y el listado revienta al renderizar. Hacemos merge.
+      const patch = result.data || {};
       set((state) => ({
-        reservations: state.reservations.map(r => 
-          r.id === id ? result.data : r
+        reservations: state.reservations.map(r =>
+          r.id === id ? { ...r, ...patch } : r
         ),
-        currentReservation: state.currentReservation?.id === id 
-          ? result.data 
+        currentReservation: state.currentReservation?.id === id
+          ? { ...state.currentReservation, ...patch }
           : state.currentReservation,
         isLoading: false
       }));
-      
-      return result.data;
+
+      return patch;
     } catch (error) {
-      set({ 
+      set({
         isLoading: false,
         error: error.message
       });

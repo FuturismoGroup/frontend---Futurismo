@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { PhoneIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 
-const ProtocolContacts = ({ 
-  contactFields, 
-  register, 
-  appendContact, 
+const ProtocolContacts = ({
+  contactFields,
+  register,
+  errors,
+  appendContact,
   removeContact,
-  contactTypes 
+  contactTypes
 }) => {
   const { t } = useTranslation();
 
@@ -49,16 +50,24 @@ const ProtocolContacts = ({
                 </label>
                 <input
                   {...register(`contacts.${index}.phone`, {
-                    pattern: {
-                      value: /^9\d{8}$/,
-                      message: t('validation.phoneMustBe9Digits')
+                    validate: (value) => {
+                      // Acepta vacio (campo no obligatorio); si hay valor debe calzar el patron peruano.
+                      if (!value) return true;
+                      return /^9\d{8}$/.test(value) || t('validation.phoneMustBe9Digits');
                     }
                   })}
                   type="tel"
                   maxLength="9"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
+                    errors?.contacts?.[index]?.phone ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   placeholder="999999999"
                 />
+                {errors?.contacts?.[index]?.phone && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.contacts[index].phone.message}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -98,6 +107,7 @@ const ProtocolContacts = ({
 ProtocolContacts.propTypes = {
   contactFields: PropTypes.array.isRequired,
   register: PropTypes.func.isRequired,
+  errors: PropTypes.object,
   appendContact: PropTypes.func.isRequired,
   removeContact: PropTypes.func.isRequired,
   contactTypes: PropTypes.array.isRequired

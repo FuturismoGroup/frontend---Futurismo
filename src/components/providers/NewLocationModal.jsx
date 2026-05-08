@@ -35,6 +35,8 @@ const NewLocationModal = ({ isOpen, onClose, onSave, locations }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Evitar que el submit del modal (renderizado por portal) burbujee al form padre
+    e.stopPropagation();
     if (validate()) {
       try {
         await onSave(formData);

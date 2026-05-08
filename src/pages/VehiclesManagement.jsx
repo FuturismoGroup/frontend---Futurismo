@@ -44,7 +44,8 @@ const VehiclesManagement = () => {
     plate: '',
     brand: '',
     model: '',
-    year: new Date().getFullYear()
+    year: new Date().getFullYear(),
+    capacity: ''
   });
 
   const [documentFormData, setDocumentFormData] = useState({
@@ -94,6 +95,13 @@ const VehiclesManagement = () => {
       newErrors.model = 'El modelo es requerido';
     }
 
+    const capacityNum = parseInt(formData.capacity, 10);
+    if (!formData.capacity || isNaN(capacityNum) || capacityNum < 1) {
+      newErrors.capacity = 'La capacidad maxima de pasajeros es requerida';
+    } else if (capacityNum > 100) {
+      newErrors.capacity = 'La capacidad no puede superar 100 pasajeros';
+    }
+
     // Validar documentos
     if (!documentFormData[VEHICLE_DOCUMENTS.SOAT].expiry) {
       newErrors.soatExpiry = 'La fecha de vencimiento del SOAT es requerida';
@@ -120,6 +128,7 @@ const VehiclesManagement = () => {
       // Preparar datos con documentos
       const vehicleData = {
         ...formData,
+        capacity: parseInt(formData.capacity, 10),
         documents: documentFormData
       };
 
@@ -142,7 +151,8 @@ const VehiclesManagement = () => {
       plate: '',
       brand: '',
       model: '',
-      year: new Date().getFullYear()
+      year: new Date().getFullYear(),
+      capacity: ''
     });
     setDocumentFormData({
       [VEHICLE_DOCUMENTS.SOAT]: { number: '', expiry: '' },
@@ -159,7 +169,8 @@ const VehiclesManagement = () => {
       plate: vehicle.plate,
       brand: vehicle.brand,
       model: vehicle.model,
-      year: vehicle.year
+      year: vehicle.year,
+      capacity: vehicle.capacity ?? ''
     });
     
     // Preparar documentos
@@ -279,7 +290,7 @@ const VehiclesManagement = () => {
                           {vehicle.brand} {vehicle.model}
                         </div>
                         <div className="text-sm text-gray-500">
-                          Año: {vehicle.year}
+                          Año: {vehicle.year} {vehicle.capacity != null && `· Capacidad: ${vehicle.capacity} pax`}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -425,6 +436,22 @@ const VehiclesManagement = () => {
                         className="w-full border rounded-lg px-3 py-2"
                       />
                     </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Capacidad maxima de pasajeros *
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.capacity}
+                        onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                        min={1}
+                        max={100}
+                        placeholder="Ej: 19"
+                        className={`w-full border rounded-lg px-3 py-2 ${errors.capacity ? 'border-red-500' : ''}`}
+                      />
+                      {errors.capacity && <p className="text-red-500 text-sm mt-1">{errors.capacity}</p>}
+                    </div>
                   </div>
 
                   {/* Documentos */}
@@ -567,6 +594,12 @@ const VehiclesManagement = () => {
                       <div className="flex justify-between">
                         <dt className="text-sm font-medium text-gray-500">Año</dt>
                         <dd className="text-sm text-gray-900">{selectedVehicle.year}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-sm font-medium text-gray-500">Capacidad maxima</dt>
+                        <dd className="text-sm text-gray-900">
+                          {selectedVehicle.capacity != null ? `${selectedVehicle.capacity} pasajeros` : 'No registrada'}
+                        </dd>
                       </div>
                     </dl>
                   </div>

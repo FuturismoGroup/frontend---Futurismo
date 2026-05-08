@@ -37,7 +37,7 @@ const ServicesManagement = () => {
   const [showConflictModal, setShowConflictModal] = useState(false);
   const [conflictInfo, setConflictInfo] = useState(null); // Info del conflicto (reservas activas)
 
-  const { deleteTour, loadTours } = useToursStore();
+  const { deleteTour, loadTours, getTourById } = useToursStore();
   const { user } = useAuthStore();
 
   const handleCreateService = () => {
@@ -45,9 +45,20 @@ const ServicesManagement = () => {
     setCurrentView('create');
   };
 
-  const handleEditService = (service) => {
-    setSelectedService(service);
+  const handleEditService = async (service) => {
+    // El listado solo trae stopsCount; el itinerario completo viene en GET /tours/:id.
+    // Sin este fetch el formulario abriria con stops vacio.
     setCurrentView('edit');
+    setSelectedService(service);
+    try {
+      const fullService = await getTourById(service.id);
+      if (fullService) {
+        setSelectedService(fullService);
+      }
+    } catch (error) {
+      console.error('Error al cargar detalle del servicio:', error);
+      toast.error(t('errors.unexpectedError'));
+    }
   };
 
   const handleViewService = (service) => {

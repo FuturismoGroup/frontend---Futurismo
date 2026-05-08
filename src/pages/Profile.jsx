@@ -30,7 +30,7 @@ const Profile = () => {
     const baseSections = isAdminRole
       ? ['company', 'contact', 'payment', 'feedback']
       : user?.role === 'agency'
-      ? ['company', 'contact', 'payment', 'status']
+      ? ['company', 'contact', 'payment']
       : ['company', 'contact', 'payment'];
     const sections = (user?.role === 'agency') 
       ? [...baseSections, 'feedback'] 
@@ -89,7 +89,7 @@ const Profile = () => {
           </div>
           <div className="text-center sm:text-right flex-shrink-0">
             <p className="text-xs sm:text-sm text-blue-100 opacity-75">{t('profile.activeUser')}</p>
-            <p className="text-base sm:text-lg font-semibold break-words">{user?.name || 'Usuario'}</p>
+            <p className="text-base sm:text-lg font-semibold break-words">{user?.name || t('profile.defaultUser')}</p>
           </div>
         </div>
       </div>
@@ -116,7 +116,7 @@ const Profile = () => {
             >
               <tab.icon className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
               <span className="hidden sm:inline">{tab.name}</span>
-              <span className="sm:hidden">{tab.id === 'profile' ? 'Perfil' : 'Guías'}</span>
+              <span className="sm:hidden">{tab.id === 'profile' ? t('profile.profileShort') : t('profile.guidesShort')}</span>
             </button>
           ))}
         </nav>
@@ -145,6 +145,7 @@ const Profile = () => {
               <CompanyDataSection />
               <ContactDataSection />
               <PaymentDataSection />
+              <AccountStatusSection />
               <ChangePasswordSection />
             </>
           )}
@@ -157,9 +158,6 @@ const Profile = () => {
               <ChangePasswordSection />
             </>
           )}
-
-          {/* Estado de la cuenta - Solo para agencias */}
-          {user?.role === 'agency' && <AccountStatusSection />}
 
           {/* Opiniones y sugerencias - Solo para agencias */}
           {user?.role === 'agency' && (

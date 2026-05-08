@@ -1,6 +1,7 @@
 import { StarIcon, PhoneIcon, EnvelopeIcon, MapPinIcon, PencilIcon, TrashIcon, BuildingOffice2Icon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
+import { getCategoryIconComponent } from '../../utils/providerCategoryIcons';
 
 const ProviderCard = ({
   provider,
@@ -8,6 +9,7 @@ const ProviderCard = ({
   categoryInfo,
   onEdit,
   onDelete,
+  canManage = false,
   layout = 'card'
 }) => {
   const { t } = useTranslation();
@@ -20,11 +22,14 @@ const ProviderCard = ({
     return service.name || service.serviceType || service.service_type || '';
   };
 
-  // Renderiza el ícono de categoría como Material Icon
-  const renderCategoryIcon = (sizeClass = 'text-2xl') => {
+  // Renderiza el ícono de categoría usando Heroicons.
+  // Los nombres guardados en DB (utensils, building, truck, etc.) NO son
+  // nombres válidos de Material Icons; usamos el mismo mapeo que LocationTree
+  // a componentes de Heroicons.
+  const renderCategoryIcon = (sizeClass = 'w-6 h-6') => {
     const iconName = categoryInfo?.icon;
-    if (!iconName) return <span className={sizeClass}>📦</span>;
-    return <span className={`material-icons-outlined ${sizeClass} leading-none`}>{iconName}</span>;
+    const Icon = getCategoryIconComponent(iconName);
+    return <Icon className={sizeClass} />;
   };
 
   // Mapea el color hex de la DB a un nombre Tailwind
@@ -96,7 +101,7 @@ const ProviderCard = ({
           {/* Icono de categoría */}
           <div className="flex-shrink-0">
             <div className={`w-14 h-14 rounded-xl ${colors.badge} flex items-center justify-center shadow-sm`}>
-              {renderCategoryIcon('text-2xl')}
+              {renderCategoryIcon('w-7 h-7')}
             </div>
           </div>
 
@@ -123,7 +128,7 @@ const ProviderCard = ({
                 {locationName || t('providers.card.noLocation')}
               </span>
               <span className="flex items-center">
-                <span className="mr-1">{renderCategoryIcon('text-sm')}</span>
+                <span className="mr-1 inline-flex">{renderCategoryIcon('w-4 h-4')}</span>
                 {categoryName}
               </span>
               <span className="flex items-center font-semibold text-yellow-600">
@@ -168,23 +173,25 @@ const ProviderCard = ({
             </div>
           </div>
 
-          {/* Acciones */}
-          <div className="flex flex-col gap-2 flex-shrink-0">
-            <button
-              onClick={() => onEdit()}
-              className="p-2 text-blue-700 hover:bg-blue-50 bg-blue-50/50 rounded-lg transition-colors"
-              title={t('common.edit')}
-            >
-              <PencilIcon className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => onDelete()}
-              className="p-2 text-red-700 hover:bg-red-50 bg-red-50/50 rounded-lg transition-colors"
-              title={t('common.delete')}
-            >
-              <TrashIcon className="w-4 h-4" />
-            </button>
-          </div>
+          {/* Acciones — solo visibles si el usuario puede gestionar */}
+          {canManage && (
+            <div className="flex flex-col gap-2 flex-shrink-0">
+              <button
+                onClick={() => onEdit()}
+                className="p-2 text-blue-700 hover:bg-blue-50 bg-blue-50/50 rounded-lg transition-colors"
+                title={t('common.edit')}
+              >
+                <PencilIcon className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => onDelete()}
+                className="p-2 text-red-700 hover:bg-red-50 bg-red-50/50 rounded-lg transition-colors"
+                title={t('common.delete')}
+              >
+                <TrashIcon className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -261,7 +268,7 @@ const ProviderCard = ({
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center space-x-3">
             <div className={`${colors.badge} w-12 h-12 rounded-xl flex items-center justify-center shadow-sm`}>
-              {renderCategoryIcon('text-2xl')}
+              {renderCategoryIcon('w-6 h-6')}
             </div>
             <div>
               <span className={`${colors.text} text-xs font-semibold uppercase tracking-wide`}>
@@ -390,26 +397,28 @@ const ProviderCard = ({
         </div>
       </div>
 
-      {/* Footer con acciones mejorado */}
-      <div className="p-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end space-x-2">
-        <button
-          onClick={() => onEdit()}
-          className="flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
-          title={t('common.edit')}
-        >
-          <PencilIcon className="w-4 h-4 mr-1.5" />
-          {t('common.edit')}
-        </button>
+      {/* Footer con acciones mejorado — solo visible si el usuario puede gestionar */}
+      {canManage && (
+        <div className="p-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end space-x-2">
+          <button
+            onClick={() => onEdit()}
+            className="flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+            title={t('common.edit')}
+          >
+            <PencilIcon className="w-4 h-4 mr-1.5" />
+            {t('common.edit')}
+          </button>
 
-        <button
-          onClick={() => onDelete()}
-          className="flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
-          title={t('common.delete')}
-        >
-          <TrashIcon className="w-4 h-4 mr-1.5" />
-          {t('common.delete')}
-        </button>
-      </div>
+          <button
+            onClick={() => onDelete()}
+            className="flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+            title={t('common.delete')}
+          >
+            <TrashIcon className="w-4 h-4 mr-1.5" />
+            {t('common.delete')}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

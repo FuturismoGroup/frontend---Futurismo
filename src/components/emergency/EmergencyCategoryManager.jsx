@@ -25,17 +25,18 @@ const EmergencyCategoryManager = ({ onCategoriesChanged }) => {
   const [errors, setErrors] = useState({});
 
   // Iconos disponibles para emergencias
+  // Nota: las traducciones ya incluyen el emoji, NO volver a anteponerlo aquí.
   const availableIcons = [
-    { value: '🚑', label: `🚑 ${t('emergency.comp.iconOptions.medical')}` },
-    { value: '⛈️', label: `⛈️ ${t('emergency.comp.iconOptions.weather')}` },
-    { value: '🚗', label: `🚗 ${t('emergency.comp.iconOptions.transport')}` },
-    { value: '🔍', label: `🔍 ${t('emergency.comp.iconOptions.security')}` },
-    { value: '📡', label: `📡 ${t('emergency.comp.iconOptions.communication')}` },
-    { value: '🔥', label: `🔥 ${t('emergency.comp.iconOptions.fire')}` },
-    { value: '💧', label: `💧 ${t('emergency.comp.iconOptions.flood')}` },
-    { value: '⚠️', label: `⚠️ ${t('emergency.comp.iconOptions.generalAlert')}` },
-    { value: '🆘', label: `🆘 ${t('emergency.comp.iconOptions.sos')}` },
-    { value: '⚡', label: `⚡ ${t('emergency.comp.iconOptions.electrical')}` }
+    { value: '🚑', label: t('emergency.comp.iconOptions.medical') },
+    { value: '⛈️', label: t('emergency.comp.iconOptions.weather') },
+    { value: '🚗', label: t('emergency.comp.iconOptions.transport') },
+    { value: '🔍', label: t('emergency.comp.iconOptions.security') },
+    { value: '📡', label: t('emergency.comp.iconOptions.communication') },
+    { value: '🔥', label: t('emergency.comp.iconOptions.fire') },
+    { value: '💧', label: t('emergency.comp.iconOptions.flood') },
+    { value: '⚠️', label: t('emergency.comp.iconOptions.generalAlert') },
+    { value: '🆘', label: t('emergency.comp.iconOptions.sos') },
+    { value: '⚡', label: t('emergency.comp.iconOptions.electric') }
   ];
 
   // Colores predefinidos

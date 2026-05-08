@@ -161,6 +161,14 @@ const Monitoring = () => {
   // Obtener estadísticas del guía
   const guideStats = getStats();
 
+  // Estados que cuentan como "activo en curso" para el mapa.
+  // Solo el estado canónico del backend cuenta como "en curso": `in_progress`.
+  // Las reservas en `pending`/`confirmed` no van al mapa (no están en ruta);
+  // las `completed`/`cancelled` tampoco. Esto mantiene coherencia entre el
+  // contador del mapa y el tab "Mis tours".
+  const ACTIVE_GUIDE_TOUR_STATUSES = ['in_progress'];
+  const COMPLETED_STATUSES = ['completed'];
+
   // Función auxiliar para transformar tours del guía al formato del mapa
   const transformGuideToursForMap = (tours) => {
     if (!Array.isArray(tours) || tours.length === 0) return [];
@@ -177,15 +185,15 @@ const Monitoring = () => {
       { lat: -12.1026, lng: -77.0265, name: 'San Borja' }
     ];
 
-    return tours.map((tour, index) => {
+    const activeOnly = tours.filter(tour => ACTIVE_GUIDE_TOUR_STATUSES.includes(tour.status));
+
+    return activeOnly.map((tour, index) => {
       // Asignar ubicación basada en el meeting_point o distribuir en Lima
       const location = limaLocations[index % limaLocations.length];
 
-      // Determinar el estado del servicio para el mapa
-      let mapStatus = 'enroute';
-      if (tour.status === 'completado') mapStatus = 'stopped';
-      else if (tour.status === 'iniciado') mapStatus = 'enroute';
-      else if (tour.status === 'asignado') mapStatus = 'enroute';
+      // Backend no soporta estado "pausado"; cualquier tour que pase el filtro está enrutado.
+      const mapStatus = 'enroute';
+      const isCompleted = COMPLETED_STATUSES.includes(tour.status);
 
       return {
         id: tour.id,
@@ -199,8 +207,8 @@ const Monitoring = () => {
           lng: location.lng,
           name: tour.location || location.name
         },
-        progress: tour.status === 'completado' ? 100 : tour.status === 'iniciado' ? 50 : 10,
-        estimatedEndTime: tour.status === 'completado' ? 'Completado' : 'En curso',
+        progress: isCompleted ? 100 : 50,
+        estimatedEndTime: isCompleted ? 'Completado' : 'En curso',
         // Datos adicionales del tour original
         date: tour.date,
         agency: tour.agency
@@ -578,12 +586,14 @@ const Monitoring = () => {
                             <p className="text-xs text-gray-500 truncate sm:text-sm">{tour.agency}</p>
                           </div>
                           <span className={`px-2 py-1 text-xs rounded-full whitespace-nowrap flex-shrink-0 ${
-                            tour.status === 'completado'
+                            tour.status === 'completed'
                               ? 'bg-green-100 text-green-800'
-                              : tour.status === 'iniciado'
+                              : tour.status === 'in_progress'
                               ? 'bg-blue-100 text-blue-800'
-                              : tour.status === 'pausado'
-                              ? 'bg-yellow-100 text-yellow-800'
+                              : tour.status === 'confirmed'
+                              ? 'bg-indigo-100 text-indigo-800'
+                              : tour.status === 'cancelled'
+                              ? 'bg-red-100 text-red-800'
                               : 'bg-gray-100 text-gray-800'
                           }`}>
                             {t(`monitoring.status.${tour.status}`)}

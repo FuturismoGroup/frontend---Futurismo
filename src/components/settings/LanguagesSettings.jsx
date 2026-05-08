@@ -4,7 +4,7 @@
  * Solo accesible para administradores
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   PlusIcon,
   PencilIcon,
@@ -12,7 +12,8 @@ import {
   XMarkIcon,
   CheckIcon,
   GlobeAltIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
+  LockClosedIcon
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +28,7 @@ const LanguagesSettings = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({ code: '', name: '', nativeName: '' });
   const [isSaving, setIsSaving] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const formRef = useRef(null);
 
   // Cargar idiomas al abrir
   useEffect(() => {
@@ -34,6 +36,13 @@ const LanguagesSettings = ({ isOpen, onClose }) => {
       loadLanguages();
     }
   }, [isOpen]);
+
+  // Llevar el formulario a la vista cuando se abre (agregar o editar)
+  useEffect(() => {
+    if (showForm && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [showForm, editingLanguage]);
 
   const loadLanguages = async () => {
     setIsLoading(true);
@@ -171,7 +180,7 @@ const LanguagesSettings = ({ isOpen, onClose }) => {
 
           {/* Formulario */}
           {showForm && (
-            <form onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <form ref={formRef} onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-50 rounded-lg">
               <h3 className="text-sm font-medium text-gray-700 mb-4">
                 {editingLanguage ? t('common.edit') : t('common.create')}
               </h3>
@@ -288,7 +297,7 @@ const LanguagesSettings = ({ isOpen, onClose }) => {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {/* Toggle activo/inactivo */}
+                    {/* Toggle activo/inactivo (siempre disponible para reactivar) */}
                     <button
                       onClick={() => handleToggleStatus(language)}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -303,41 +312,52 @@ const LanguagesSettings = ({ isOpen, onClose }) => {
                       />
                     </button>
 
-                    {/* Editar */}
-                    <button
-                      onClick={() => handleEdit(language)}
-                      className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                      title={t('common.edit')}
-                    >
-                      <PencilIcon className="w-4 h-4" />
-                    </button>
+                    {language.isActive ? (
+                      <>
+                        {/* Editar */}
+                        <button
+                          onClick={() => handleEdit(language)}
+                          className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                          title={t('common.edit')}
+                        >
+                          <PencilIcon className="w-4 h-4" />
+                        </button>
 
-                    {/* Eliminar */}
-                    {deleteConfirm === language.id ? (
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleDelete(language)}
-                          className="p-2 text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
-                          title={t('common.confirm')}
-                        >
-                          <CheckIcon className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => setDeleteConfirm(null)}
-                          className="p-2 text-gray-400 hover:bg-gray-100 rounded-lg transition-colors"
-                          title={t('common.cancel')}
-                        >
-                          <XMarkIcon className="w-4 h-4" />
-                        </button>
-                      </div>
+                        {/* Eliminar */}
+                        {deleteConfirm === language.id ? (
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleDelete(language)}
+                              className="p-2 text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
+                              title={t('common.confirm')}
+                            >
+                              <CheckIcon className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => setDeleteConfirm(null)}
+                              className="p-2 text-gray-400 hover:bg-gray-100 rounded-lg transition-colors"
+                              title={t('common.cancel')}
+                            >
+                              <XMarkIcon className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setDeleteConfirm(language.id)}
+                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            title={t('common.delete')}
+                          >
+                            <TrashIcon className="w-4 h-4" />
+                          </button>
+                        )}
+                      </>
                     ) : (
-                      <button
-                        onClick={() => setDeleteConfirm(language.id)}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                        title={t('common.delete')}
+                      <span
+                        className="p-2 text-gray-300"
+                        title={t('users.list.activate')}
                       >
-                        <TrashIcon className="w-4 h-4" />
-                      </button>
+                        <LockClosedIcon className="w-4 h-4" />
+                      </span>
                     )}
                   </div>
                 </div>

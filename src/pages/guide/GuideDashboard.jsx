@@ -448,7 +448,7 @@ const GuideDashboard = () => {
 
                         {/* Acciones */}
                         <div className="flex flex-row sm:flex-col gap-2">
-                          {tour.status === 'confirmed' && (
+                          {(tour.status === 'pending' || tour.status === 'confirmed') && (
                             <button
                               onClick={() => handleStartTour(tour)}
                               disabled={actionLoading === tour.id}
@@ -487,7 +487,7 @@ const GuideDashboard = () => {
                             </>
                           )}
 
-                          {(tour.status === 'pending' || tour.status === 'completed') && (
+                          {tour.status === 'completed' && (
                             <button
                               onClick={() => handleViewTour(tour)}
                               className="btn btn-outline flex items-center justify-center gap-2"

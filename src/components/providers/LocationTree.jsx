@@ -1,7 +1,37 @@
 import { useState } from 'react';
-import { MapPinIcon, ChevronDownIcon, ChevronRightIcon, BuildingOffice2Icon, PlusIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import {
+  MapPinIcon, ChevronDownIcon, ChevronRightIcon, BuildingOffice2Icon, PlusIcon,
+  TruckIcon, TicketIcon, BriefcaseIcon, CameraIcon, ShoppingBagIcon,
+  StarIcon, TagIcon, CakeIcon, HomeModernIcon, FilmIcon, TrophyIcon
+} from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import useProvidersStore from '../../stores/providersStore';
+
+// Mapea los nombres de icono almacenados en DB (Material-style + los del modal de
+// nueva categoria) a componentes de Heroicons. Fallback: TagIcon.
+const CATEGORY_ICON_MAP = {
+  utensils: CakeIcon,
+  restaurant: CakeIcon,
+  coffee: CakeIcon,
+  building: HomeModernIcon,
+  hotel: HomeModernIcon,
+  truck: TruckIcon,
+  directions_bus: TruckIcon,
+  ticket: TicketIcon,
+  briefcase: BriefcaseIcon,
+  camera: CameraIcon,
+  'shopping-bag': ShoppingBagIcon,
+  shopping_bag: ShoppingBagIcon,
+  star: StarIcon,
+  theater_comedy: FilmIcon,
+  sports: TrophyIcon,
+  tag: TagIcon
+};
+
+const getCategoryIconComponent = (iconName) => {
+  if (!iconName) return TagIcon;
+  return CATEGORY_ICON_MAP[iconName] || TagIcon;
+};
 
 const LocationTree = () => {
   const { t } = useTranslation();
@@ -115,6 +145,8 @@ const LocationTree = () => {
                       const categoryProviderCount = getProviderCount(location.id, category.id);
                       const isCategorySelected = selectedLocation === location.id && selectedCategory === category.id;
 
+                      const CategoryIcon = getCategoryIconComponent(category.icon);
+
                       return (
                         <div
                           key={category.id}
@@ -125,7 +157,7 @@ const LocationTree = () => {
                           onClick={() => handleCategoryClick(location.id, category.id)}
                         >
                           <div className="flex items-center space-x-2">
-                            <span className="text-lg">{category.icon}</span>
+                            <CategoryIcon className={`w-5 h-5 ${isCategorySelected ? 'text-indigo-600' : 'text-gray-500'}`} />
                             <span className={`text-sm ${isCategorySelected ? 'text-indigo-900 font-medium' : 'text-gray-700'}`}>
                               {category.name}
                             </span>

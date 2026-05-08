@@ -145,7 +145,7 @@ const useProviderForm = (provider, onSave, onCancel) => {
     setLanguages(languages.filter((_, i) => i !== index));
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const formData = {
       ...data,
       services: services.filter(s => s.trim()),
@@ -153,8 +153,13 @@ const useProviderForm = (provider, onSave, onCancel) => {
       languages
     };
 
-    onSave(formData);
-    toast.success(t('providers.form.saveSuccess'));
+    try {
+      await onSave(formData);
+      toast.success(t('providers.form.saveSuccess'));
+    } catch (error) {
+      console.error('Error guardando proveedor:', error);
+      toast.error(error?.message || t('providers.form.saveError'));
+    }
   };
 
   const handleCancel = () => {

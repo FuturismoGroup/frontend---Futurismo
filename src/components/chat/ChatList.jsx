@@ -44,7 +44,7 @@ const ChatList = ({ onSelectChat, selectedChatId, onCreateNewChat, refreshTrigge
       {/* Search header */}
       <div className="flex-shrink-0 p-4 border-b border-gray-200 space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">{t('chat.messages')}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('chat.title')}</h2>
           {canCreateChat && (
             <button
               onClick={() => setShowNewChatModal(true)}

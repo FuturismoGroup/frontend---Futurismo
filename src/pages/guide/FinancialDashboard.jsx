@@ -292,7 +292,7 @@ const FinancialDashboard = () => {
         notes: `Cálculo de tour - Transporte: S/${calculatorResults.transportExpenses}, Alimentación: S/${calculatorResults.foodExpenses}, Otros: S/${calculatorResults.otherExpenses}`
       });
 
-      // Limpiar calculadora y cambiar a tab de transacciones
+      // Limpiar calculadora y cambiar a tab de Historial (donde se listan los calculos guardados)
       setCalculatorData({
         income: '',
         transportExpenses: '',
@@ -300,7 +300,7 @@ const FinancialDashboard = () => {
         otherExpenses: ''
       });
 
-      setActiveTab('transactions');
+      setActiveTab('saved-calculations');
       toast.success(t('financial.calculationSaved'));
     } catch (error) {
       toast.error(t('financial.calculationSaveError'));
