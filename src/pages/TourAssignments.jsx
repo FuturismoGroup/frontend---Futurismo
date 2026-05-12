@@ -287,7 +287,6 @@ const TourAssignments = () => {
           date: selectedReservation.date || new Date().toISOString(),
           vehicleId: selectedVehicle || null
         });
-        toast.success('Chofer asignado exitosamente');
       }
 
       if (needsVehicle) {
@@ -298,7 +297,6 @@ const TourAssignments = () => {
           passengers: selectedReservation.participants || 10,
           driverId: selectedDriver || null
         });
-        toast.success('Vehiculo asignado exitosamente');
       }
 
       // Recargar reservas y cerrar modal

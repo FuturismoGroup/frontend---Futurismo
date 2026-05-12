@@ -139,11 +139,12 @@ const ReservationManagement = () => {
   const guidesOptions = Array.isArray(guides) ? guides.map(guide => guide.name) : [];
   // Obtener tipos de tour desde las reservas existentes (más preciso para filtrar)
   const tourTypes = (() => {
+    const noCategoryLabel = t('reservations.noCategory');
     // Extraer categorías únicas de las reservas enriquecidas
     const fromReservations = [...new Set(
       enrichedReservations
         .map(res => res.tourType)
-        .filter(t => t && t !== t('reservations.noCategory'))
+        .filter(type => type && type !== noCategoryLabel)
     )];
 
     if (fromReservations.length > 0) {
@@ -347,7 +348,7 @@ const ReservationManagement = () => {
   const handleExport = async () => {
     try {
       if (filteredReservations.length === 0) {
-        toast.warning('No hay reservas para exportar');
+        toast('No hay reservas para exportar');
         return;
       }
 

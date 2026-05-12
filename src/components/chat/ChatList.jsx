@@ -6,6 +6,7 @@ import { formatters } from '../../utils/formatters';
 import useChatList from '../../hooks/useChatList';
 import NewChatModal from './NewChatModal';
 import { useAuthStore } from '../../stores/authStore';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 // Roles que pueden crear nuevas conversaciones
 const ROLES_CAN_CREATE_CHAT = ['administrator', 'admin', 'agency', 'guide'];
@@ -124,7 +125,7 @@ const ChatList = ({ onSelectChat, selectedChatId, onCreateNewChat, refreshTrigge
                 ) : (
                   <>
                     <img
-                      src={chat.avatar}
+                      src={resolveFileUrl(chat.avatar)}
                       alt={chat.name}
                       className="w-12 h-12 rounded-full"
                     />

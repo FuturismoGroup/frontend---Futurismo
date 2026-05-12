@@ -15,6 +15,7 @@ import { useUsersStore } from '../stores/usersStoreSimple';
 import usersService from '../services/usersService';
 import { GUIDE_SPECIALTIES } from '../constants/guidesConstants';
 import { getLanguageName } from '../config/languages';
+import { resolveFileUrl } from '../utils/fileUrl';
 
 const Users = () => {
   const { t } = useTranslation();
@@ -229,7 +230,7 @@ const Users = () => {
             <div className="flex-shrink-0">
               {photoSrc ? (
                 <img
-                  src={photoSrc}
+                  src={resolveFileUrl(photoSrc)}
                   alt={user.firstName}
                   className="h-28 w-28 rounded-full object-cover border-4 border-gray-100"
                 />

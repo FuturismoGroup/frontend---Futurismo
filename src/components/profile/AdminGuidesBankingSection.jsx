@@ -9,6 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const AdminGuidesBankingSection = () => {
   const { t } = useTranslation();
@@ -129,7 +130,7 @@ const AdminGuidesBankingSection = () => {
                         <div className="flex-shrink-0">
                           {guide.avatar ? (
                             <img
-                              src={guide.avatar}
+                              src={resolveFileUrl(guide.avatar)}
                               alt={`${guide.first_name} ${guide.last_name}`}
                               className="w-12 h-12 rounded-full"
                             />
@@ -149,11 +150,11 @@ const AdminGuidesBankingSection = () => {
                       </div>
                       <div className="text-right">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          guide.type === 'employed'
+                          guide.type === 'planta'
                             ? 'bg-blue-100 text-blue-800'
                             : 'bg-green-100 text-green-800'
                         }`}>
-                          {guide.type === 'employed' ? t('profile.comp.employed') : t('profile.comp.freelance')}
+                          {guide.type === 'planta' ? t('profile.comp.employed') : t('profile.comp.freelance')}
                         </span>
                       </div>
                     </div>

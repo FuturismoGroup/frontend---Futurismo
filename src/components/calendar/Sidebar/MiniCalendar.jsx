@@ -1,38 +1,49 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { 
-  format, 
-  startOfMonth, 
-  endOfMonth, 
-  startOfWeek, 
-  endOfWeek, 
-  addDays, 
-  addMonths, 
-  subMonths, 
-  isSameMonth, 
-  isSameDay, 
-  isToday 
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  addDays,
+  addMonths,
+  subMonths,
+  isSameMonth,
+  isSameDay,
+  isToday
 } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useIndependentAgendaStore from '../../../stores/independentAgendaStore';
 
 const MiniCalendar = () => {
   const { t, i18n } = useTranslation();
-  const { 
-    selectedDate, 
-    actions: { setSelectedDate } 
+  const {
+    selectedDate: rawSelectedDate,
+    actions: { setSelectedDate }
   } = useIndependentAgendaStore();
-  
-  const [currentMonth, setCurrentMonth] = useState(new Date());
 
+  // Validar selectedDate y derivar el mes mostrado de él, en lugar de un
+  // useState local independiente. Antes las flechas del mini sólo movían
+  // un estado interno y el calendario principal nunca se enteraba.
+  const selectedDate = React.useMemo(() => {
+    if (!rawSelectedDate) return new Date();
+    const dateObj = rawSelectedDate instanceof Date ? rawSelectedDate : new Date(rawSelectedDate);
+    return isNaN(dateObj.getTime()) ? new Date() : dateObj;
+  }, [rawSelectedDate]);
+
+  const currentMonth = selectedDate;
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }); // Monday as first day
   const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
   const navigateMonth = (direction) => {
-    setCurrentMonth(direction === 'prev' ? subMonths(currentMonth, 1) : addMonths(currentMonth, 1));
+    // Mover el día seleccionado un mes adelante/atrás, preservando el día del mes
+    // cuando es válido para el destino (date-fns se encarga del recorte).
+    const newDate = direction === 'prev' ? subMonths(selectedDate, 1) : addMonths(selectedDate, 1);
+    setSelectedDate(newDate);
   };
 
   const handleDateClick = (date) => {

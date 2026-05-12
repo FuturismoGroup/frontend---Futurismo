@@ -95,9 +95,14 @@ const AdminAvailabilityView = () => {
     navigate(chatUrl);
   };
 
-  // Función para llamar al guía
-  const handleCallGuide = (guide) => {
-    window.location.href = `tel:${guide.phone}`;
+  // Función para abrir WhatsApp con el guía
+  const handleWhatsAppGuide = (guide) => {
+    if (!guide?.phone || guide.phone === 'N/A') {
+      toast.error(t('agenda.admin.noWhatsAppNumber'));
+      return;
+    }
+    const sanitized = String(guide.phone).replace(/[^0-9]/g, '');
+    window.open(`https://wa.me/${sanitized}`, '_blank', 'noopener,noreferrer');
   };
 
   // Detectar conflictos de horario antes de asignar
@@ -281,12 +286,13 @@ const AdminAvailabilityView = () => {
                 <ChatBubbleLeftRightIcon className="w-3 h-3" />
                 <span>Chat</span>
               </button>
-              <button 
-                onClick={() => handleCallGuide(currentGuideInfo)}
+              <button
+                onClick={() => handleWhatsAppGuide(currentGuideInfo)}
                 className="flex-1 flex items-center justify-center space-x-1 px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600 transition-colors"
+                title={t('agenda.admin.whatsappWith', { name: currentGuideInfo.name })}
               >
                 <PhoneIcon className="w-3 h-3" />
-                <span>{t('agenda.admin.call')}</span>
+                <span>{t('agenda.admin.whatsapp')}</span>
               </button>
             </div>
           </div>
@@ -348,13 +354,13 @@ const AdminAvailabilityView = () => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleCallGuide(guide);
+                    handleWhatsAppGuide(guide);
                   }}
                   className="flex-1 flex items-center justify-center space-x-1 px-1 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600 transition-colors"
-                  title={t('agenda.admin.callTo', { name: guide.name })}
+                  title={t('agenda.admin.whatsappWith', { name: guide.name })}
                 >
                   <PhoneIcon className="w-2.5 h-2.5" />
-                  <span className="hidden sm:inline">{t('agenda.admin.call')}</span>
+                  <span className="hidden sm:inline">{t('agenda.admin.whatsapp')}</span>
                 </button>
               </div>
             </div>

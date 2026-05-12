@@ -18,6 +18,7 @@ import {
 } from '@heroicons/react/24/outline';
 import useMarketplaceStore from '../../stores/marketplaceStore';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const getLanguageName = (lang, t) => {
   if (!lang) return '';
@@ -416,7 +417,7 @@ const GuideCard = ({ guide, t, onViewProfile }) => (
       <div className="h-24 bg-gradient-to-r from-blue-500 to-blue-600"></div>
       <div className="absolute -bottom-10 left-4">
         <img
-          src={guide.profileImage || guide.guidePhoto || `https://ui-avatars.com/api/?name=${guide.name || guide.fullName}&background=3b82f6&color=fff&size=128`}
+          src={resolveFileUrl(guide.profileImage || guide.guidePhoto) || `https://ui-avatars.com/api/?name=${guide.name || guide.fullName}&background=3b82f6&color=fff&size=128`}
           alt={guide.name || guide.fullName}
           className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md"
         />
@@ -557,7 +558,7 @@ const GuideListRow = ({ guide, t, onViewProfile }) => (
     <div className="col-span-4 flex items-center gap-3 w-full">
       <div className="relative flex-shrink-0">
         <img
-          src={guide.profileImage || guide.guidePhoto || `https://ui-avatars.com/api/?name=${guide.name || guide.fullName}&background=3b82f6&color=fff&size=80`}
+          src={resolveFileUrl(guide.profileImage || guide.guidePhoto) || `https://ui-avatars.com/api/?name=${guide.name || guide.fullName}&background=3b82f6&color=fff&size=80`}
           alt={guide.name || guide.fullName}
           className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
         />

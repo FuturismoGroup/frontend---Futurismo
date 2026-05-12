@@ -20,6 +20,8 @@ import useIndependentAgendaStore from '../../stores/independentAgendaStore';
 import useDashboard from '../../hooks/useDashboard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import api from '../../services/api';
+import { formatDateSafe } from '../../utils/dateUtils';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 /**
  * Status color mappings for service requests.
@@ -66,21 +68,17 @@ const STATUS_CONFIG = {
 const getStatusConfig = (status) => STATUS_CONFIG[status] || STATUS_CONFIG.pending;
 
 /**
- * Format a UTC date string to the user's local timezone.
+ * Format the service date exactly as it was registered, without timezone shifts.
+ * Backend returns @db.Date as "YYYY-MM-DD"; we keep that calendar day intact.
  */
-const formatLocalDate = (utcDateString) => {
-  if (!utcDateString) return 'Fecha no definida';
-  try {
-    const date = new Date(utcDateString);
-    return date.toLocaleDateString('es-PE', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  } catch {
-    return 'Fecha no definida';
-  }
+const formatLocalDate = (dateString) => {
+  if (!dateString) return 'Fecha no definida';
+  return formatDateSafe(dateString, {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  }) || 'Fecha no definida';
 };
 
 /* ========================================================================
@@ -556,7 +554,7 @@ const GuideMarketplaceDashboard = () => {
               <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
                 {guideInfo.avatar ? (
                   <img
-                    src={guideInfo.avatar}
+                    src={resolveFileUrl(guideInfo.avatar)}
                     alt={guideInfo.fullName}
                     className="w-full h-full object-cover"
                   />

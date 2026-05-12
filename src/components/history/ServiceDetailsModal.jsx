@@ -17,12 +17,7 @@ import {
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 import useAuthStore from '../../stores/authStore';
 import reservationsService from '../../services/reservationsService';
-
-// Obtener URL base del backend para archivos estáticos
-const getBackendBaseUrl = () => {
-  const apiUrl = import.meta.env.VITE_API_URL || '';
-  return apiUrl.replace(/\/api\/?$/, '');
-};
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
   const { t } = useTranslation();
@@ -540,7 +535,7 @@ const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
                                           className="w-12 h-12 rounded overflow-hidden border-2 border-white shadow-sm hover:border-blue-400 transition-colors"
                                         >
                                           <img
-                                            src={`${getBackendBaseUrl()}${photo.url}`}
+                                            src={`${resolveFileUrl(photo.url)}`}
                                             alt={photo.caption || 'Foto'}
                                             className="w-full h-full object-cover"
                                           />
@@ -589,7 +584,7 @@ const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
                                     className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-400 transition-colors group"
                                   >
                                     <img
-                                      src={`${getBackendBaseUrl()}${photo.url}`}
+                                      src={`${resolveFileUrl(photo.url)}`}
                                       alt={photo.caption || 'Foto del tour'}
                                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                                     />
@@ -619,7 +614,7 @@ const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
                       <XMarkIcon className="w-8 h-8" />
                     </button>
                     <img
-                      src={`${getBackendBaseUrl()}${selectedPhoto.url}`}
+                      src={`${resolveFileUrl(selectedPhoto.url)}`}
                       alt={selectedPhoto.caption || 'Foto'}
                       className="max-w-full max-h-[80vh] object-contain rounded-lg"
                     />

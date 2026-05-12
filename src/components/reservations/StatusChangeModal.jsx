@@ -9,12 +9,21 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { useReservationsStore } from '../../stores/reservationsStore';
+import useAuthStore from '../../stores/authStore';
 import { getStatusBadge } from '../../utils/reservationHelpers';
 
-// Transiciones de estado permitidas segun API-005
-const ALLOWED_TRANSITIONS = {
+// Transiciones permitidas para admin (sigue la API-005)
+const ADMIN_TRANSITIONS = {
   pending: ['confirmed', 'cancelled'],
   confirmed: ['completed', 'cancelled'],
+  cancelled: [],
+  completed: []
+};
+
+// Las agencias solo pueden cancelar reservas activas; ningún otro cambio.
+const AGENCY_TRANSITIONS = {
+  pending: ['cancelled'],
+  confirmed: ['cancelled'],
   cancelled: [],
   completed: []
 };
@@ -50,6 +59,7 @@ const STATUS_CONFIG = {
 const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) => {
   const { t } = useTranslation();
   const { updateReservationStatus } = useReservationsStore();
+  const { user } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [cancellationReason, setCancellationReason] = useState('');
   const [showCancellationInput, setShowCancellationInput] = useState(false);
@@ -57,7 +67,12 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
   if (!isOpen || !reservation) return null;
 
   const currentStatus = reservation.status;
-  const allowedStatuses = ALLOWED_TRANSITIONS[currentStatus] || [];
+  const isAgency = user?.role === 'agency';
+  const transitionsByRole = isAgency ? AGENCY_TRANSITIONS : ADMIN_TRANSITIONS;
+  const allowedStatuses = transitionsByRole[currentStatus] || [];
+  // Para agencia, la única acción posible es cancelar: saltar el paso intermedio
+  // y mostrar el formulario de motivo desde el inicio.
+  const cancellationFormVisible = showCancellationInput || (isAgency && allowedStatuses.includes('cancelled'));
 
   const handleStatusChange = async (newStatus) => {
     // Si es cancelacion, mostrar input para razon
@@ -98,7 +113,9 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">
-            {t('reservations.changeStatus', 'Cambiar Estado de Reserva')}
+            {isAgency
+              ? t('reservations.cancelReservation', 'Cancelar Reserva')
+              : t('reservations.changeStatus', 'Cambiar Estado de Reserva')}
           </h3>
           <button
             onClick={onClose}
@@ -128,11 +145,14 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
         {/* Estados disponibles */}
         {allowedStatuses.length > 0 ? (
           <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-700 mb-2">
-              {t('reservations.selectNewStatus', 'Seleccionar nuevo estado:')}
-            </p>
+            {!isAgency && (
+              <p className="text-sm font-medium text-gray-700 mb-2">
+                {t('reservations.selectNewStatus', 'Seleccionar nuevo estado:')}
+              </p>
+            )}
 
-            {allowedStatuses.map((status) => {
+            {/* Agencia: el modal es exclusivo para cancelar, no mostrar selector de estados */}
+            {!isAgency && allowedStatuses.map((status) => {
               const config = STATUS_CONFIG[status];
               return (
                 <button
@@ -147,7 +167,7 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
             })}
 
             {/* Input de razon de cancelacion */}
-            {showCancellationInput && (
+            {cancellationFormVisible && (
               <div className="mt-3 space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
                   {t('reservations.cancellationReason', 'Razon de cancelacion')} *

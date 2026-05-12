@@ -35,6 +35,23 @@ const Monitoring = () => {
   const isAdmin = user?.role === 'admin' || user?.role === 'administrator';
   const isAgency = user?.role === 'agency';
 
+  // Ubicaciones de respaldo en Lima/Ica para tours sin GPS aún reportado.
+  // Permite que un tour activo siempre aparezca en el mapa, aunque el guía
+  // todavía no haya enviado su primera coordenada (currentLocation: null
+  // ocultaría el marcador en LiveMapResponsive).
+  const FALLBACK_TOUR_LOCATIONS = [
+    { lat: -12.0464, lng: -77.0428, name: 'Plaza San Martín' },
+    { lat: -12.0432, lng: -77.0282, name: 'Centro Histórico' },
+    { lat: -12.1182, lng: -77.0377, name: 'Miraflores' },
+    { lat: -12.1467, lng: -77.0217, name: 'Barranco' },
+    { lat: -12.0700, lng: -77.0500, name: 'San Isidro' },
+    { lat: -12.0897, lng: -77.0438, name: 'Lince' },
+    { lat: -12.0608, lng: -77.0372, name: 'Cercado de Lima' },
+    { lat: -12.1026, lng: -77.0265, name: 'San Borja' },
+    { lat: -13.7167, lng: -76.2000, name: 'Pisco' },
+    { lat: -14.0678, lng: -75.7286, name: 'Ica' }
+  ];
+
   // Función para cargar tours activos (memoizada con useCallback)
   const loadActiveTours = useCallback(async () => {
     try {
@@ -48,26 +65,41 @@ const Monitoring = () => {
         const rawTours = Array.isArray(result.data) ? result.data : (result.data?.data || []);
 
         // Mapear datos del backend al formato esperado por el frontend
-        const tours = rawTours.map(tour => ({
-          ...tour,
-          id: tour.activeTourId || tour.reservationId,
-          tourists: tour.passengers,
-          // Mapear guideLocation a currentLocation para el mapa
-          currentLocation: tour.guideLocation ? {
-            lat: tour.guideLocation.lat,
-            lng: tour.guideLocation.lng,
-            name: tour.currentStop || t('monitoring.inTransit')
-          } : null,
-          // Mapear status para el mapa (backend usa 'enroute', frontend espera 'enroute')
-          status: tour.status === 'on_route' ? 'enroute' : tour.status,
-          // Formatear tiempos
-          startTime: tour.startTime
-            ? new Date(tour.startTime).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-            : 'No especificado',
-          estimatedEndTime: tour.estimatedEndTime
-            ? new Date(tour.estimatedEndTime).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-            : 'No especificado'
-        }));
+        const tours = rawTours.map((tour, index) => {
+          // Si el guía aún no ha enviado GPS, usar una ubicación de respaldo
+          // distribuida por índice para que el tour igual sea visible en el mapa.
+          const fallback = FALLBACK_TOUR_LOCATIONS[index % FALLBACK_TOUR_LOCATIONS.length];
+          const hasGps = !!(tour.guideLocation?.lat && tour.guideLocation?.lng);
+
+          return {
+            ...tour,
+            id: tour.activeTourId || tour.reservationId,
+            tourists: tour.passengers,
+            // Si hay GPS real lo usamos; si no, un fallback para mantener la
+            // consistencia entre la lista y el mapa.
+            currentLocation: hasGps
+              ? {
+                  lat: tour.guideLocation.lat,
+                  lng: tour.guideLocation.lng,
+                  name: tour.currentStop || t('monitoring.inTransit')
+                }
+              : {
+                  lat: fallback.lat,
+                  lng: fallback.lng,
+                  name: tour.currentStop || fallback.name,
+                  isApproximate: true
+                },
+            // Mapear status para el mapa (backend usa 'enroute', frontend espera 'enroute')
+            status: tour.status === 'on_route' ? 'enroute' : tour.status,
+            // Formatear tiempos
+            startTime: tour.startTime
+              ? new Date(tour.startTime).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+              : 'No especificado',
+            estimatedEndTime: tour.estimatedEndTime
+              ? new Date(tour.estimatedEndTime).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+              : 'No especificado'
+          };
+        });
 
         setActiveServices(tours);
         console.log(`✅ ${tours.length} tours activos cargados con datos detallados`);

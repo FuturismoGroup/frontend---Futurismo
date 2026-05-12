@@ -8,6 +8,27 @@ export const isAdminRole = (user) => {
   return user?.role === 'admin' || user?.role === 'administrator';
 };
 
+// Tipos de eventos agrupados por categoría visible en el calendario.
+// El backend (getCompleteAgenda) devuelve varios tipos para "tours":
+//   - company_tour      → reservaciones asignadas (reservations.guide_id)
+//   - assigned_tour     → tours que el admin agendó vía /guides/:id/tours sin reserva formal
+//   - marketplace_service / marketplace_pending → solicitudes del marketplace
+// Antes la vista mensual sólo contaba 'company_tour', dejando fuera los otros.
+const TOUR_TYPES = new Set(['company_tour', 'assigned_tour', 'marketplace_service', 'marketplace_pending']);
+const PERSONAL_TYPES = new Set(['personal']);
+const OCCUPIED_TYPES = new Set(['occupied']);
+
+export const isTourEvent = (event) =>
+  TOUR_TYPES.has(event?.type) || TOUR_TYPES.has(event?.eventType);
+
+export const isPersonalEvent = (event) =>
+  PERSONAL_TYPES.has(event?.type) || PERSONAL_TYPES.has(event?.eventType);
+
+export const isOccupiedEvent = (event) =>
+  OCCUPIED_TYPES.has(event?.type) ||
+  OCCUPIED_TYPES.has(event?.eventType) ||
+  event?.visibility === 'occupied';
+
 /**
  * Filtra eventos para la vista del admin: enmascara eventos privados/personales
  * del guía como "Ocupado"/"Tiempo ocupado", manteniendo visibles tours asignados
@@ -135,6 +156,22 @@ export const getEventTypeStyle = (type) => {
       textWhite: 'text-white',
       hover: 'hover:bg-purple-600',
       dot: 'bg-purple-500'
+    },
+    marketplace_pending: {
+      bg: 'bg-amber-100 border-amber-300',
+      bgSolid: 'bg-amber-500',
+      text: 'text-amber-800',
+      textWhite: 'text-white',
+      hover: 'hover:bg-amber-600',
+      dot: 'bg-amber-500'
+    },
+    assigned_tour: {
+      bg: 'bg-green-100 border-green-300',
+      bgSolid: 'bg-green-500',
+      text: 'text-green-800',
+      textWhite: 'text-white',
+      hover: 'hover:bg-green-600',
+      dot: 'bg-green-500'
     }
   };
 

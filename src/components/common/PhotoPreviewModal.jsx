@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const PhotoPreviewModal = ({ photo, onClose, formatFileSize }) => {
   if (!photo) return null;
@@ -23,7 +24,7 @@ const PhotoPreviewModal = ({ photo, onClose, formatFileSize }) => {
         </button>
         
         <img
-          src={photo.url}
+          src={resolveFileUrl(photo.url)}
           alt={photo.name}
           className="max-w-full max-h-full object-contain rounded-lg"
         />

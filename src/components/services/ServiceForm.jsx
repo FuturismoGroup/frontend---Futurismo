@@ -21,6 +21,7 @@ import toursService from '../../services/toursService';
 import toast from 'react-hot-toast';
 import LanguageMultiSelect from '../common/LanguageMultiSelect';
 import StopsManager from './StopsManager';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 // Esquema de validación - factory function para i18n
 const getServiceSchema = (t) => yup.object({
@@ -541,14 +542,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
               {imagePreview ? (
                 <div className="relative group">
                   <img
-                    src={(() => {
-                      if (imagePreview.startsWith('blob:')) return imagePreview;
-                      if (imagePreview.startsWith('http')) return imagePreview;
-                      // Base URL sin /api para archivos estáticos
-                      const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:4025/api').replace('/api', '');
-                      if (imagePreview.startsWith('/')) return `${baseUrl}${imagePreview}`;
-                      return `${baseUrl}/uploads/${imagePreview}`;
-                    })()}
+                    src={resolveFileUrl(imagePreview)}
                     alt="Preview"
                     className="w-40 h-40 object-cover rounded-lg border border-gray-200"
                   />

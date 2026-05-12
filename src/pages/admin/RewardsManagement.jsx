@@ -27,6 +27,7 @@ import {
 import toast from 'react-hot-toast';
 import CategoryManager from '../../components/rewards/CategoryManager';
 import { getStorageKey } from '../../config/app.config';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const RewardsManagement = () => {
   const { t } = useTranslation();
@@ -298,8 +299,9 @@ const RewardsManagement = () => {
       active: reward.active
     });
     // Limpiar archivo previo y establecer preview de imagen existente
+    // (resolveFileUrl convierte URLs relativas en absolutas hacia el backend).
     setImageFile(null);
-    setImagePreview(reward.image || null);
+    setImagePreview(reward.image ? resolveFileUrl(reward.image) : null);
     setShowForm(true);
   };
 
@@ -495,7 +497,7 @@ const RewardsManagement = () => {
                         <td className="px-6 py-4">
                           <div className="flex items-center">
                             {reward.image ? (
-                              <img className="h-10 w-10 rounded object-cover mr-3" src={reward.image} alt="" />
+                              <img className="h-10 w-10 rounded object-cover mr-3" src={resolveFileUrl(reward.image)} alt="" />
                             ) : (
                               <div className="h-10 w-10 bg-gray-200 rounded flex items-center justify-center mr-3">
                                 <PhotoIcon className="h-5 w-5 text-gray-400" />
@@ -1041,7 +1043,7 @@ const RewardsManagement = () => {
                       <div>
                         <h4 className="font-medium mb-2">Imagen</h4>
                         <img
-                          src={selectedItem.image}
+                          src={resolveFileUrl(selectedItem.image)}
                           alt={selectedItem.name}
                           className="w-full h-48 object-cover rounded-lg"
                         />

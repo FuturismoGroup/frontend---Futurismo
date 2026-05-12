@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon, MagnifyingGlassIcon, UserIcon } from '@heroicons/react/24/outline';
 import chatService from '../../services/chatService';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const getRoleTabs = (t) => ({
   guides: { label: t('chat.roleTabs.guides'), active: 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' },
@@ -148,7 +149,7 @@ const NewChatModal = ({ isOpen, onClose, onSelectUser }) => {
                     className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors text-left"
                   >
                     <img
-                      src={avatar}
+                      src={resolveFileUrl(avatar)}
                       alt={contact.name}
                       className="w-12 h-12 rounded-full object-cover"
                     />

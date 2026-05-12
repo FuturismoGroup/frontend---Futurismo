@@ -7,6 +7,7 @@ import { DEFAULT_VALUES, USER_STATUS, USER_ROLES } from '../../constants/usersCo
 import UserStatCards from './UserStatCards';
 import UserFilters from './UserFilters';
 import UserTableRow from './UserTableRow';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const UserList = ({ onEdit, onView, onDelete }) => {
   const { t } = useTranslation();
@@ -131,7 +132,7 @@ const UserList = ({ onEdit, onView, onDelete }) => {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center">
                 <img
-                  src={user.avatar}
+                  src={resolveFileUrl(user.avatar)}
                   alt={user.firstName}
                   className="h-10 w-10 rounded-full"
                 />

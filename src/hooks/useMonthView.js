@@ -9,7 +9,7 @@ import {
 } from 'date-fns';
 import useIndependentAgendaStore from '../stores/independentAgendaStore';
 import useAuthStore from '../stores/authStore';
-import { isAdminRole, filterEventsForAdmin } from '../utils/eventHelpers';
+import { isAdminRole, filterEventsForAdmin, isTourEvent, isPersonalEvent, isOccupiedEvent } from '../utils/eventHelpers';
 import {
   EVENT_TYPES,
   CALENDAR_CONFIG,
@@ -113,10 +113,13 @@ const useMonthView = () => {
   const getDayEventIndicators = (date) => {
     const dateKey = format(date, CALENDAR_CONFIG.DATE_FORMAT);
     const dayData = monthEvents[dateKey] || { events: [], availability: [] };
-    
-    const personalEvents = dayData.events.filter(e => e.type === EVENT_TYPES.PERSONAL).length;
-    const companyTours = dayData.events.filter(e => e.type === EVENT_TYPES.COMPANY_TOUR).length;
-    const occupiedSlots = dayData.events.filter(e => e.type === EVENT_TYPES.OCCUPIED).length;
+
+    // Agrupar por categoría: contamos como "company tours" cualquier servicio
+    // (reservación, tour asignado por admin, o solicitud del marketplace) para que
+    // el badge mensual no se trague los eventos de tipo assigned_tour/marketplace_*.
+    const personalEvents = dayData.events.filter(isPersonalEvent).length;
+    const companyTours = dayData.events.filter(isTourEvent).length;
+    const occupiedSlots = dayData.events.filter(isOccupiedEvent).length;
     const availableSlots = dayData.availability.length;
 
     return {
@@ -133,11 +136,23 @@ const useMonthView = () => {
   const handleEventBadgeClick = (date, eventType, event, onEventClick) => {
     event.preventDefault();
     event.stopPropagation();
-    
+
     const dateKey = format(date, CALENDAR_CONFIG.DATE_FORMAT);
     const dayData = monthEvents[dateKey] || { events: [] };
-    const eventsOfType = dayData.events.filter(e => e.type === eventType);
-    
+
+    // Filtrar usando los mismos predicados que getDayEventIndicators para que
+    // el click del badge muestre exactamente los eventos contados.
+    let eventsOfType;
+    if (eventType === EVENT_TYPES.COMPANY_TOUR) {
+      eventsOfType = dayData.events.filter(isTourEvent);
+    } else if (eventType === EVENT_TYPES.PERSONAL) {
+      eventsOfType = dayData.events.filter(isPersonalEvent);
+    } else if (eventType === EVENT_TYPES.OCCUPIED) {
+      eventsOfType = dayData.events.filter(isOccupiedEvent);
+    } else {
+      eventsOfType = dayData.events.filter(e => e.type === eventType);
+    }
+
     if (eventsOfType.length === 1 && onEventClick) {
       // If only one event, click it directly
       onEventClick(eventsOfType[0]);

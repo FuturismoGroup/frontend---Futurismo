@@ -13,6 +13,7 @@ import {
   ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
 import { formatters } from '../../utils/formatters';
+import { resolveFileUrl } from '../../utils/fileUrl';
 import PhotoUpload from '../common/PhotoUpload';
 import TourPhotoUpload from './TourPhotoUpload';
 import { TOUR_STATUS, MAX_PHOTOS_PER_STOP } from '../../constants/monitoringConstants';
@@ -173,7 +174,7 @@ const TourStopItem = ({
                       {stop.photos.map((photo) => (
                         <div key={photo.id} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                           <img
-                            src={photo.url}
+                            src={resolveFileUrl(photo.url)}
                             alt={photo.name}
                             className="w-full h-full object-cover"
                           />

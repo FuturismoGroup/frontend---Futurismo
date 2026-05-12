@@ -7,6 +7,7 @@ import {
   ChevronLeftIcon
 } from '@heroicons/react/24/outline';
 import { formatters } from '../../utils/formatters';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const ChatHeader = ({ chat, onClose }) => {
   const { t } = useTranslation();
@@ -37,7 +38,7 @@ const ChatHeader = ({ chat, onClose }) => {
         ) : (
           <div className="relative flex-shrink-0">
             <img
-              src={chat.avatar}
+              src={resolveFileUrl(chat.avatar)}
               alt={chat.name}
               className="w-11 h-11 rounded-full object-cover ring-2 ring-white shadow-md"
             />

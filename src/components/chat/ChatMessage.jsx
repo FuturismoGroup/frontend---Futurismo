@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { formatters } from '../../utils/formatters';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const getInitials = (name) => {
   if (!name) return '?';
@@ -88,7 +89,7 @@ const ChatMessage = ({ message, isCurrentUser, isGroup, senderAvatar }) => {
         <div className="flex-shrink-0 mb-1">
           {senderAvatar ? (
             <img
-              src={senderAvatar}
+              src={resolveFileUrl(senderAvatar)}
               alt={message.senderName}
               className="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-md"
             />

@@ -29,9 +29,9 @@ const ProviderBasicInfo = ({ register, errors, watch }) => {
   const handleSaveLocation = async (locationData) => {
     try {
       await actions.createLocation(locationData);
-      toast.success(t('providers.form.saveSuccess'));
+      toast.success(t('providers.form.locationCreated'));
     } catch (error) {
-      const errorMessage = error.message || t('providers.form.saveError');
+      const errorMessage = error.message || t('providers.form.locationCreateError');
       toast.error(errorMessage);
       throw error;
     }
@@ -40,9 +40,9 @@ const ProviderBasicInfo = ({ register, errors, watch }) => {
   const handleSaveCategory = async (categoryData) => {
     try {
       await actions.createCategory(categoryData);
-      toast.success(t('providers.form.saveSuccess'));
+      toast.success(t('providers.form.categoryCreated'));
     } catch (error) {
-      const errorMessage = error.message || t('providers.form.saveError');
+      const errorMessage = error.message || t('providers.form.categoryCreateError');
       toast.error(errorMessage);
       throw error;
     }

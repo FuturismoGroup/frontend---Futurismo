@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { EyeIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const PhotoGrid = ({ photos, onPreview, onRemove }) => {
   const { t } = useTranslation();
@@ -12,7 +13,7 @@ const PhotoGrid = ({ photos, onPreview, onRemove }) => {
         <div key={photo.id} className="relative group">
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
             <img
-              src={photo.url}
+              src={resolveFileUrl(photo.url)}
               alt={photo.name}
               className="w-full h-full object-cover"
             />

@@ -26,6 +26,7 @@ import ServiceTypesSettings from '../components/settings/ServiceTypesSettings';
 import { useToursStore } from '../stores/toursStore';
 import { useAuthStore } from '../stores/authStore';
 import toast from 'react-hot-toast';
+import { resolveFileUrl } from '../utils/fileUrl';
 
 const ServicesManagement = () => {
   const { t } = useTranslation();
@@ -392,16 +393,8 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
   };
 
   // Base URL del servidor (sin /api) para archivos estáticos
-  const baseServerUrl = (import.meta.env.VITE_API_URL || 'http://localhost:4025/api').replace('/api', '');
-
-  // Helper para construir URL de imagen
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return null;
-    if (imagePath.startsWith('http')) return imagePath;
-    if (imagePath.startsWith('/uploads/')) return `${baseServerUrl}${imagePath}`;
-    if (imagePath.startsWith('/')) return `${baseServerUrl}${imagePath}`;
-    return `${baseServerUrl}/uploads/${imagePath}`;
-  };
+  // Helper centralizado: resolveFileUrl maneja absolutas/relativas/blobs.
+  const getImageUrl = (imagePath) => resolveFileUrl(imagePath);
 
   return (
     <div className="space-y-6">

@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { USER_STATUS, USER_ROLES, GUIDE_TYPES } from '../../constants/usersConstants';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 // Función para generar iniciales del usuario
 const getInitials = (firstName, lastName) => {
@@ -93,7 +94,7 @@ const UserTableRow = ({
           {/* Avatar con iniciales */}
           {user.avatar && !user.avatar.includes('ui-avatars') ? (
             <img
-              src={user.avatar}
+              src={resolveFileUrl(user.avatar)}
               alt={user.firstName}
               className="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-sm"
             />

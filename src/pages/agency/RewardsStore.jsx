@@ -26,6 +26,7 @@ import {
 // NOTA: ELM-424 - Las categorias del filtro ahora se cargan desde API real
 // GET /api/rewards/categories (TBL-009 reward_categories)
 import toast from 'react-hot-toast';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const RewardsStore = () => {
   const { t } = useTranslation();
@@ -340,7 +341,7 @@ const RewardsStore = () => {
                         {reward.image ? (
                           <img
                             className="h-48 w-full object-cover rounded-t-lg"
-                            src={reward.image}
+                            src={resolveFileUrl(reward.image)}
                             alt={reward.name}
                             onError={(e) => {
                               e.target.style.display = 'none';
@@ -576,7 +577,7 @@ const RewardsStore = () => {
                   {selectedReward.image ? (
                     <img
                       className="h-64 w-full object-cover rounded-lg"
-                      src={selectedReward.image}
+                      src={resolveFileUrl(selectedReward.image)}
                       alt={selectedReward.name}
                     />
                   ) : (

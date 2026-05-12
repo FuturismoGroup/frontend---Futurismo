@@ -23,13 +23,7 @@ import toursService from '../../services/toursService';
 import webSocketService from '../../services/websocket';
 import useAuthStore from '../../stores/authStore';
 import toast from 'react-hot-toast';
-
-// Obtener URL base del backend para archivos estáticos (sin /api)
-const getBackendBaseUrl = () => {
-  const apiUrl = import.meta.env.VITE_API_URL || '';
-  // Remover /api del final si existe
-  return apiUrl.replace(/\/api\/?$/, '');
-};
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const GuideTourView = () => {
   const { tourId: reservationId } = useParams(); // El param es realmente reservationId
@@ -765,7 +759,7 @@ const GuideTourView = () => {
                             {stopPhotos[stop.id].map(photo => (
                               <div key={photo.id} className="relative group">
                                 <img
-                                  src={`${getBackendBaseUrl()}${photo.photoUrl}`}
+                                  src={resolveFileUrl(photo.photoUrl)}
                                   alt={photo.caption || 'Foto del tour'}
                                   className="w-20 h-20 object-cover rounded-lg border"
                                 />

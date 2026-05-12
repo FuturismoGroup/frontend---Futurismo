@@ -421,13 +421,16 @@ const ReservationList = () => {
                       )}
                       {user?.role === 'agency' && (
                         <>
-                          <button
-                            onClick={() => handleChangeStatus(reservation)}
-                            className="p-1.5 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-md transition-colors"
-                            title={t('reservations.changeStatus')}
-                          >
-                            <ArrowPathIcon className="w-4 h-4" />
-                          </button>
+                          {/* Agencia: solo botón de cancelar y solo si la reserva sigue activa */}
+                          {(reservation.status === 'pending' || reservation.status === 'confirmed') && (
+                            <button
+                              onClick={() => handleChangeStatus(reservation)}
+                              className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                              title={t('reservations.cancelReservation')}
+                            >
+                              <XMarkIcon className="w-4 h-4" />
+                            </button>
+                          )}
                           <button
                             onClick={() => handleGenerateVoucher(reservation)}
                             className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
@@ -506,13 +509,16 @@ const ReservationList = () => {
                         )}
                         {user?.role === 'agency' && (
                           <>
-                            <button
-                              onClick={() => handleChangeStatus(reservation)}
-                              className="flex items-center gap-1 px-2 py-1.5 text-xs text-amber-600 hover:bg-amber-50 rounded-md transition-colors"
-                            >
-                              <ArrowPathIcon className="w-3.5 h-3.5" />
-                              {t('reservations.status')}
-                            </button>
+                            {/* Agencia: solo cancelar, y solo si la reserva sigue activa */}
+                            {(reservation.status === 'pending' || reservation.status === 'confirmed') && (
+                              <button
+                                onClick={() => handleChangeStatus(reservation)}
+                                className="flex items-center gap-1 px-2 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                              >
+                                <XMarkIcon className="w-3.5 h-3.5" />
+                                {t('reservations.cancelReservation')}
+                              </button>
+                            )}
                             <button
                               onClick={() => handleGenerateVoucher(reservation)}
                               className="flex items-center gap-1 px-2 py-1.5 text-xs text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"

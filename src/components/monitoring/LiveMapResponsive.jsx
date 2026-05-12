@@ -227,15 +227,23 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
       const statusColors = {
         'enroute': 'bg-green-500',
         'stopped': 'bg-yellow-500',
-        'delayed': 'bg-red-500'
+        'delayed': 'bg-red-500',
+        'pending': 'bg-blue-500',
+        'completed': 'bg-gray-400'
       };
+      const dotColor = statusColors[service.status] || 'bg-blue-500';
+      // Borde discontinuo cuando la posición es solo un fallback (sin GPS aún)
+      const isApproximate = service.currentLocation?.isApproximate;
+      const borderClass = isApproximate
+        ? 'border-2 border-dashed border-amber-400'
+        : 'border-2 border-gray-200';
 
       return window.L.divIcon({
         className: 'custom-marker',
         html: `
           <div class="relative">
-            <div class="absolute -top-1 -right-1 w-3 h-3 ${statusColors[service.status]} rounded-full animate-pulse"></div>
-            <div class="bg-white rounded-full p-2 shadow-lg border-2 border-gray-200">
+            <div class="absolute -top-1 -right-1 w-3 h-3 ${dotColor} rounded-full animate-pulse"></div>
+            <div class="bg-white rounded-full p-2 shadow-lg ${borderClass}">
               <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
               </svg>
@@ -258,6 +266,7 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
       ).addTo(leafletMapRef.current);
 
       // Popup responsive
+      const isApproximate = service.currentLocation?.isApproximate;
       const popupContent = `
         <div class="${viewport.isMobile ? 'text-sm' : ''} p-2">
           <h3 class="font-bold text-gray-900">${service.tourName}</h3>
@@ -280,6 +289,14 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
                 service.status === 'stopped' ? t('monitoring.comp.stopped') : t('monitoring.comp.delayed')}
             </span>
           </div>
+          ${isApproximate ? `
+            <p class="mt-2 text-[10px] text-amber-600 italic flex items-center gap-1">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Posición aproximada (sin GPS aún)
+            </p>
+          ` : ''}
         </div>
       `;
 

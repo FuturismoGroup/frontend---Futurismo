@@ -6,6 +6,7 @@ import useChatWindow from '../../hooks/useChatWindow';
 import ChatHeader from './ChatHeader';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const ChatWindow = ({ chat, onClose }) => {
   const { t } = useTranslation();
@@ -86,7 +87,7 @@ const ChatWindow = ({ chat, onClose }) => {
             <div className="flex-shrink-0 mb-1">
               {chat.avatar ? (
                 <img
-                  src={chat.avatar}
+                  src={resolveFileUrl(chat.avatar)}
                   alt={chat.name}
                   className="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-md"
                 />

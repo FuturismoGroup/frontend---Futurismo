@@ -240,11 +240,11 @@ const useVehiclesStore = create(
             const vehicle = get().vehicles.find(v => v.id === vehicleId);
             if (vehicle) {
               set(state => ({
-                vehicles: state.vehicles.map(v => 
-                  v.id === vehicleId 
-                    ? { 
-                        ...v, 
-                        currentAssignments: [...v.currentAssignments, result.data] 
+                vehicles: state.vehicles.map(v =>
+                  v.id === vehicleId
+                    ? {
+                        ...v,
+                        currentAssignments: [...(v.currentAssignments || []), result.data]
                       }
                     : v
                 )

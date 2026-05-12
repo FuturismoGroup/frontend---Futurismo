@@ -252,11 +252,11 @@ const useDriversStore = create(
             const driver = get().drivers.find(d => d.id === driverId);
             if (driver) {
               set(state => ({
-                drivers: state.drivers.map(d => 
-                  d.id === driverId 
-                    ? { 
-                        ...d, 
-                        currentAssignments: [...d.currentAssignments, result.data] 
+                drivers: state.drivers.map(d =>
+                  d.id === driverId
+                    ? {
+                        ...d,
+                        currentAssignments: [...(d.currentAssignments || []), result.data]
                       }
                     : d
                 )

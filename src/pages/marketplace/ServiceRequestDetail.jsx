@@ -20,6 +20,8 @@ import useMarketplaceStore from '../../stores/marketplaceStore';
 import useAuthStore from '../../stores/authStore';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import toast from 'react-hot-toast';
+import { formatDateSafe } from '../../utils/dateUtils';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const ServiceRequestDetail = () => {
   const { requestId } = useParams();
@@ -149,13 +151,19 @@ const ServiceRequestDetail = () => {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString('es-PE', {
+    // formatDateSafe respeta el día YYYY-MM-DD del backend sin que el navegador
+    // lo desplace al timezone local.
+    return formatDateSafe(dateStr, {
       weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
-    });
+    }) || '-';
   };
 
   const formatTime = (timeStr) => {
     if (!timeStr) return '-';
+    // Si el backend ya manda "HH:mm" (caso service_requests.start_time), úsalo tal cual.
+    if (typeof timeStr === 'string' && /^\d{1,2}:\d{2}/.test(timeStr)) {
+      return timeStr.slice(0, 5);
+    }
     return new Date(timeStr).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
   };
 
@@ -463,7 +471,7 @@ const ServiceRequestDetail = () => {
                 <div className="relative z-10">
                   <div className="w-20 h-20 rounded-full mx-auto mb-3 bg-white/20 backdrop-blur-sm flex items-center justify-center overflow-hidden ring-4 ring-white/30">
                     {request.guide?.profilePhoto ? (
-                      <img src={request.guide.profilePhoto} alt="" className="w-full h-full object-cover" />
+                      <img src={resolveFileUrl(request.guide.profilePhoto)} alt="" className="w-full h-full object-cover" />
                     ) : (
                       <UserGroupIcon className="h-8 w-8 text-white" />
                     )}

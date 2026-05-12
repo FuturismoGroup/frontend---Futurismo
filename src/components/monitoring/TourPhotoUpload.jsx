@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CameraIcon, MapPinIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const TourPhotoUpload = ({ stopId, stopName, requiredLocation, onPhotoUploaded, isRequired = false }) => {
   const { t } = useTranslation();
@@ -227,7 +228,7 @@ const TourPhotoUpload = ({ stopId, stopName, requiredLocation, onPhotoUploaded, 
             {photos.map((photo) => (
               <div key={photo.id} className="relative group">
                 <img
-                  src={photo.url}
+                  src={resolveFileUrl(photo.url)}
                   alt={`Foto de ${photo.stopName}`}
                   className="w-full h-24 object-cover rounded-lg border border-gray-200"
                 />

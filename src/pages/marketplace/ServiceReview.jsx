@@ -9,6 +9,8 @@ import { reviewSchema } from '../../utils/validationSchemas/marketplaceSchemas';
 import useMarketplaceStore from '../../stores/marketplaceStore';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import toast from 'react-hot-toast';
+import { formatDateSafe } from '../../utils/dateUtils';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const ServiceReview = () => {
   const { requestId } = useParams();
@@ -101,7 +103,7 @@ const ServiceReview = () => {
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center gap-4">
               <img
-                src={guide.profilePhoto || '/images/default-avatar.png'}
+                src={resolveFileUrl(guide.profilePhoto) || '/images/default-avatar.png'}
                 alt={guide.name || 'Guia'}
                 className="w-12 h-12 rounded-full object-cover"
               />
@@ -109,7 +111,7 @@ const ServiceReview = () => {
                 <p className="font-medium text-gray-900">{guide.name || 'Guia'}</p>
                 <p className="text-sm text-gray-600">
                   {request.location || 'Servicio freelance'} •
-                  {' '}{request.serviceDate ? new Date(request.serviceDate).toLocaleDateString('es-PE') : '-'}
+                  {' '}{formatDateSafe(request.serviceDate) || '-'}
                 </p>
               </div>
             </div>

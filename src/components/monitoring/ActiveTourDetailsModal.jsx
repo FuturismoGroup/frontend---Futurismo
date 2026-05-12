@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { XMarkIcon, MapPinIcon, ClockIcon, UserGroupIcon, CheckCircleIcon, CameraIcon } from '@heroicons/react/24/outline';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const ActiveTourDetailsModal = ({ isOpen, onClose, tour, onViewOnMap }) => {
   const { t } = useTranslation();
@@ -509,7 +510,7 @@ const ActiveTourDetailsModal = ({ isOpen, onClose, tour, onViewOnMap }) => {
                       {/* Imagen con badge */}
                       <div className="relative aspect-[16/10] bg-gray-100 overflow-hidden group">
                         <img
-                          src={photo.thumbnail || photo.url}
+                          src={resolveFileUrl(photo.thumbnail || photo.url)}
                           alt={photo.comment || photo.stopName}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           loading="lazy"
@@ -667,7 +668,7 @@ const ActiveTourDetailsModal = ({ isOpen, onClose, tour, onViewOnMap }) => {
               {/* Imagen principal */}
               <div className="relative bg-gray-900">
                 <img
-                  src={selectedPhoto.url}
+                  src={resolveFileUrl(selectedPhoto.url)}
                   alt={selectedPhoto.comment || selectedPhoto.stopName}
                   className="w-full max-h-[70vh] object-contain"
                 />

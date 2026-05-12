@@ -16,6 +16,7 @@ import useGuidesStore from '../../stores/guidesStore';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const FreelancerPersonalDataSection = () => {
   const { user } = useAuthStore();
@@ -271,7 +272,7 @@ const FreelancerPersonalDataSection = () => {
                   <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg">
                     {formData.profilePhoto ? (
                       <img
-                        src={formData.profilePhoto}
+                        src={resolveFileUrl(formData.profilePhoto)}
                         alt="Foto de perfil"
                         className="w-full h-full object-cover"
                       />

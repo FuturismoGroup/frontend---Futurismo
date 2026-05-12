@@ -23,6 +23,7 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import GuideAvailabilityCalendar from '../../components/marketplace/GuideAvailabilityCalendar';
 import { useTranslation } from 'react-i18next';
 import { getLanguageName } from '../../config/languages';
+import { resolveFileUrl } from '../../utils/fileUrl';
 
 const GuideMarketplaceProfile = () => {
   const { guideId } = useParams();
@@ -137,7 +138,7 @@ const GuideMarketplaceProfile = () => {
           <div className="max-w-7xl mx-auto">
             <div className="flex items-end gap-6">
               <img
-                src={guide.profileImage || guide.profilePhoto || guide.guidePhoto || `https://ui-avatars.com/api/?name=${guide.name}&background=random`}
+                src={resolveFileUrl(guide.profileImage || guide.profilePhoto || guide.guidePhoto) || `https://ui-avatars.com/api/?name=${guide.name}&background=random`}
                 alt={guide.name}
                 className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
               />

@@ -18,7 +18,9 @@ import {
 import useMarketplaceStore from '../../stores/marketplaceStore';
 import useAuthStore from '../../stores/authStore';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { resolveFileUrl } from '../../utils/fileUrl';
 import toast from 'react-hot-toast';
+import { formatDateSafe } from '../../utils/dateUtils';
 
 const AgencyMarketplaceDashboard = () => {
   const navigate = useNavigate();
@@ -125,9 +127,11 @@ const AgencyMarketplaceDashboard = () => {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString('es-PE', {
+    // Usar formatDateSafe para evitar que el toLocaleDateString del navegador
+    // desplace la fecha al timezone local cuando el backend manda @db.Date.
+    return formatDateSafe(dateStr, {
       day: '2-digit', month: 'short', year: 'numeric'
-    });
+    }) || '-';
   };
 
   if (isLoading) {
@@ -250,7 +254,7 @@ const AgencyMarketplaceDashboard = () => {
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
                       {request.guide?.profilePhoto ? (
-                        <img src={request.guide.profilePhoto} alt="" className="w-full h-full object-cover" />
+                        <img src={resolveFileUrl(request.guide.profilePhoto)} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <UserGroupIcon className="h-5 w-5 text-purple-600" />
                       )}

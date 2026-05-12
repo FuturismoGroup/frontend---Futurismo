@@ -51,10 +51,10 @@ const ExportStatusFilter = ({
                   : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
               }`}
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0 flex-1 sm:gap-3">
                   <option.icon className={`w-4 h-4 flex-shrink-0 sm:w-5 sm:h-5 ${option.color}`} />
-                  <span className="text-xs font-medium text-gray-900 sm:text-sm" title={option.label}>
+                  <span className="text-xs font-medium text-gray-900 sm:text-sm truncate" title={option.label}>
                     {option.label}
                   </span>
                 </div>
