@@ -655,27 +655,22 @@ const useProvidersStore = create(
       }),
       {
         name: 'providers-store',
-        version: 1, // Incrementar versión para forzar reset
+        version: 2, // Bump: ya no persistimos catálogos (categories/locations/services)
+        // Solo persistimos la lista de proveedores. Los catálogos (categories, locations,
+        // services) SIEMPRE se cargan frescos desde la API en `initialize()` para evitar
+        // IDs obsoletos que provoquen errores FK al crear/editar proveedores.
         partialize: (state) => ({
-          providers: state.providers,
-          locations: state.locations,
-          categories: state.categories,
-          services: state.services
+          providers: state.providers
         }),
-        // Función de migración para asegurar que los datos restaurados sean válidos
-        merge: (persistedState, currentState) => {
-          const merged = {
-            ...currentState,
-            ...persistedState,
-            // Asegurar que arrays sean siempre arrays válidos
-            providers: Array.isArray(persistedState?.providers) ? persistedState.providers : [],
-            locations: Array.isArray(persistedState?.locations) ? persistedState.locations : [],
-            categories: Array.isArray(persistedState?.categories) ? persistedState.categories : [],
-            services: Array.isArray(persistedState?.services) ? persistedState.services : []
-          };
-          console.log('🔄 Datos restaurados del localStorage:', merged);
-          return merged;
-        }
+        merge: (persistedState, currentState) => ({
+          ...currentState,
+          ...persistedState,
+          providers: Array.isArray(persistedState?.providers) ? persistedState.providers : [],
+          // Forzar arrays vacíos para catálogos hasta que `initialize()` los pueble
+          locations: [],
+          categories: [],
+          services: []
+        })
       }
     ),
     {

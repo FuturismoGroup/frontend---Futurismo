@@ -73,6 +73,15 @@ const useIndependentAgendaStore = create(
             timeFormat: '24h',
             firstDayOfWeek: 1 // Lunes
           },
+
+          // Toggles de visibilidad del sidebar (Mi Agenda / Tours / Reservas).
+          // Compartido entre CalendarSidebar y las vistas para que el ojo del
+          // sidebar realmente oculte/muestre eventos en el calendario.
+          visibleCalendars: {
+            personal: true,
+            company: true,
+            reservations: true
+          },
           
           // Estados de carga y error
           isLoading: false,
@@ -254,17 +263,17 @@ const useIndependentAgendaStore = create(
           // === TIEMPO OCUPADO (VISIBLE PARA ADMIN COMO "OCUPADO") ===
           markTimeAsOccupied: async (guideId, timeSlot) => {
             set({ isLoading: true, error: null });
-            
+
             try {
               const result = await independentAgendaService.markTimeAsOccupied(guideId, timeSlot);
-              
+
               if (!result.success) {
                 throw new Error(result.error || i18next.t('errors.unexpectedError'));
               }
-              
+
               const { personalEvents } = get();
               const dateKey = result.data.date;
-              
+
               set({
                 personalEvents: {
                   ...personalEvents,
@@ -276,9 +285,10 @@ const useIndependentAgendaStore = create(
                     ]
                   }
                 },
-                isLoading: false
+                isLoading: false,
+                lastEventUpdate: Date.now() // Trigger refresh en las vistas
               });
-              
+
               return result.data;
             } catch (error) {
               set({ 
@@ -549,6 +559,17 @@ const useIndependentAgendaStore = create(
               }
             });
           },
+
+          // Toggle de visibilidad de calendarios (personal, company, reservations)
+          toggleCalendarVisibility: (calendarType) => {
+            const { visibleCalendars } = get();
+            set({
+              visibleCalendars: {
+                ...visibleCalendars,
+                [calendarType]: !visibleCalendars?.[calendarType]
+              }
+            });
+          },
           
           // === VERIFICACIÓN DE CONFLICTOS ===
           checkScheduleConflicts: async (guideId, eventData) => {
@@ -682,6 +703,11 @@ const useIndependentAgendaStore = create(
                 timeFormat: '24h',
                 firstDayOfWeek: 1
               },
+              visibleCalendars: {
+                personal: true,
+                company: true,
+                reservations: true
+              },
               isLoading: false,
               error: null
             });
@@ -694,11 +720,12 @@ const useIndependentAgendaStore = create(
   ),
   {
     name: 'independent-agenda-store',
-    version: 3, // v3: solo persistir preferencias, no datos de eventos (se cargan desde API)
+    version: 4, // v4: persistir también visibleCalendars (toggles del sidebar)
     partialize: (state) => ({
       currentGuide: state.currentGuide,
       currentView: state.currentView,
-      viewPreferences: state.viewPreferences
+      viewPreferences: state.viewPreferences,
+      visibleCalendars: state.visibleCalendars
     })
   }
 ));

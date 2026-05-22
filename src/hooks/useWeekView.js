@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { format, startOfWeek, addDays, isToday } from 'date-fns';
 import useIndependentAgendaStore from '../stores/independentAgendaStore';
 import useAuthStore from '../stores/authStore';
-import { isAdminRole, filterEventsForAdmin } from '../utils/eventHelpers';
+import { isAdminRole, filterEventsForAdmin, filterEventsByVisibility } from '../utils/eventHelpers';
 
 const useWeekView = () => {
   const { user } = useAuthStore();
@@ -10,6 +10,7 @@ const useWeekView = () => {
     selectedDate,
     currentGuide,
     lastEventUpdate,
+    visibleCalendars,
     actions: { getGuideCompleteAgenda }
   } = useIndependentAgendaStore();
 
@@ -73,8 +74,10 @@ const useWeekView = () => {
         // Backend returns { success, data: { allEvents } }
         const events = result?.data?.allEvents || result?.allEvents || [];
 
-        // Si es admin, filtrar por visibilidad
-        const processedEvents = isAdmin ? filterEventsForAdmin(events) : events;
+        // Si es admin, filtrar por visibilidad (enmascara privados como "Ocupado")
+        const adminFiltered = isAdmin ? filterEventsForAdmin(events) : events;
+        // Aplicar toggles del sidebar (Mi Agenda / Tours / Reservas)
+        const processedEvents = filterEventsByVisibility(adminFiltered, visibleCalendars);
 
         // Group events by date, separating all-day events
         processedEvents.forEach(event => {
@@ -103,7 +106,7 @@ const useWeekView = () => {
     };
 
     loadWeekEvents();
-  }, [selectedDate, currentGuide, user?.guideId, isAdmin, getGuideCompleteAgenda, lastEventUpdate]);
+  }, [selectedDate, currentGuide, user?.guideId, isAdmin, getGuideCompleteAgenda, lastEventUpdate, visibleCalendars]);
 
   const handleSlotHover = (day, hour, isHovering) => {
     if (isHovering) {

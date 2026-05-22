@@ -44,7 +44,7 @@ const AdminAvailabilityView = () => {
     }
   } = useIndependentAgendaStore();
 
-  const { guides: guidesData, fetchGuides, setFilters } = useGuidesStore();
+  const { guides: guidesData, fetchGuides } = useGuidesStore();
 
   const [isAssignTourModalOpen, setIsAssignTourModalOpen] = useState(false);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
@@ -61,23 +61,37 @@ const AdminAvailabilityView = () => {
     status: 'confirmed'
   });
 
-  // Load FREELANCE guides from API (only freelance guides have independent agendas)
+  // Cargar guías. NO mutamos los filtros globales del store (useGuidesStore es
+  // compartido con GuidesManagement) — filtramos FREELANCE localmente para evitar
+  // que la pantalla de Guías pierda los de planta tras visitar la agenda.
   useEffect(() => {
-    setFilters({ guideType: 'FREELANCE', status: 'active' });
-  }, [setFilters]);
+    fetchGuides();
+  }, [fetchGuides]);
 
-  // Transform guides data from API
-  const guides = (guidesData || []).map(guide => ({
-    id: guide.id,
-    userId: guide.user?.id || guide.userId,
-    name: guide.name || `${guide.firstName || ''} ${guide.lastName || ''}`.trim(),
-    online: guide.isOnline || guide.online || false,
-    role: guide.type || guide.guideType || 'freelance',
-    phone: guide.phone || guide.phoneNumber || 'N/A',
-    specialities: guide.specialities || guide.specializations || [],
-    rating: guide.rating || guide.averageRating || 0,
-    avatar: guide.avatar || guide.profileImage || ''
-  }));
+  // Solo guías FREELANCE tienen agenda independiente.
+  const isFreelance = (g) => {
+    const t = (g.guideType || g.guide_type || g.type || '').toString().toUpperCase();
+    return t === 'FREELANCE';
+  };
+  const isActive = (g) => {
+    const s = (g.status || '').toString().toLowerCase();
+    return !s || s === 'active';
+  };
+
+  // Transform guides data from API (filtrado local a freelance + activos)
+  const guides = (guidesData || [])
+    .filter(g => isFreelance(g) && isActive(g))
+    .map(guide => ({
+      id: guide.id,
+      userId: guide.user?.id || guide.userId,
+      name: guide.name || `${guide.firstName || ''} ${guide.lastName || ''}`.trim(),
+      online: guide.isOnline || guide.online || false,
+      role: guide.type || guide.guideType || 'freelance',
+      phone: guide.phone || guide.phoneNumber || 'N/A',
+      specialities: guide.specialities || guide.specializations || [],
+      rating: guide.rating || guide.averageRating || 0,
+      avatar: guide.avatar || guide.profileImage || ''
+    }));
 
   const currentGuideInfo = guides.find(g => g.id === currentGuide) || guides[0];
 

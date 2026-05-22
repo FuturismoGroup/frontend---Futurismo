@@ -28,6 +28,7 @@ import ReservationWizard from '../../components/reservations/ReservationWizard';
 import reservationsService from '../../services/reservationsService';
 import exportService from '../../services/exportService';
 import { formatDateSafe } from '../../utils/dateUtils';
+import { getLanguageName } from '../../config/languages';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -116,15 +117,25 @@ const ReservationManagement = () => {
     const tour = toursArray.find(t => t.id === reservation.tourId || t.id === reservation.service_id);
     const guide = guidesArray.find(g => g.id === reservation.guideId || g.id === reservation.guide_id);
 
+    // Backend devuelve guide como { id, firstName, lastName }; construimos nombre completo.
+    // También consideramos tourAssignment.guideName por si guide_id no se sincronizó.
+    const backendGuideName = reservation.guide
+      ? `${reservation.guide.firstName || ''} ${reservation.guide.lastName || ''}`.trim()
+      : '';
+    const assignmentGuideName = reservation.tourAssignment?.guideName || '';
+    const resolvedGuideName = backendGuideName || reservation.guide?.name || guide?.name || guide?.fullName || assignmentGuideName;
+
     return {
       ...reservation,
+      guide_id: reservation.guide_id || reservation.guideId || reservation.tourAssignment?.guideId || '',
+      guideId: reservation.guideId || reservation.guide_id || reservation.tourAssignment?.guideId || '',
       // Datos de la agencia (viene del backend en reservation.agencyName)
       agencyName: reservation.agencyName || 'Sin agencia',
       agencyEmail: reservation.agencyEmail || '',
       agencyPhone: reservation.agencyPhone || '',
       tourName: reservation.tourName || tour?.name || 'Tour sin nombre',
       destination: reservation.destination || tour?.destination || 'Sin destino',
-      guide: reservation.guide?.name || guide?.name || t('reservations.noGuideAssigned'),
+      guide: resolvedGuideName || t('reservations.noGuideAssigned'),
       tourists: (reservation.adults || 0) + (reservation.children || 0) || reservation.group_size || 0,
       totalAmount: reservation.total || reservation.total_amount || 0,
       tourType: reservation.tourType || reservation.tour?.tourType || tour?.tour_type || t('reservations.noCategory'),
@@ -418,6 +429,10 @@ const ReservationManagement = () => {
 
   // Funciones para asignación de guía
   const handleOpenGuideModal = (reservation) => {
+    if (reservation.status === 'pending') {
+      toast.error(t('reservations.confirmReservationFirst'));
+      return;
+    }
     setSelectedReservation(reservation);
     setSelectedGuideId(reservation.guide_id || reservation.guideId || '');
     setShowGuideModal(true);
@@ -1035,17 +1050,23 @@ const ReservationManagement = () => {
                           {/* Botón de asignar/cambiar guía */}
                           <button
                             onClick={() => handleOpenGuideModal(reservation)}
-                            disabled={reservation.status === 'cancelled' || reservation.status === 'completed'}
+                            disabled={reservation.status === 'pending' || reservation.status === 'cancelled' || reservation.status === 'completed'}
                             className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded transition-colors ${
                               reservation.guide === t('reservations.noGuideAssigned')
                                 ? 'bg-orange-100 text-orange-700 hover:bg-orange-200'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             } ${
-                              (reservation.status === 'cancelled' || reservation.status === 'completed')
+                              (reservation.status === 'pending' || reservation.status === 'cancelled' || reservation.status === 'completed')
                                 ? 'opacity-50 cursor-not-allowed'
                                 : ''
                             }`}
-                            title={reservation.guide === t('reservations.noGuideAssigned') ? t('reservations.assignGuide') : t('reservations.changeGuide')}
+                            title={
+                              reservation.status === 'pending'
+                                ? t('reservations.confirmReservationFirst')
+                                : (reservation.guide === t('reservations.noGuideAssigned')
+                                    ? t('reservations.assignGuide')
+                                    : t('reservations.changeGuide'))
+                            }
                           >
                             <UserIcon className="w-3.5 h-3.5" />
                           </button>
@@ -1178,13 +1199,14 @@ const ReservationManagement = () => {
                       {/* Botón de asignar guía */}
                       <button
                         onClick={() => handleOpenGuideModal(reservation)}
-                        disabled={reservation.status === 'cancelled' || reservation.status === 'completed'}
+                        disabled={reservation.status === 'pending' || reservation.status === 'cancelled' || reservation.status === 'completed'}
+                        title={reservation.status === 'pending' ? t('reservations.confirmReservationFirst') : undefined}
                         className={`w-full inline-flex items-center justify-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                           reservation.guide === t('reservations.noGuideAssigned')
                             ? 'bg-orange-100 text-orange-700 hover:bg-orange-200'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         } ${
-                          (reservation.status === 'cancelled' || reservation.status === 'completed')
+                          (reservation.status === 'pending' || reservation.status === 'cancelled' || reservation.status === 'completed')
                             ? 'opacity-50 cursor-not-allowed'
                             : ''
                         }`}
@@ -1282,7 +1304,18 @@ const ReservationManagement = () => {
                                 {guide.name || guide.fullName || `${guide.firstName} ${guide.lastName}`}
                               </p>
                               <p className="text-xs text-gray-500">
-                                {guide.languages?.join(', ') || t('reservations.defaultLanguage')}
+                                {(() => {
+                                  const langs = Array.isArray(guide.languages)
+                                    ? guide.languages
+                                        .map(l => {
+                                          if (!l) return null;
+                                          const code = typeof l === 'string' ? l : (l.code || l.language || l.value);
+                                          return code ? getLanguageName(code) : null;
+                                        })
+                                        .filter(Boolean)
+                                    : [];
+                                  return langs.length > 0 ? langs.join(', ') : t('reservations.defaultLanguage');
+                                })()}
                                 {guide.rating && ` • ⭐ ${guide.rating}`}
                               </p>
                             </div>

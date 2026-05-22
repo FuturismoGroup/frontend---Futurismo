@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import useAuthStore from '../../stores/authStore';
 import toursService from '../../services/toursService';
 import reservationsService from '../../services/reservationsService';
+import marketplaceService from '../../services/marketplaceService';
 
 const GuideDashboard = () => {
   const navigate = useNavigate();
@@ -77,6 +78,7 @@ const GuideDashboard = () => {
         time: parseTimeSafe(item.time),
         tourists: item.participants || item.tourists || 0,
         status: item.status || 'pending',
+        source: item.source || 'reservation',
         agency: item.agency?.business_name || item.agencyName || 'Sin agencia',
         location: item.location || item.tour?.meeting_point || item.meeting_point || 'Por definir',
         activeTour: item.active_tours?.[0] || null,
@@ -164,6 +166,11 @@ const GuideDashboard = () => {
     setConfirmDialog({ show: true, tour, action: 'complete' });
   };
 
+  // Marcar servicio del marketplace como completado (accepted -> completed)
+  const handleCompleteServiceRequest = (tour) => {
+    setConfirmDialog({ show: true, tour, action: 'completeServiceRequest' });
+  };
+
   // Confirmar accion
   const confirmAction = async () => {
     const { tour, action } = confirmDialog;
@@ -173,8 +180,13 @@ const GuideDashboard = () => {
     setConfirmDialog({ show: false, tour: null, action: null });
 
     try {
-      const newStatus = action === 'start' ? 'in_progress' : 'completed';
-      const response = await reservationsService.updateStatus(tour.id, newStatus);
+      let response;
+      if (action === 'completeServiceRequest') {
+        response = await marketplaceService.completeService(tour.id, {});
+      } else {
+        const newStatus = action === 'start' ? 'in_progress' : 'completed';
+        response = await reservationsService.updateStatus(tour.id, newStatus);
+      }
 
       if (response.success) {
         toast.success(action === 'start'
@@ -188,7 +200,7 @@ const GuideDashboard = () => {
           await loadGuideTours();
         }
       } else {
-        throw new Error(response.message || t('guideDashboard.errorUpdatingStatus'));
+        throw new Error(response.message || response.error || t('guideDashboard.errorUpdatingStatus'));
       }
     } catch (err) {
       console.error('Error updating tour status:', err);
@@ -448,7 +460,7 @@ const GuideDashboard = () => {
 
                         {/* Acciones */}
                         <div className="flex flex-row sm:flex-col gap-2">
-                          {(tour.status === 'pending' || tour.status === 'confirmed') && (
+                          {(tour.status === 'pending' || tour.status === 'confirmed') && tour.source !== 'service_request' && (
                             <button
                               onClick={() => handleStartTour(tour)}
                               disabled={actionLoading === tour.id}
@@ -460,6 +472,21 @@ const GuideDashboard = () => {
                                 <PlayIcon className="w-4 h-4" />
                               )}
                               {t('guideDashboard.startTour')}
+                            </button>
+                          )}
+
+                          {tour.status === 'confirmed' && tour.source === 'service_request' && (
+                            <button
+                              onClick={() => handleCompleteServiceRequest(tour)}
+                              disabled={actionLoading === tour.id}
+                              className="btn btn-success flex items-center justify-center gap-2 w-full sm:w-auto"
+                            >
+                              {actionLoading === tour.id ? (
+                                <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <CheckCircleIcon className="w-4 h-4" />
+                              )}
+                              {t('guideDashboard.completeTour')}
                             </button>
                           )}
 

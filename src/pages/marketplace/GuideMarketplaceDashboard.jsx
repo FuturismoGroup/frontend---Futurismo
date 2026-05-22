@@ -450,6 +450,55 @@ const GuideMarketplaceDashboard = () => {
     r.status === 'completed' || r.status === 'rejected' || r.status === 'cancelled'
   );
 
+  // Métricas locales basadas EXCLUSIVAMENTE en service_requests del marketplace,
+  // para que las tarjetas coincidan con lo mostrado en las pestañas (Solicitudes/
+  // Próximos/Completados). Antes se usaba stats del backend que mezcla reservas
+  // asignadas por agencia con service_requests, generando inconsistencia visible
+  // (ej. "Tours completados: 3" mientras la pestaña Completados está vacía).
+  const now = new Date();
+  const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+  const startOfCurrentWeek = (() => {
+    const d = new Date(now);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // lunes
+    d.setDate(diff);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  })();
+  const endOfCurrentWeek = (() => {
+    const d = new Date(startOfCurrentWeek);
+    d.setDate(d.getDate() + 6);
+    d.setHours(23, 59, 59, 999);
+    return d;
+  })();
+
+  const getServiceDate = (r) => {
+    const raw = r.service_date || r.serviceDate || r.date;
+    return raw ? new Date(raw) : null;
+  };
+  const isInRange = (date, start, end) => date && date >= start && date <= end;
+  const toNumber = (v) => {
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  const monthlyCompleted = localRequests.filter(r => {
+    const d = getServiceDate(r);
+    return r.status === 'completed' && isInRange(d, startOfCurrentMonth, endOfCurrentMonth);
+  });
+  const weeklyActive = localRequests.filter(r => {
+    const d = getServiceDate(r);
+    return ['accepted', 'completed'].includes(r.status) && isInRange(d, startOfCurrentWeek, endOfCurrentWeek);
+  });
+
+  const localToursCompleted = monthlyCompleted.length;
+  const localToursThisWeek = weeklyActive.length;
+  const localMonthlyIncome = monthlyCompleted.reduce(
+    (sum, r) => sum + toNumber(r.total_price ?? r.totalPrice ?? r.price),
+    0
+  );
+
   // Request action handlers
   const handleAcceptClick = (request) => {
     setSelectedRequest(request);
@@ -596,7 +645,7 @@ const GuideMarketplaceDashboard = () => {
               <CurrencyDollarIcon className="h-5 w-5 text-gray-400" />
             </div>
             <p className="text-2xl font-bold text-gray-900">
-              S/. {(stats?.monthlyIncome || 0).toLocaleString()}
+              S/. {localMonthlyIncome.toLocaleString()}
             </p>
             <p className="text-sm text-gray-500 mt-2">Solo servicios completados</p>
           </div>
@@ -606,7 +655,7 @@ const GuideMarketplaceDashboard = () => {
               <p className="text-sm text-gray-500">Tours completados</p>
               <CheckCircleIcon className="h-5 w-5 text-gray-400" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats?.toursCompleted || 0}</p>
+            <p className="text-2xl font-bold text-gray-900">{localToursCompleted}</p>
             <p className="text-sm text-gray-500 mt-2">Este mes</p>
           </div>
 
@@ -639,7 +688,7 @@ const GuideMarketplaceDashboard = () => {
               <p className="text-sm text-gray-500">Tours esta semana</p>
               <CalendarIcon className="h-5 w-5 text-gray-400" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stats?.toursThisWeek || 0}</p>
+            <p className="text-2xl font-bold text-gray-900">{localToursThisWeek}</p>
             <p className="text-sm text-gray-500 mt-2">Confirmados</p>
           </div>
         </div>

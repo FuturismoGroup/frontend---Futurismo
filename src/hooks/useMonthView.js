@@ -9,7 +9,7 @@ import {
 } from 'date-fns';
 import useIndependentAgendaStore from '../stores/independentAgendaStore';
 import useAuthStore from '../stores/authStore';
-import { isAdminRole, filterEventsForAdmin, isTourEvent, isPersonalEvent, isOccupiedEvent } from '../utils/eventHelpers';
+import { isAdminRole, filterEventsForAdmin, filterEventsByVisibility, isTourEvent, isPersonalEvent, isOccupiedEvent } from '../utils/eventHelpers';
 import {
   EVENT_TYPES,
   CALENDAR_CONFIG,
@@ -22,6 +22,7 @@ const useMonthView = () => {
     selectedDate: rawSelectedDate,
     currentGuide,
     lastEventUpdate,
+    visibleCalendars,
     actions: {
       getGuideCompleteAgenda,
       setSelectedDate,
@@ -83,8 +84,10 @@ const useMonthView = () => {
         // Backend returns { success, data: { allEvents } }
         const events = result?.data?.allEvents || result?.allEvents || [];
 
-        // Si es admin, filtrar por visibilidad
-        const processedEvents = isAdmin ? filterEventsForAdmin(events) : events;
+        // Si es admin, filtrar por visibilidad (enmascara privados como "Ocupado")
+        const adminFiltered = isAdmin ? filterEventsForAdmin(events) : events;
+        // Aplicar toggles del sidebar (Mi Agenda / Tours / Reservas)
+        const processedEvents = filterEventsByVisibility(adminFiltered, visibleCalendars);
 
         // Group events by date
         processedEvents.forEach(event => {
@@ -100,7 +103,7 @@ const useMonthView = () => {
     };
 
     loadMonthEvents();
-  }, [selectedDate, currentGuide, user?.guideId, isAdmin, getGuideCompleteAgenda, startDate, endDate, lastEventUpdate]);
+  }, [selectedDate, currentGuide, user?.guideId, isAdmin, getGuideCompleteAgenda, startDate, endDate, lastEventUpdate, visibleCalendars]);
 
   const handleDateHover = (date, isHovering) => {
     if (isHovering) {

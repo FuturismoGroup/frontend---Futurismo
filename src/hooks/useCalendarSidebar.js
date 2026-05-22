@@ -5,19 +5,17 @@ import useGuidesStore from '../stores/guidesStore';
 
 const useCalendarSidebar = ({ hideGuides = false } = {}) => {
   const { user } = useAuthStore();
-  const { currentGuide, actions: { setCurrentGuide } } = useIndependentAgendaStore();
+  const {
+    currentGuide,
+    visibleCalendars,
+    actions: { setCurrentGuide, toggleCalendarVisibility }
+  } = useIndependentAgendaStore();
   const { guides: guidesData, fetchGuides } = useGuidesStore();
 
   const [expandedSections, setExpandedSections] = useState({
     calendars: true,
     guides: true,
     filters: false
-  });
-
-  const [visibleCalendars, setVisibleCalendars] = useState({
-    personal: true,
-    company: true,
-    reservations: true
   });
 
   const isAdmin = user?.role === 'admin' || user?.role === 'administrator';
@@ -38,13 +36,6 @@ const useCalendarSidebar = ({ hideGuides = false } = {}) => {
     }));
   };
 
-  const toggleCalendarVisibility = (calendarType) => {
-    setVisibleCalendars(prev => ({
-      ...prev,
-      [calendarType]: !prev[calendarType]
-    }));
-  };
-
   // Transform guides data to the format needed by the sidebar
   const guides = (guidesData || []).map(guide => ({
     id: guide.id,
@@ -53,9 +44,16 @@ const useCalendarSidebar = ({ hideGuides = false } = {}) => {
     role: guide.type || guide.guideType || 'freelance'
   }));
 
+  // Fallback defensivo si el store persistido viene sin visibleCalendars
+  const safeVisibleCalendars = visibleCalendars || {
+    personal: true,
+    company: true,
+    reservations: true
+  };
+
   return {
     expandedSections,
-    visibleCalendars,
+    visibleCalendars: safeVisibleCalendars,
     currentGuide,
     guides,
     isAdmin,

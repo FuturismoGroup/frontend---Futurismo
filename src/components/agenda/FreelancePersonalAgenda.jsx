@@ -44,6 +44,15 @@ const FreelancePersonalAgenda = () => {
     setIsAddEventModalOpen(true);
   };
 
+  // Click en una fecha del calendario mensual: ir a la vista de día para revisar
+  // los eventos agendados (en lugar de abrir directamente el modal de agregar).
+  const handleDateClick = (date) => {
+    if (date) {
+      setSelectedDate(date);
+    }
+    setCurrentView('day');
+  };
+
   const handleMarkOccupied = (date = null, time = null) => {
     setSelectedTimeSlot({ date, time });
     setModalMode('occupied');
@@ -125,8 +134,10 @@ const FreelancePersonalAgenda = () => {
   const renderCurrentView = () => {
     const commonProps = {
       onTimeSlotClick: handleAddEvent,
-      onDateClick: handleAddEvent,
-      onEventClick: handleEventClick,
+      // Click en fecha desde el mes: navegar al detalle del día (no abrir modal de agregar);
+      // para agregar usar el botón flotante, el botón de Acciones rápidas o Shift/Ctrl+click.
+      onDateClick: handleDateClick,
+      onEventClick: handleEventEdit,
       onEventEdit: handleEventEdit
     };
 

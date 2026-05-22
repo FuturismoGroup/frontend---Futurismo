@@ -164,7 +164,8 @@ const GuideTourView = () => {
       const guideId = user?.guideId || user?.id;
       console.log('[GuideTourView] GuideId:', guideId);
 
-      const guideTours = await toursService.getGuideTours(guideId);
+      // Incluir tours completados para que la vista "Ver Detalles" funcione desde la tab Completados
+      const guideTours = await toursService.getGuideTours(guideId, { includeCompleted: 'true' });
       console.log('[GuideTourView] Tours del guía:', guideTours);
 
       if (!guideTours.success) {
@@ -179,21 +180,46 @@ const GuideTourView = () => {
         throw new Error('Tour no encontrado para esta reserva');
       }
 
+      const isCompleted = tourInfo.status === 'completed';
+
+      // Si no hay activeTour: solo es error si NO está completado (no iniciado todavía).
+      // Para tours completados sin activeTour, mostramos la info básica sin paradas.
       if (!tourInfo.activeTour?.id) {
-        throw new Error('Este tour no ha sido iniciado. Debe iniciar el tour primero.');
+        if (!isCompleted) {
+          throw new Error('Este tour no ha sido iniciado. Debe iniciar el tour primero.');
+        }
+        setTourData({
+          tourName: tourInfo.tourName || tourInfo.tour?.name,
+          stops: [],
+          startedAt: tourInfo.startedAt || null,
+          tourInfo
+        });
+        return;
       }
 
       setActiveTourId(tourInfo.activeTour.id);
       console.log('[GuideTourView] ActiveTourId:', tourInfo.activeTour.id);
 
-      // Unirse a la room WebSocket del tour para recibir mensajes
-      webSocketService.joinGuideTour(tourInfo.activeTour.id);
+      // Solo unirse a la room WebSocket si el tour aún no está completado
+      if (!isCompleted) {
+        webSocketService.joinGuideTour(tourInfo.activeTour.id);
+      }
 
       // Ahora obtener el progreso con las paradas
       const progressResponse = await toursService.getTourProgress(tourInfo.activeTour.id);
       console.log('[GuideTourView] Progreso del tour:', progressResponse);
 
       if (!progressResponse.success) {
+        // Para tours completados, si falla el progreso, mostramos info básica en lugar de error fatal
+        if (isCompleted) {
+          setTourData({
+            tourName: tourInfo.tourName || tourInfo.tour?.name,
+            stops: [],
+            startedAt: tourInfo.startedAt || null,
+            tourInfo
+          });
+          return;
+        }
         throw new Error(progressResponse.error || progressResponse.message || 'Error al obtener progreso del tour');
       }
 
@@ -202,13 +228,15 @@ const GuideTourView = () => {
         tourInfo: tourInfo
       });
 
-      // Expandir la primera parada pendiente o la que está en progreso
-      const inProgress = progressResponse.data.stops?.find(s => s.status === 'in_progress');
-      const firstPending = progressResponse.data.stops?.find(s => s.status === 'pending');
-      if (inProgress) {
-        setExpandedStop(inProgress.id);
-      } else if (firstPending) {
-        setExpandedStop(firstPending.id);
+      // Expandir la primera parada pendiente o la que está en progreso (solo si el tour no está completado)
+      if (!isCompleted) {
+        const inProgress = progressResponse.data.stops?.find(s => s.status === 'in_progress');
+        const firstPending = progressResponse.data.stops?.find(s => s.status === 'pending');
+        if (inProgress) {
+          setExpandedStop(inProgress.id);
+        } else if (firstPending) {
+          setExpandedStop(firstPending.id);
+        }
       }
 
     } catch (err) {
@@ -506,6 +534,13 @@ const GuideTourView = () => {
     };
   }, [user?.role, navigate, loadTourData, startGpsTracking, stopGpsTracking]);
 
+  // Si el tour ya está completado, detener tracking GPS (no tiene sentido para tours pasados)
+  useEffect(() => {
+    if (tourData?.tourInfo?.status === 'completed') {
+      stopGpsTracking();
+    }
+  }, [tourData?.tourInfo?.status, stopGpsTracking]);
+
   // Cargar fotos cuando se tenga el activeTourId
   useEffect(() => {
     if (activeTourId) {
@@ -542,6 +577,8 @@ const GuideTourView = () => {
     );
   }
 
+  const isReadOnly = tourData?.tourInfo?.status === 'completed';
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -562,33 +599,45 @@ const GuideTourView = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Indicador de GPS */}
-              <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                gpsStatus === 'active'
-                  ? 'bg-green-100 text-green-700'
-                  : gpsStatus === 'error'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-600'
-              }`}>
-                <MapPinIcon className={`w-4 h-4 ${gpsStatus === 'active' ? 'animate-pulse' : ''}`} />
-                {gpsStatus === 'active' ? 'GPS Activo' : gpsStatus === 'error' ? 'GPS Error' : 'GPS Inactivo'}
-              </div>
+              {/* Indicador de GPS - oculto cuando el tour ya está completado */}
+              {!isReadOnly && (
+                <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                  gpsStatus === 'active'
+                    ? 'bg-green-100 text-green-700'
+                    : gpsStatus === 'error'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-gray-100 text-gray-600'
+                }`}>
+                  <MapPinIcon className={`w-4 h-4 ${gpsStatus === 'active' ? 'animate-pulse' : ''}`} />
+                  {gpsStatus === 'active' ? 'GPS Activo' : gpsStatus === 'error' ? 'GPS Error' : 'GPS Inactivo'}
+                </div>
+              )}
 
-              <button
-                onClick={handleReportIncident}
-                className="btn btn-outline flex items-center gap-2 text-yellow-600 border-yellow-600 hover:bg-yellow-50"
-              >
-                <ExclamationTriangleIcon className="w-4 h-4" />
-                <span className="hidden sm:inline">Reportar Incidente</span>
-              </button>
+              {isReadOnly && (
+                <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                  Tour completado
+                </span>
+              )}
 
-              <button
-                onClick={handleCompleteTour}
-                className="btn btn-success flex items-center gap-2"
-              >
-                <CheckCircleIcon className="w-4 h-4" />
-                <span className="hidden sm:inline">Finalizar Tour</span>
-              </button>
+              {!isReadOnly && (
+                <button
+                  onClick={handleReportIncident}
+                  className="btn btn-outline flex items-center gap-2 text-yellow-600 border-yellow-600 hover:bg-yellow-50"
+                >
+                  <ExclamationTriangleIcon className="w-4 h-4" />
+                  <span className="hidden sm:inline">Reportar Incidente</span>
+                </button>
+              )}
+
+              {!isReadOnly && (
+                <button
+                  onClick={handleCompleteTour}
+                  className="btn btn-success flex items-center gap-2"
+                >
+                  <CheckCircleIcon className="w-4 h-4" />
+                  <span className="hidden sm:inline">Finalizar Tour</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -78,6 +78,7 @@ const useProviderForm = (provider, onSave, onCancel) => {
         // Si está vacío o es NaN, devolver el valor por defecto
         return originalValue === '' || isNaN(value) ? 3 : value;
       })
+      .integer(t(VALIDATION_MESSAGES.INTEGER))
       .min(MIN_RATING, t(VALIDATION_MESSAGES.MIN_VALUE))
       .max(MAX_RATING, t(VALIDATION_MESSAGES.MAX_VALUE)),
     capacity: yup.number().positive(t(VALIDATION_MESSAGES.POSITIVE_NUMBER))

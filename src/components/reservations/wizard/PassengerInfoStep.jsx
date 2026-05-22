@@ -121,8 +121,27 @@ const PassengerInfoStep = ({
                     </label>
                     <input
                       type="tel"
-                      {...register(`groups.${index}.representativePhone`)}
-                      placeholder="+51 999999999"
+                      {...register(`groups.${index}.representativePhone`, {
+                        onChange: (e) => {
+                          // Solo permitir dígitos y limitar a 9 caracteres
+                          e.target.value = e.target.value.replace(/\D/g, '').slice(0, 9);
+                        }
+                      })}
+                      onKeyPress={(e) => {
+                        if (!/[0-9]/.test(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        const pastedText = e.clipboardData.getData('text');
+                        const numbersOnly = pastedText.replace(/\D/g, '').slice(0, 9);
+                        e.target.value = numbersOnly;
+                        e.target.dispatchEvent(new Event('input', { bubbles: true }));
+                      }}
+                      maxLength={9}
+                      inputMode="numeric"
+                      placeholder="9XXXXXXXX"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                     {errors.groups?.[index]?.representativePhone && (

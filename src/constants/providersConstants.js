@@ -14,7 +14,8 @@ export const VALIDATION_MESSAGES = {
   INVALID_EMAIL: 'validation.invalidEmail',
   POSITIVE_NUMBER: 'validation.positiveNumber',
   MIN_VALUE: 'validation.minValue',
-  MAX_VALUE: 'validation.maxValue'
+  MAX_VALUE: 'validation.maxValue',
+  INTEGER: 'validation.integer'
 };
 
 export default {

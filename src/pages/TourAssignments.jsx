@@ -65,6 +65,7 @@ const TourAssignments = () => {
   const [availableDrivers, setAvailableDrivers] = useState([]);
   const [availableVehicles, setAvailableVehicles] = useState([]);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
+  const [isAssigning, setIsAssigning] = useState(false);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -175,6 +176,11 @@ const TourAssignments = () => {
 
   // Abrir modal de asignacion
   const handleOpenAssignModal = async (reservation) => {
+    // Solo se pueden asignar recursos a reservas confirmadas
+    if (reservation.status?.toLowerCase() === 'pending') {
+      toast.error('Debe confirmar la reserva antes de asignar recursos');
+      return;
+    }
     setSelectedReservation(reservation);
     setShowAssignModal(true);
     setAssignmentType('guide');
@@ -253,6 +259,8 @@ const TourAssignments = () => {
 
   // Asignar todos los recursos seleccionados a la reserva
   const handleAssign = async () => {
+    // Idempotencia: si ya hay una operación en curso, ignorar clics repetidos
+    if (isAssigning) return;
     if (!selectedReservation) return;
 
     const tourId = selectedReservation.tour_id || selectedReservation.tourId || selectedReservation.tour?.id;
@@ -268,6 +276,7 @@ const TourAssignments = () => {
       return;
     }
 
+    setIsAssigning(true);
     try {
       // Ejecutar secuencialmente para evitar race condition:
       // los 3 endpoints crean/actualizan el MISMO registro tour_assignments (unique por reservation_id),
@@ -304,6 +313,8 @@ const TourAssignments = () => {
       setShowAssignModal(false);
     } catch (error) {
       toast.error(error.message || 'Error en la asignacion');
+    } finally {
+      setIsAssigning(false);
     }
   };
 
@@ -488,9 +499,9 @@ const TourAssignments = () => {
             <FunnelIcon className="h-5 w-5 text-gray-400" />
             <div className="flex items-center space-x-2">
               {[
-                { key: 'all', label: 'Pendientes' },
+                { key: 'all', label: 'Todos' },
                 { key: 'pending', label: 'Sin Asignar' },
-                { key: 'assigned', label: 'Completados' },
+                { key: 'assigned', label: 'Asignados' },
                 { key: 'today', label: 'Hoy' }
               ].map(({ key, label }) => (
                 <button
@@ -661,15 +672,16 @@ const TourAssignments = () => {
                         <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${
                           isComplete ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {isComplete ? 'Completo' : 'Pendiente'}
+                          {isComplete ? 'Asignado' : 'Pendiente'}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             onClick={() => handleOpenAssignModal(reservation)}
-                            disabled={isLoading}
-                            className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                            disabled={isLoading || reservation.status?.toLowerCase() === 'pending'}
+                            title={reservation.status?.toLowerCase() === 'pending' ? 'Debe confirmar la reserva antes de asignar recursos' : 'Asignar recursos'}
+                            className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             Asignar
                           </button>
@@ -723,7 +735,7 @@ const TourAssignments = () => {
                         ? 'bg-green-100 text-green-800'
                         : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {isComplete ? 'Completo' : 'Pendiente'}
+                      {isComplete ? 'Asignado' : 'Pendiente'}
                     </span>
                   </div>
 
@@ -819,8 +831,9 @@ const TourAssignments = () => {
                   <div className="space-y-2">
                     <button
                       onClick={() => handleOpenAssignModal(reservation)}
-                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
-                      disabled={isLoading}
+                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={isLoading || reservation.status?.toLowerCase() === 'pending'}
+                      title={reservation.status?.toLowerCase() === 'pending' ? 'Debe confirmar la reserva antes de asignar recursos' : ''}
                     >
                       Gestionar Asignaciones
                       <ChevronRightIcon className="h-4 w-4 ml-2" />
@@ -1071,20 +1084,31 @@ const TourAssignments = () => {
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={() => setShowAssignModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                disabled={isAssigning}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleAssign}
                 disabled={
+                  isAssigning ||
                   isLoading ||
                   (!selectedGuide && !selectedDriver && !selectedVehicle)
                 }
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
               >
-                <CheckIcon className="h-4 w-4 mr-2" />
-                Asignar
+                {isAssigning ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Asignando...
+                  </>
+                ) : (
+                  <>
+                    <CheckIcon className="h-4 w-4 mr-2" />
+                    Asignar
+                  </>
+                )}
               </button>
             </div>
           </div>

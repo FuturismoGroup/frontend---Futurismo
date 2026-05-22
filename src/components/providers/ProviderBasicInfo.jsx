@@ -160,11 +160,21 @@ const ProviderBasicInfo = ({ register, errors, watch }) => {
           <div className="flex items-center space-x-2">
             <input
               type="number"
-              step="0.1"
+              step="1"
               min={MIN_RATING}
               max={MAX_RATING}
               defaultValue={3}
-              {...register('rating', { valueAsNumber: true })}
+              onKeyDown={(e) => {
+                if (['.', ',', 'e', 'E', '+', '-'].includes(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              {...register('rating', {
+                setValueAs: (v) =>
+                  v === '' || v === null || v === undefined || isNaN(parseInt(v, 10))
+                    ? undefined
+                    : parseInt(v, 10)
+              })}
               className={`w-20 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
                 errors.rating ? 'border-red-500' : 'border-gray-300'
               }`}

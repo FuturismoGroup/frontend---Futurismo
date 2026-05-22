@@ -94,8 +94,15 @@ const ProvidersManager = () => {
     });
   }, [providers, searchQuery, filters]);
 
-  const handleAddProvider = () => {
+  const handleAddProvider = async () => {
     if (!canManage) return;
+    // Refrescar catálogos (categorías/ubicaciones/servicios) antes de abrir
+    // el formulario para asegurar IDs válidos y evitar errores FK al guardar.
+    try {
+      await actions.initialize();
+    } catch (error) {
+      console.error('Error refrescando catálogos:', error);
+    }
     setEditingProvider(null);
     setShowForm(true);
   };

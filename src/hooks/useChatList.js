@@ -30,7 +30,9 @@ const useChatList = () => {
           name: conv.name || otherParticipant?.name || 'Usuario',
           type: conv.chatType === 'group' ? 'group' : 'direct',
           avatar: otherParticipant?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(otherParticipant?.name || 'User')}&background=3B82F6&color=fff`,
-          lastMessage: conv.lastMessage?.content || i18next.t('common.noData'),
+          // Si no hay último mensaje (chat nuevo o todos los mensajes borrados),
+          // mostrar prompt de inicio en lugar del genérico "No hay datos".
+          lastMessage: conv.lastMessage?.content || i18next.t('chat.startConversation', { defaultValue: 'Inicia la conversación' }),
           lastMessageTime: conv.lastMessage?.createdAt ? new Date(conv.lastMessage.createdAt) : new Date(conv.createdAt),
           unreadCount: conv.unreadCount || 0,
           online: otherParticipant ? onlineUsers.has(otherParticipant.id) : false,

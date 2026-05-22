@@ -354,7 +354,7 @@ const History = () => {
             sort={sort}
             onSort={updateSort}
             onViewDetails={handleViewDetails}
-            onRate={handleRate}
+            onRate={user?.role === 'agency' ? handleRate : undefined}
             loading={loading}
           />
         </div>

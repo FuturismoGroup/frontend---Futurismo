@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { format, isToday } from 'date-fns';
 import useIndependentAgendaStore from '../stores/independentAgendaStore';
 import useAuthStore from '../stores/authStore';
-import { isAdminRole, filterEventsForAdmin } from '../utils/eventHelpers';
+import { isAdminRole, filterEventsForAdmin, filterEventsByVisibility } from '../utils/eventHelpers';
 
 const useDayView = () => {
   const { user } = useAuthStore();
@@ -10,6 +10,7 @@ const useDayView = () => {
     selectedDate,
     currentGuide,
     lastEventUpdate,
+    visibleCalendars,
     actions: { getGuideCompleteAgenda }
   } = useIndependentAgendaStore();
 
@@ -66,8 +67,10 @@ const useDayView = () => {
         // Backend returns { success, data: { allEvents } }
         const events = result?.data?.allEvents || result?.allEvents || result?.events || [];
 
-        // Si es admin, filtrar por visibilidad
-        const processedEvents = isAdmin ? filterEventsForAdmin(events) : events;
+        // Si es admin, filtrar por visibilidad (enmascara privados como "Ocupado")
+        const adminFiltered = isAdmin ? filterEventsForAdmin(events) : events;
+        // Aplicar toggles del sidebar (Mi Agenda / Tours / Reservas)
+        const processedEvents = filterEventsByVisibility(adminFiltered, visibleCalendars);
 
         // Separate all-day events
         const allDay = processedEvents.filter(event => event.allDay);
@@ -83,7 +86,7 @@ const useDayView = () => {
     };
 
     loadEvents();
-  }, [selectedDate, currentGuide, user?.guideId, isAdmin, getGuideCompleteAgenda, lastEventUpdate]);
+  }, [selectedDate, currentGuide, user?.guideId, isAdmin, getGuideCompleteAgenda, lastEventUpdate, visibleCalendars]);
 
   const handleTimeSlotClick = (hour, minutes = 0, onTimeSlotClick) => {
     const clickDate = new Date(selectedDate);

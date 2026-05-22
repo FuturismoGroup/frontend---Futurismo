@@ -30,6 +30,54 @@ export const isOccupiedEvent = (event) =>
   event?.visibility === 'occupied';
 
 /**
+ * Filtra eventos por los toggles de visibilidad del sidebar
+ * (Mi Agenda / Tours asignados / Reservas). `visibleCalendars` es un objeto
+ * { personal, company, reservations } con booleans.
+ * Si un toggle viene en `false`, los eventos de esa categoría se ocultan.
+ */
+export const filterEventsByVisibility = (events, visibleCalendars) => {
+  if (!visibleCalendars || !Array.isArray(events)) return events || [];
+
+  const personalOn = visibleCalendars.personal !== false;
+  const companyOn = visibleCalendars.company !== false;
+  const reservationsOn = visibleCalendars.reservations !== false;
+
+  // Si todos están encendidos, no filtramos
+  if (personalOn && companyOn && reservationsOn) return events;
+
+  return events.filter(event => {
+    const type = event.eventType || event.type;
+
+    // Eventos personales del guía u "ocupado" → calendario "Mi Agenda"
+    if (
+      type === 'personal' ||
+      type === 'occupied' ||
+      event.visibility === 'occupied'
+    ) {
+      return personalOn;
+    }
+
+    // Tours asignados por admin + solicitudes marketplace → "Tours asignados"
+    if (
+      type === 'assigned_tour' ||
+      type === 'marketplace_service' ||
+      type === 'marketplace_pending' ||
+      event.source === 'marketplace'
+    ) {
+      return companyOn;
+    }
+
+    // Reservas (company_tour proviene de reservations.guide_id) → "Reservas"
+    if (type === 'company_tour') {
+      return reservationsOn;
+    }
+
+    // Cualquier otro tipo desconocido se respeta (no se oculta por accidente)
+    return true;
+  });
+};
+
+/**
  * Filtra eventos para la vista del admin: enmascara eventos privados/personales
  * del guía como "Ocupado"/"Tiempo ocupado", manteniendo visibles tours asignados
  * y servicios marketplace.
