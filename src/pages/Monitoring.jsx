@@ -449,7 +449,7 @@ const Monitoring = () => {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 min-h-0 bg-white overflow-hidden" style={{ minHeight: '500px' }}>
+      <div className="flex-1 min-h-0 bg-white overflow-hidden">
         {/* Vista de Mapa - Para todos los roles */}
         {activeView === 'map' && (
           <div className="h-full flex flex-col lg:flex-row">

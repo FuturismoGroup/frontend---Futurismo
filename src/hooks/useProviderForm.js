@@ -72,7 +72,7 @@ const useProviderForm = (provider, onSave, onCancel) => {
         .required(t(VALIDATION_MESSAGES.REQUIRED)),
       address: yup.string().required(t(VALIDATION_MESSAGES.REQUIRED))
     }),
-    observations: yup.string(),
+    observations: yup.string().nullable().transform((v) => v ?? ''),
     rating: yup.number()
       .transform((value, originalValue) => {
         // Si está vacío o es NaN, devolver el valor por defecto

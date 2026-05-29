@@ -118,6 +118,28 @@ class PaymentVoucherService {
    * Agrega información del cliente
    */
   addClientInfo(doc, reservation, yPos, margin, secondaryColor) {
+    // El "cliente" de la nota de pago es la agencia que reserva
+    // (Futurismo factura a la agencia). Se cae a billingName / agencyName
+    // si no viene un clientName explícito.
+    const clientName =
+      reservation.clientName ||
+      reservation.billingName ||
+      reservation.agency?.businessName ||
+      reservation.agencyName ||
+      t('common.noData');
+
+    const clientPhone =
+      reservation.clientPhone ||
+      reservation.agency?.phone ||
+      reservation.agencyPhone ||
+      '';
+
+    const clientEmail =
+      reservation.clientEmail ||
+      reservation.agency?.email ||
+      reservation.agencyEmail ||
+      '';
+
     doc.setFontSize(12);
     doc.setTextColor('#000000');
     doc.text(t('paymentVoucher.clientInfo'), margin, yPos);
@@ -125,16 +147,16 @@ class PaymentVoucherService {
 
     doc.setFontSize(10);
     doc.setTextColor(secondaryColor);
-    doc.text(`${t('paymentVoucher.client')} ${reservation.clientName}`, margin, yPos);
+    doc.text(`${t('paymentVoucher.client')} ${clientName}`, margin, yPos);
     yPos += 6;
-    
-    if (reservation.clientPhone) {
-      doc.text(`${t('paymentVoucher.phone')} ${reservation.clientPhone}`, margin, yPos);
+
+    if (clientPhone) {
+      doc.text(`${t('paymentVoucher.phone')} ${clientPhone}`, margin, yPos);
       yPos += 6;
     }
-    
-    if (reservation.clientEmail) {
-      doc.text(`${t('paymentVoucher.email')} ${reservation.clientEmail}`, margin, yPos);
+
+    if (clientEmail) {
+      doc.text(`${t('paymentVoucher.email')} ${clientEmail}`, margin, yPos);
       yPos += 6;
     }
 

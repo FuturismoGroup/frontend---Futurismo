@@ -668,7 +668,7 @@ const RewardsManagement = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className={`badge badge-${REDEMPTION_STATUS_COLORS[redemption.status]}`}>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${REDEMPTION_STATUS_COLORS[redemption.status] || 'bg-gray-100 text-gray-800'}`}>
                           {t(REDEMPTION_STATUS_LABELS[redemption.status] || '', { defaultValue: redemption.status })}
                         </span>
                       </td>
@@ -1103,7 +1103,7 @@ const RewardsManagement = () => {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-500">Estado:</span>
-                          <span className={`badge badge-${REDEMPTION_STATUS_COLORS[selectedItem.status]}`}>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${REDEMPTION_STATUS_COLORS[selectedItem.status] || 'bg-gray-100 text-gray-800'}`}>
                             {t(REDEMPTION_STATUS_LABELS[selectedItem.status] || '', { defaultValue: selectedItem.status })}
                           </span>
                         </div>

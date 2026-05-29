@@ -19,7 +19,7 @@ const ProviderServicesSection = ({
   const { categories, services: storeServices, actions } = useProvidersStore();
   const [showServiceModal, setShowServiceModal] = useState(false);
 
-  const getServiceOptions = () => {
+  const getServiceOptions = (currentValue = '') => {
     if (!selectedCategory) return [];
 
     let categoryValue = selectedCategory;
@@ -75,7 +75,31 @@ const ProviderServicesSection = ({
       });
     }
 
-    return options;
+    // Excluir servicios ya seleccionados en otras filas para evitar duplicados.
+    // Se mantiene el valor actual de la fila (currentValue) para que se muestre correctamente.
+    const selectedInOtherRows = new Set(
+      services.filter(s => s && s !== currentValue)
+    );
+
+    return options.filter(opt => !selectedInOtherRows.has(opt.value));
+  };
+
+  const totalAvailableServices = getServiceOptions().length;
+  const selectedCount = services.filter(s => s && s.trim()).length;
+  const hasEmptyRow = services.some(s => !s || !s.trim());
+  const allServicesUsed = selectedCount >= totalAvailableServices && totalAvailableServices > 0;
+  const canAddMoreServices = !hasEmptyRow && !allServicesUsed;
+
+  const handleAddServiceClick = () => {
+    if (hasEmptyRow) {
+      toast.error(t('providers.services.completeRowFirst'));
+      return;
+    }
+    if (allServicesUsed) {
+      toast.error(t('providers.services.noMoreAvailable'));
+      return;
+    }
+    handleAddService();
   };
 
   const handleSaveService = async (serviceData) => {
@@ -161,7 +185,7 @@ const ProviderServicesSection = ({
                          hover:border-gray-300 transition-colors cursor-pointer"
             >
               <option value="">{t('providers.form.placeholders.selectService')}</option>
-              {getServiceOptions().map(option => (
+              {getServiceOptions(service).map(option => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -186,10 +210,21 @@ const ProviderServicesSection = ({
       <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 flex flex-wrap gap-2">
         <button
           type="button"
-          onClick={handleAddService}
-          className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium
-                     text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg
-                     transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+          onClick={handleAddServiceClick}
+          disabled={!canAddMoreServices}
+          title={
+            hasEmptyRow
+              ? t('providers.services.completeRowFirst')
+              : allServicesUsed
+                ? t('providers.services.noMoreAvailable')
+                : ''
+          }
+          className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg
+                      transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1
+                      ${canAddMoreServices
+                        ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 focus:ring-blue-500'
+                        : 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                      }`}
         >
           <PlusIcon className="w-4 h-4" />
           {t('providers.form.actions.addService')}

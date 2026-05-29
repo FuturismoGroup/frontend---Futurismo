@@ -14,9 +14,10 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   ExclamationTriangleIcon,
-  GiftIcon
+  GiftIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline';
-import { StarIcon } from '@heroicons/react/24/solid';
+import { StarIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 import agencyService from '../services/agencyService';
 import pointsService from '../services/pointsService';
 import toast from 'react-hot-toast';
@@ -307,6 +308,34 @@ const ClientsManagement = () => {
     setShowDetails(true);
   };
 
+  // Alternar verificación de la agencia (sello del admin)
+  const handleToggleVerified = async (agency) => {
+    const nextVerified = !agency.verified;
+    const confirmMsg = nextVerified
+      ? `¿Marcar a "${agency.businessName || agency.name}" como verificada?`
+      : `¿Quitar la verificación a "${agency.businessName || agency.name}"?`;
+    if (!window.confirm(confirmMsg)) return;
+
+    // Optimistic update para reflejar el cambio sin esperar al fetch
+    setAgencies(prev => prev.map(a =>
+      a.id === agency.id ? { ...a, verified: nextVerified } : a
+    ));
+
+    try {
+      const result = await agencyService.setAgencyVerified(agency.id, nextVerified);
+      if (!result.success) {
+        throw new Error(result.error || 'Error al actualizar verificación');
+      }
+      toast.success(nextVerified ? 'Agencia verificada' : 'Verificación retirada');
+    } catch (error) {
+      // Revertir si falló
+      setAgencies(prev => prev.map(a =>
+        a.id === agency.id ? { ...a, verified: !nextVerified } : a
+      ));
+      toast.error(error.message || 'Error al actualizar verificación');
+    }
+  };
+
   // Manejar adicion de puntos (ELM-414: POST /api/agencies/:id/points)
   const handleAddPoints = async () => {
     const amount = parseInt(pointsData.amount);
@@ -506,8 +535,14 @@ const ClientsManagement = () => {
                 <tr key={agency.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {agency.businessName || agency.name || agency.company_name}
+                      <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
+                        <span>{agency.businessName || agency.name || agency.company_name}</span>
+                        {agency.verified && (
+                          <CheckBadgeIcon
+                            className="h-4 w-4 text-blue-500"
+                            title="Agencia verificada"
+                          />
+                        )}
                       </div>
                       <div className="text-sm text-gray-500">
                         RUC: {agency.ruc || agency.tax_id || '-'}
@@ -547,6 +582,17 @@ const ClientsManagement = () => {
                         title="Ver detalles"
                       >
                         <EyeIcon className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => handleToggleVerified(agency)}
+                        className={agency.verified
+                          ? 'text-blue-600 hover:text-gray-600'
+                          : 'text-gray-400 hover:text-blue-600'}
+                        title={agency.verified ? 'Quitar verificación' : 'Verificar agencia'}
+                      >
+                        {agency.verified
+                          ? <CheckBadgeIcon className="h-5 w-5" />
+                          : <ShieldCheckIcon className="h-5 w-5" />}
                       </button>
                       <button
                         onClick={() => {

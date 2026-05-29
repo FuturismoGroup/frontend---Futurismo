@@ -222,7 +222,7 @@ const useHistoryStore = create(
               })(),
               duration: duration,
               status: reservation.status || (reservation.guideId ? 'confirmed' : 'pending'),
-              serviceType: reservation.tour?.tourType || reservation.serviceType || 'regular',
+              serviceType: reservation.tour?.tourType || reservation.serviceType || '',
               guide: guideName,
               driver: driverName,
               vehicle: vehicleInfo,

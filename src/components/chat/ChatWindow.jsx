@@ -18,7 +18,8 @@ const ChatWindow = ({ chat, onClose }) => {
     handleSendMessage,
     currentUserId,
     typingUsers,
-    sendTypingIndicator
+    sendTypingIndicator,
+    loading
   } = useChatWindow(chat);
 
   if (!chat) {
@@ -65,6 +66,21 @@ const ChatWindow = ({ chat, onClose }) => {
             <span className="px-4 py-1.5 bg-white/80 backdrop-blur-sm text-xs font-medium text-slate-500 rounded-full shadow-sm border border-slate-200/50">
               {t('chat.today')}
             </span>
+          </div>
+        )}
+
+        {/* Estado vacío cuando ya cargó y no hay mensajes (chat nuevo o sin actividad) */}
+        {!loading && messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full text-center px-6 py-12">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full p-5 mb-4 shadow-sm">
+              <ChatBubbleLeftRightIcon className="w-12 h-12 text-blue-500" />
+            </div>
+            <h4 className="text-base font-semibold text-slate-700 mb-1">
+              {t('chat.noMessagesYet')}
+            </h4>
+            <p className="text-sm text-slate-500 max-w-xs">
+              {t('chat.startConversation')}
+            </p>
           </div>
         )}
 

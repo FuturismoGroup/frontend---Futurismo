@@ -86,7 +86,10 @@ const DayView = ({ onTimeSlotClick, onDateClick, onEventClick, onEventEdit }) =>
   };
 
   return (
-    <div className="h-full bg-white rounded-lg">
+    // `relative` es CRÍTICO: contiene el overlay `absolute inset-0` del
+    // empty state. Sin esto, el overlay se posiciona contra el viewport
+    // y captura clicks del menú lateral, dejando la página "congelada".
+    <div className="relative h-full bg-white rounded-lg">
       {/* All-day events section */}
       {allDayEvents.length > 0 && (
         <div className="border-b border-gray-200 p-4 bg-gray-50">
@@ -163,9 +166,10 @@ const DayView = ({ onTimeSlotClick, onDateClick, onEventClick, onEventEdit }) =>
         </div>
       </div>
 
-      {/* Empty state */}
+      {/* Empty state — overlay decorativo: pointer-events-none para no
+          interceptar clicks del grid de horas ni del menú lateral. */}
       {dayEvents.length === 0 && allDayEvents.length === 0 && !isAdmin && (
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="text-center text-gray-500">
             <ClockIcon className="h-12 w-12 mx-auto mb-2 text-gray-400" />
             <p className="text-lg font-medium">{t('calendar.noEvents')}</p>

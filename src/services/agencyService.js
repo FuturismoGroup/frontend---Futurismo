@@ -363,6 +363,17 @@ return this.post('/points/calculate', reservation);
   async togglePaymentMethod(agencyId, pmId) {
     return this.patch(`/${agencyId}/payment-methods/${pmId}/toggle`);
   }
+
+  /**
+   * Marcar/desmarcar una agencia como verificada
+   * @param {string} id - ID de la agencia
+   * @param {boolean} [verified] - Valor explícito; si se omite, alterna
+   * @returns {Promise<Object>}
+   */
+  async setAgencyVerified(id, verified) {
+    const body = typeof verified === 'boolean' ? { verified } : {};
+    return this.patch(`/${id}/verify`, body);
+  }
 }
 
 const agencyService = new AgencyService();

@@ -597,7 +597,12 @@ const useProvidersStore = create(
               return [];
             }
 
-            let filteredProviders = providers;
+            // Defensa en profundidad: nunca contar soft-deleted, aunque por una
+            // carrera entre fetchProviders, updateProvider o toggleProviderStatus
+            // un eliminado se cuele en state.providers. El backend ya excluye
+            // status='deleted', pero este filtro evita que los badges del árbol
+            // de ubicaciones reporten un número distinto del que ve la grilla.
+            let filteredProviders = providers.filter(p => p?.status !== 'deleted');
 
             // Filtrar por ubicación - soporta múltiples formatos del backend
             if (locationId) {
@@ -619,10 +624,13 @@ const useProvidersStore = create(
 
             return filteredProviders;
           },
-          
+
           getTotalProvidersCount: () => {
             const { providers } = get();
-            return providers ? providers.length : 0;
+            if (!providers) return 0;
+            // Mismo razonamiento que getProvidersByLocationAndCategory: el conteo
+            // total nunca debe incluir soft-deleted.
+            return providers.filter(p => p?.status !== 'deleted').length;
           },
           
           clearError: () => set({ error: null }),
@@ -655,18 +663,16 @@ const useProvidersStore = create(
       }),
       {
         name: 'providers-store',
-        version: 2, // Bump: ya no persistimos catálogos (categories/locations/services)
-        // Solo persistimos la lista de proveedores. Los catálogos (categories, locations,
-        // services) SIEMPRE se cargan frescos desde la API en `initialize()` para evitar
-        // IDs obsoletos que provoquen errores FK al crear/editar proveedores.
-        partialize: (state) => ({
-          providers: state.providers
-        }),
-        merge: (persistedState, currentState) => ({
+        version: 3, // Bump: dejamos de persistir 'providers' para evitar mostrar
+        // soft-deleted en cache después de una recarga o cambio de filtros.
+        // Ya no persistimos nada del módulo: providers se cargan frescos vía
+        // fetchProviders() en cada montaje, y los catálogos (categories,
+        // locations, services) en initialize(). Esto garantiza que un
+        // proveedor eliminado en el backend no reaparezca por cache local.
+        partialize: () => ({}),
+        merge: (_persistedState, currentState) => ({
           ...currentState,
-          ...persistedState,
-          providers: Array.isArray(persistedState?.providers) ? persistedState.providers : [],
-          // Forzar arrays vacíos para catálogos hasta que `initialize()` los pueble
+          providers: [],
           locations: [],
           categories: [],
           services: []

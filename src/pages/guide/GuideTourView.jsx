@@ -845,8 +845,10 @@ const GuideTourView = () => {
           </div>
         </div>
 
-        {/* Acciones rápidas */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Acciones rápidas — Reportar/Finalizar solo aplican mientras el
+            tour está en curso. Si ya está completado se ocultan para evitar
+            contradicción con el badge "Tour completado" del encabezado. */}
+        <div className={`mt-6 grid grid-cols-1 gap-4 ${isReadOnly ? 'md:grid-cols-1' : 'md:grid-cols-3'}`}>
           <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-2">📱 Contacto de Emergencia</h4>
             <p className="text-sm text-gray-600 mb-1">
@@ -857,31 +859,35 @@ const GuideTourView = () => {
             </p>
           </div>
 
-          <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-2">⚠️ Reportar Problema</h4>
-            <p className="text-sm text-gray-600 mb-3">
-              Retrasos, cambios de plan, etc.
-            </p>
-            <button
-              onClick={handleReportIncident}
-              className="btn btn-outline w-full"
-            >
-              Reportar Incidente
-            </button>
-          </div>
+          {!isReadOnly && (
+            <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+              <h4 className="font-medium text-gray-900 mb-2">⚠️ Reportar Problema</h4>
+              <p className="text-sm text-gray-600 mb-3">
+                Retrasos, cambios de plan, etc.
+              </p>
+              <button
+                onClick={handleReportIncident}
+                className="btn btn-outline w-full"
+              >
+                Reportar Incidente
+              </button>
+            </div>
+          )}
 
-          <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-2">✅ Finalizar Servicio</h4>
-            <p className="text-sm text-gray-600 mb-3">
-              Cuando termines todas las paradas
-            </p>
-            <button
-              onClick={handleCompleteTour}
-              className="btn btn-success w-full"
-            >
-              Finalizar Tour
-            </button>
-          </div>
+          {!isReadOnly && (
+            <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+              <h4 className="font-medium text-gray-900 mb-2">✅ Finalizar Servicio</h4>
+              <p className="text-sm text-gray-600 mb-3">
+                Cuando termines todas las paradas
+              </p>
+              <button
+                onClick={handleCompleteTour}
+                className="btn btn-success w-full"
+              >
+                Finalizar Tour
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

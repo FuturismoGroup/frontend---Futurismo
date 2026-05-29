@@ -18,7 +18,8 @@ const HistoryTable = ({
   onSort,
   loading,
   onViewDetails,
-  onRate
+  onRate,
+  serviceTypes
 }) => {
   const { t } = useTranslation();
   const { user } = useAuthStore();
@@ -69,29 +70,27 @@ const HistoryTable = ({
   };
 
   const getServiceTypeBadge = (type) => {
-    const typeConfig = {
-      regular: {
-        bg: 'bg-blue-100',
-        text: 'text-blue-800',
-        label: t('history.table.serviceType.regular')
-      },
-      private: {
-        bg: 'bg-purple-100',
-        text: 'text-purple-800',
-        label: t('history.table.serviceType.private')
-      },
-      transfer: {
-        bg: 'bg-gray-100',
-        text: 'text-gray-800',
-        label: t('history.table.serviceType.transfer')
-      }
-    };
+    // Buscar el tipo en el catálogo dinámico creado por el admin
+    const dynamicType = Array.isArray(serviceTypes)
+      ? serviceTypes.find(st => st.value === type)
+      : null;
 
-    const config = typeConfig[type] || typeConfig.regular;
+    if (dynamicType) {
+      const color = dynamicType.color || '#6B7280';
+      return (
+        <span
+          className="inline-flex px-2 py-1 text-xs font-medium rounded"
+          style={{ backgroundColor: `${color}20`, color }}
+        >
+          {dynamicType.label}
+        </span>
+      );
+    }
 
+    // Sin tipo definido o tipo desconocido
     return (
-      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${config.bg} ${config.text}`}>
-        {config.label}
+      <span className="inline-flex px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-600">
+        {type || t('common.noData')}
       </span>
     );
   };
@@ -317,11 +316,17 @@ HistoryTable.propTypes = {
   onSort: PropTypes.func.isRequired,
   onViewDetails: PropTypes.func.isRequired,
   onRate: PropTypes.func,
+  serviceTypes: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.string,
+    label: PropTypes.string,
+    color: PropTypes.string
+  })),
   loading: PropTypes.bool
 };
 
 HistoryTable.defaultProps = {
-  loading: false
+  loading: false,
+  serviceTypes: []
 };
 
 export default HistoryTable;

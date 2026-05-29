@@ -9,6 +9,7 @@ import HistoryPagination from '../components/history/HistoryPagination';
 import ServiceDetailsModal from '../components/history/ServiceDetailsModal';
 import RatingModal from '../components/rating/RatingModal';
 import ratingsService from '../services/ratingsService';
+import api from '../services/api';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -22,6 +23,7 @@ const History = () => {
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [ratingLoading, setRatingLoading] = useState(false);
   const [allFilterOptions, setAllFilterOptions] = useState({ allGuides: [], allDrivers: [], allVehicles: [] });
+  const [serviceTypes, setServiceTypes] = useState([]);
 
   const {
     filteredServices,
@@ -46,6 +48,16 @@ const History = () => {
       // Cargar todas las opciones disponibles (incluyendo no asignados)
       const allOptions = await getAllFilterOptions();
       setAllFilterOptions(allOptions);
+
+      // Cargar tipos de servicio dinámicos creados por el admin
+      try {
+        const response = await api.get('/config/service-types');
+        if (response.data?.success) {
+          setServiceTypes(response.data.data?.serviceTypes || []);
+        }
+      } catch (err) {
+        // Silenciar: la tabla y el filtro caerán al fallback "Sin tipo"
+      }
     };
     loadData();
   }, []); // Empty dependency array to run only once
@@ -151,7 +163,9 @@ const History = () => {
         service.driver || service.driverName || 'No asignado',
         service.vehicle || service.vehiclePlate || 'No asignado',
         service.participants || 0,
-        service.price ? `$${service.price.toLocaleString()}` : 'N/A',
+        (service.price ?? service.amount)
+          ? `$${(service.price ?? service.amount).toLocaleString()}`
+          : 'N/A',
         service.status === 'completed' ? 'Completado' :
         service.status === 'pending' ? 'Pendiente' :
         service.status === 'cancelled' ? 'Cancelado' :
@@ -175,7 +189,7 @@ const History = () => {
       if (user?.role !== 'agency') {
         const totalRevenue = filteredServices
           .filter(s => s.status === 'completed')
-          .reduce((sum, s) => sum + (s.price || 0), 0);
+          .reduce((sum, s) => sum + (s.price ?? s.amount ?? 0), 0);
         summaryRows.push(['Ingresos totales (completados)', `$${totalRevenue.toLocaleString()}`]);
       }
 
@@ -344,6 +358,7 @@ const History = () => {
           onClearFilters={clearFilters}
           filterOptions={roleFilteredOptions}
           allFilterOptions={allFilterOptions}
+          serviceTypes={serviceTypes}
           loading={loading}
         />
 
@@ -355,6 +370,7 @@ const History = () => {
             onSort={updateSort}
             onViewDetails={handleViewDetails}
             onRate={user?.role === 'agency' ? handleRate : undefined}
+            serviceTypes={serviceTypes}
             loading={loading}
           />
         </div>

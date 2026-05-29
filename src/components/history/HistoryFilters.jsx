@@ -10,6 +10,7 @@ const HistoryFilters = ({
   onClearFilters,
   filterOptions,
   allFilterOptions,
+  serviceTypes,
   loading
 }) => {
   const { t } = useTranslation();
@@ -117,9 +118,11 @@ const HistoryFilters = ({
             disabled={loading}
           >
             <option value="all">{t('history.filters.serviceType.all')}</option>
-            <option value="regular">{t('history.filters.serviceType.regular')}</option>
-            <option value="private">{t('history.filters.serviceType.private')}</option>
-            <option value="transfer">{t('history.filters.serviceType.transfer')}</option>
+            {(serviceTypes || []).map(type => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -241,12 +244,18 @@ HistoryFilters.propTypes = {
       assigned: PropTypes.bool
     }))
   }),
+  serviceTypes: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.string,
+    label: PropTypes.string,
+    color: PropTypes.string
+  })),
   loading: PropTypes.bool
 };
 
 HistoryFilters.defaultProps = {
   loading: false,
-  allFilterOptions: { allGuides: [], allDrivers: [], allVehicles: [] }
+  allFilterOptions: { allGuides: [], allDrivers: [], allVehicles: [] },
+  serviceTypes: []
 };
 
 export default HistoryFilters;

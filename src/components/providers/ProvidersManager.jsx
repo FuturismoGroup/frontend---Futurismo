@@ -72,24 +72,30 @@ const ProvidersManager = () => {
     if (!providers || !Array.isArray(providers)) {
       return [];
     }
-    
+
     return providers.filter(provider => {
+      // Defensa en profundidad: nunca renderizar proveedores soft-deleted
+      // aunque el backend o el cache de zustand alguna vez los entreguen.
+      if (provider?.status === 'deleted') {
+        return false;
+      }
+
       if (searchQuery && !provider.name.toLowerCase().includes(searchQuery.toLowerCase())) {
         return false;
       }
-      
+
       if (filters.location && provider.location !== filters.location) {
         return false;
       }
-      
+
       if (filters.category && provider.category !== filters.category) {
         return false;
       }
-      
+
       if (filters.minRating && (provider.rating || 0) < filters.minRating) {
         return false;
       }
-      
+
       return true;
     });
   }, [providers, searchQuery, filters]);

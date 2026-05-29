@@ -45,14 +45,23 @@ const QuickAddModal = ({
     getFormData
   } = useEventForm();
 
-  // Update form when props change
+  // Update form when props change.
+  // Para "Marcar tiempo ocupado" desde el sidebar/botón flotante el padre abre
+  // el modal sin selectedDate/selectedTime: prellenamos fecha=hoy y title='Tiempo
+  // ocupado' para que el usuario no caiga en validaciones silenciosas (la "Razón"
+  // es requerida por useEventForm.validate() y, si se omite, handleSubmit aborta
+  // sin tocar el backend y el calendario no muestra nada).
   useEffect(() => {
+    if (!isOpen) return;
+
     const updates = {};
-    
+
     if (selectedDate) {
       updates.date = format(selectedDate, 'yyyy-MM-dd');
+    } else {
+      updates.date = format(new Date(), 'yyyy-MM-dd');
     }
-    
+
     if (selectedTime) {
       updates.startTime = selectedTime;
       // Add 1 hour to get end time
@@ -60,11 +69,15 @@ const QuickAddModal = ({
       const endHour = (h + 1) % 24;
       updates.endTime = `${String(endHour).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
     }
-    
-    if (Object.keys(updates).length > 0) {
-      updateFields(updates);
+
+    if (mode === 'occupied') {
+      // El backend ignora este título (lo hardcodea como 'Tiempo ocupado'),
+      // así que pre-llenarlo sólo evita la validación frontend de "Razón".
+      updates.title = t('calendar.occupied') || 'Tiempo ocupado';
     }
-  }, [selectedDate, selectedTime, updateFields]);
+
+    updateFields(updates);
+  }, [isOpen, selectedDate, selectedTime, mode, updateFields, t]);
 
   const handleSubmit = async () => {
     if (!validate() || !user) return;
@@ -78,7 +91,8 @@ const QuickAddModal = ({
           date: eventData.date,
           startTime: eventData.allDay ? null : eventData.startTime,
           endTime: eventData.allDay ? null : eventData.endTime,
-          note: eventData.description
+          // El backend (markTimeAsOccupied) destructura `notes`, no `note`.
+          notes: eventData.description
         });
         toast.success(t('calendar.messages.timeMarkedOccupied'));
       } else {
