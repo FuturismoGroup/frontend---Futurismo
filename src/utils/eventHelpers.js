@@ -48,18 +48,17 @@ export const filterEventsByVisibility = (events, visibleCalendars) => {
   return events.filter(event => {
     const type = event.eventType || event.type;
 
-    // Eventos personales del guía u "ocupado" → calendario "Mi Agenda"
-    if (
-      type === 'personal' ||
-      type === 'occupied' ||
-      event.visibility === 'occupied'
-    ) {
-      return personalOn;
-    }
+    // El orden importa: assigned_tour y los servicios reservados se evalúan
+    // ANTES que la regla genérica de `visibility === 'occupied'`, porque el
+    // backend devuelve esos tipos con visibility='occupied' (bloquean la
+    // disponibilidad del guía). Si dejáramos la regla de "Mi Agenda" arriba,
+    // los assigned_tour caerían en `personalOn` y el toggle "Tours asignados"
+    // dejaría de tener efecto — el bug reportado por los guías freelance.
 
     // "Tours asignados" (chip verde): SOLO los tours que un admin agendó
     // manualmente sobre la agenda del guía vía /guides/:id/tours.
-    // Estos viven en personal_events con event_type = 'assigned_tour'.
+    // Estos viven en personal_events con event_type = 'assigned_tour' y
+    // suelen llegar con visibility='occupied' porque bloquean la agenda.
     if (type === 'assigned_tour') {
       return companyOn;
     }
@@ -81,6 +80,19 @@ export const filterEventsByVisibility = (events, visibleCalendars) => {
       event.source === 'marketplace'
     ) {
       return reservationsOn;
+    }
+
+    // Eventos personales del guía u "ocupado" → calendario "Mi Agenda".
+    // Incluye personal, occupied, day_off y cualquier otro evento con
+    // visibility='occupied' que no haya sido capturado por las reglas de
+    // arriba (assigned_tour, company_tour, marketplace_*).
+    if (
+      type === 'personal' ||
+      type === 'occupied' ||
+      type === 'day_off' ||
+      event.visibility === 'occupied'
+    ) {
+      return personalOn;
     }
 
     // Cualquier otro tipo desconocido se respeta (no se oculta por accidente)

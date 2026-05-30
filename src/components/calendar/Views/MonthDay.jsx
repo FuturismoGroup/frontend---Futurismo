@@ -22,6 +22,12 @@ const MonthDay = ({
   const isCurrentDay = isToday(date);
   const dateKey = format(date, 'yyyy-MM-dd');
   const isHovered = hoveredDate === dateKey;
+  // Si el día ya tiene algún evento o slot ocupado, el overlay grande de
+  // "Agregar evento" taparía los badges e impediría clicarlos. En ese caso
+  // mostramos solo un botón "+" pequeño.
+  const hasAnyEvent = (indicators.personalEvents > 0) ||
+                      (indicators.companyTours > 0) ||
+                      (indicators.occupiedSlots > 0);
 
   return (
     <div
@@ -103,27 +109,50 @@ const MonthDay = ({
         )}
       </div>
 
-      {/* Add button (hover) */}
+      {/* Add button (hover) - sólo cubre la celda completa cuando NO hay eventos;
+          si la celda ya tiene eventos, mostramos un botón "+" pequeño en la esquina
+          inferior derecha para no tapar los badges y permitir clicarlos. */}
       {!isAdmin && isCurrentMonth && (
-        <div 
-          onClick={(e) => onQuickAdd(date, e)}
-          className="absolute inset-2 border-2 border-dashed border-blue-300 rounded bg-blue-50 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center cursor-pointer hover:bg-blue-100"
-          title={t('calendar.ctrlClickToAddEvent')}
-        >
-          <div className="flex items-center space-x-1 text-blue-600">
+        hasAnyEvent ? (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onQuickAdd(date, e); }}
+            className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-blue-500 text-white shadow opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center hover:bg-blue-600 cursor-pointer"
+            title={t('calendar.addEvent')}
+            aria-label={t('calendar.addEvent')}
+          >
             <PlusIcon className="w-4 h-4" />
-            <span className="text-sm font-medium">{t('calendar.addEvent')}</span>
+          </button>
+        ) : (
+          <div
+            onClick={(e) => onQuickAdd(date, e)}
+            className="absolute inset-2 border-2 border-dashed border-blue-300 rounded bg-blue-50 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center cursor-pointer hover:bg-blue-100"
+            title={t('calendar.ctrlClickToAddEvent')}
+          >
+            <div className="flex items-center space-x-1 text-blue-600">
+              <PlusIcon className="w-4 h-4" />
+              <span className="text-sm font-medium">{t('calendar.addEvent')}</span>
+            </div>
           </div>
-        </div>
+        )
       )}
 
-      {/* Admin available day indicator */}
+      {/* Admin available day indicator - mismo criterio: pequeño cuando hay eventos */}
       {isAdmin && isCurrentMonth && indicators.hasAvailability && (
-        <div className="absolute inset-2 border-2 border-dashed border-green-300 rounded bg-green-50 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center">
-          <div className="flex items-center space-x-1 text-green-600">
-            <span className="text-sm font-medium">{t('calendar.assignTour')}</span>
+        hasAnyEvent ? (
+          <div
+            className="absolute bottom-1 right-1 px-2 py-0.5 rounded-full bg-green-500 text-white text-[10px] font-semibold shadow opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+            title={t('calendar.assignTour')}
+          >
+            {t('calendar.assignTour')}
           </div>
-        </div>
+        ) : (
+          <div className="absolute inset-2 border-2 border-dashed border-green-300 rounded bg-green-50 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center pointer-events-none">
+            <div className="flex items-center space-x-1 text-green-600">
+              <span className="text-sm font-medium">{t('calendar.assignTour')}</span>
+            </div>
+          </div>
+        )
       )}
 
       {/* Active hover indicator */}

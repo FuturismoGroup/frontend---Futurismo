@@ -377,9 +377,9 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
   };
 
   return (
-    <div className="relative w-full h-full" style={{ minHeight: '500px' }}>
+    <div className="relative w-full h-full">
       <div className="relative bg-gray-100 rounded-xl overflow-hidden shadow-lg border border-gray-200 h-full">
-        <div ref={mapRef} className="w-full h-full" style={{ minHeight: '500px' }} />
+        <div ref={mapRef} className="w-full h-full" />
 
         {/* Indicador de actualización en tiempo real */}
         <div className="absolute top-4 left-4 z-[10]">

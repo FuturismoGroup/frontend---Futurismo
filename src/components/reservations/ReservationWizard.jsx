@@ -500,7 +500,9 @@ const ReservationWizard = ({ onClose, onComplete }) => {
         navigate('/reservations');
       }
     } catch (error) {
-      toast.error(t('errors.unexpectedError'));
+      // Mostrar el mensaje real del backend para que el usuario sepa qué corregir
+      const backendMessage = error?.message || error?.response?.data?.message || error?.response?.data?.error;
+      toast.error(backendMessage || t('errors.unexpectedError'));
     } finally {
       setIsSubmitting(false);
     }

@@ -760,6 +760,22 @@
     },
     "subtitle": "Communicate with tour guides and clients in real time"
   },
+  "event": {
+    "errors": {
+      "titleRequired": "Title is required",
+      "titleTooLong": "Title cannot exceed 100 characters",
+      "dateRequired": "Date is required",
+      "startTimeRequired": "Start time is required",
+      "endTimeRequired": "End time is required",
+      "invalidTimeRange": "End time must be after start time",
+      "descriptionTooLong": "Description cannot exceed 500 characters",
+      "locationTooLong": "Location cannot exceed 200 characters",
+      "invalidCategory": "Invalid category",
+      "invalidPriority": "Invalid priority",
+      "pastDate": "Cannot create an event on a past date",
+      "conflictDetected": "There is a conflict with another event at that time"
+    }
+  },
   "calendar": {
     "sidebar": {
       "calendars": "Calendars",
@@ -1228,6 +1244,14 @@
       "currency": "Currency",
       "soles": "Soles (PEN)",
       "dollars": "Dollars (USD)",
+      "importantInfo": "Important Information",
+      "bankingImportantNote": "Make sure your banking details are correct to receive your payments without delays.",
+      "interbankCode": "Interbank Account Code (CCI)",
+      "holderFullNamePlaceholder": "Full name of the account holder",
+      "bankingVerified": "Banking data verified",
+      "noBankingDataFound": "No banking data found",
+      "foreignId": "Foreign ID Card",
+      "passport": "Passport",
       "noBankingData": "No banking data found.",
       "bankingDataUpdated": "Banking data updated successfully",
       "guideBankingData": "Guide Banking Data",

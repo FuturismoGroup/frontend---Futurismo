@@ -983,6 +983,14 @@
       "currency": "Moneda",
       "soles": "Soles (PEN)",
       "dollars": "Dólares (USD)",
+      "importantInfo": "Información importante",
+      "bankingImportantNote": "Asegúrate de que los datos bancarios sean correctos para recibir tus pagos sin demoras.",
+      "interbankCode": "Código de Cuenta Interbancario (CCI)",
+      "holderFullNamePlaceholder": "Nombre completo del titular",
+      "bankingVerified": "Datos bancarios verificados",
+      "noBankingDataFound": "No se encontraron datos bancarios",
+      "foreignId": "Carnet de Extranjería",
+      "passport": "Pasaporte",
       "noBankingData": "No se encontraron datos bancarios.",
       "bankingDataUpdated": "Datos bancarios actualizados correctamente",
       "guideBankingData": "Datos Bancarios de Guías",
@@ -1432,6 +1440,22 @@
         "marketplace_service": "Servicio Marketplace",
         "availability": "Disponibilidad"
       }
+    }
+  },
+  "event": {
+    "errors": {
+      "titleRequired": "El título es requerido",
+      "titleTooLong": "El título no puede tener más de 100 caracteres",
+      "dateRequired": "La fecha es requerida",
+      "startTimeRequired": "La hora de inicio es requerida",
+      "endTimeRequired": "La hora de fin es requerida",
+      "invalidTimeRange": "La hora de fin debe ser posterior a la hora de inicio",
+      "descriptionTooLong": "La descripción no puede tener más de 500 caracteres",
+      "locationTooLong": "La ubicación no puede tener más de 200 caracteres",
+      "invalidCategory": "Categoría inválida",
+      "invalidPriority": "Prioridad inválida",
+      "pastDate": "No se puede crear un evento en una fecha pasada",
+      "conflictDetected": "Existe un conflicto con otro evento en ese horario"
     }
   },
   "calendar": {

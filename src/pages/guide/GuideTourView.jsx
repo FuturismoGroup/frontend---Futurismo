@@ -518,7 +518,8 @@ const GuideTourView = () => {
     return Math.round((completed / tourData.stops.length) * 100);
   };
 
-  // Efecto inicial
+  // Efecto inicial: solo cargar datos del tour. El GPS se gestiona en un efecto aparte
+  // según el estado real del tour para no mostrar "GPS activado" en tours completados.
   useEffect(() => {
     if (user?.role !== 'guide') {
       toast.error(t('monitoring.guideAccessOnly'));
@@ -527,19 +528,26 @@ const GuideTourView = () => {
     }
 
     loadTourData();
-    startGpsTracking();
+  }, [user?.role, navigate, loadTourData, t]);
+
+  // Gestionar GPS según el estado del tour:
+  // - Solo se activa para tours 'in_progress' (en curso).
+  // - Para tours completados/cancelados/pendientes no tiene sentido enviar ubicación
+  //   y no se debe mostrar el toast "GPS activado".
+  useEffect(() => {
+    const status = tourData?.tourInfo?.status;
+    if (!status) return;
+
+    if (status === 'in_progress') {
+      startGpsTracking();
+    } else {
+      stopGpsTracking();
+    }
 
     return () => {
       stopGpsTracking();
     };
-  }, [user?.role, navigate, loadTourData, startGpsTracking, stopGpsTracking]);
-
-  // Si el tour ya está completado, detener tracking GPS (no tiene sentido para tours pasados)
-  useEffect(() => {
-    if (tourData?.tourInfo?.status === 'completed') {
-      stopGpsTracking();
-    }
-  }, [tourData?.tourInfo?.status, stopGpsTracking]);
+  }, [tourData?.tourInfo?.status, startGpsTracking, stopGpsTracking]);
 
   // Cargar fotos cuando se tenga el activeTourId
   useEffect(() => {
