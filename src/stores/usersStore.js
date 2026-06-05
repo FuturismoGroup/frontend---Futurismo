@@ -11,7 +11,6 @@ const useUsersStore = create((set, get) => ({
   // Estado
   users: [],
   roles: [],
-  permissions: [],
   currentUser: null,
   isLoading: false,
   error: null,
@@ -318,36 +317,6 @@ const useUsersStore = create((set, get) => ({
     }
   },
 
-  updateUserPermissions: async (id, permissions) => {
-    set({ isLoading: true, error: null });
-    
-    try {
-      const result = await usersService.updateUserPermissions(id, permissions);
-      
-      if (!result.success) {
-        throw new Error(result.error || i18next.t('errors.unexpectedError'));
-      }
-      
-      set((state) => ({
-        users: state.users.map(u => 
-          u.id === id ? result.data : u
-        ),
-        currentUser: state.currentUser?.id === id 
-          ? result.data 
-          : state.currentUser,
-        isLoading: false
-      }));
-      
-      return result.data;
-    } catch (error) {
-      set({ 
-        isLoading: false,
-        error: error.message
-      });
-      throw error;
-    }
-  },
-  
   updateUserRole: async (id, roleId) => {
     set({ isLoading: true, error: null });
     
@@ -404,31 +373,6 @@ const useUsersStore = create((set, get) => ({
     }
   },
   
-  fetchPermissions: async () => {
-    set({ isLoading: true, error: null });
-    
-    try {
-      const result = await usersService.getPermissions();
-      
-      if (!result.success) {
-        throw new Error(result.error || i18next.t('errors.unexpectedError'));
-      }
-      
-      set({
-        permissions: result.data.permissions,
-        isLoading: false
-      });
-      
-      return result.data;
-    } catch (error) {
-      set({ 
-        isLoading: false,
-        error: error.message
-      });
-      throw error;
-    }
-  },
-
   // Búsqueda
   searchUsers: async (query) => {
     set({ isLoading: true, error: null });
@@ -706,18 +650,6 @@ const useUsersStore = create((set, get) => ({
     return roles;
   },
   
-  // Helper function to get permissions by module
-  getPermissionsByModule: () => {
-    const { permissions } = get();
-    return permissions.reduce((acc, perm) => {
-      if (!acc[perm.module]) {
-        acc[perm.module] = [];
-      }
-      acc[perm.module].push(perm);
-      return acc;
-    }, {});
-  },
-
   // Get users statistics
   getUsersStatistics: () => {
     const { users } = get();
@@ -749,7 +681,6 @@ const useUsersStore = create((set, get) => ({
     set({
       users: [],
       roles: [],
-      permissions: [],
       currentUser: null,
       isLoading: false,
       error: null,

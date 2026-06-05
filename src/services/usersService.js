@@ -97,16 +97,6 @@ return this.post(`/${id}/change-password`, passwordData);
   }
 
   /**
-   * Actualizar permisos del usuario
-   * @param {string} id - ID del usuario
-   * @param {Array} permissions - Lista de permisos
-   * @returns {Promise<Object>}
-   */
-  async updateUserPermissions(id, permissions) {
-return this.put(`/${id}/permissions`, { permissions });
-  }
-
-  /**
    * Actualizar rol del usuario
    * @param {string} id - ID del usuario
    * @param {string} roleId - ID del nuevo rol
@@ -122,14 +112,6 @@ return this.put(`/${id}/role`, { roleId });
    */
   async getRoles() {
 return this.get('/roles/list');
-  }
-
-  /**
-   * Obtener permisos del sistema
-   * @returns {Promise<Object>}
-   */
-  async getPermissions() {
-return this.get('/permissions');
   }
 
   /**
