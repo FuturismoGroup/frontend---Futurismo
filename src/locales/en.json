@@ -2330,10 +2330,14 @@
       "typeLabels": {
         "reservation": "Reservation",
         "personal_event": "Personal Event",
+        "personal": "Personal Event",
         "company_tour": "Company Tour",
+        "assigned_tour": "Assigned Tour",
         "occupied": "Occupied Time",
         "marketplace_service": "Marketplace Service",
-        "availability": "Availability"
+        "marketplace_pending": "Marketplace Service (Pending)",
+        "availability": "Availability",
+        "event": "Event"
       }
     }
   },
@@ -2479,6 +2483,12 @@
       "museumKnowledge": "Museum Knowledge",
       "noMuseums": "No museums registered",
       "unknownMuseum": "Unknown museum",
+      "museum": "Museum",
+      "expertiseLevel": "Expertise Level",
+      "bio": "Biography",
+      "languages": "Languages",
+      "specialties": "Specialties",
+      "certifications": "Certifications",
       "statistics": "Guide Statistics"
     },
     "stats": {

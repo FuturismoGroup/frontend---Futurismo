@@ -289,10 +289,13 @@ const useHistoryStore = create(
 
         if (newFilters.dateRange !== 'all') {
           const now = new Date();
-          const filterDate = getDateByRange(newFilters.dateRange, now);
-          filtered = filtered.filter(service => 
-            new Date(service.date) >= filterDate
-          );
+          // El módulo es "Historial": ningún rango debe incluir fechas futuras,
+          // por eso aplicamos también un techo en el fin del día de hoy.
+          const { start, end } = getDateByRange(newFilters.dateRange, now);
+          filtered = filtered.filter(service => {
+            const serviceDate = new Date(service.date);
+            return serviceDate >= start && serviceDate <= end;
+          });
         }
 
         if (newFilters.status !== 'all') {
@@ -505,28 +508,37 @@ const useHistoryStore = create(
   )
 );
 
-// Función auxiliar para obtener fecha por rango
+// Devuelve el rango {start, end} para filtrar el historial.
+// `end` siempre es el fin del día de hoy (nunca futuro), porque el módulo
+// es "Historial" — un servicio con fecha posterior a hoy no debería aparecer
+// aunque exista en la base. Antes esta función devolvía solo `start` y se
+// filtraba con `>= start`, lo que dejaba pasar todas las reservas futuras.
 function getDateByRange(range, baseDate) {
-  const date = new Date(baseDate);
+  const start = new Date(baseDate);
+  const end = new Date(baseDate);
+  end.setHours(23, 59, 59, 999);
 
   switch (range) {
     case 'today':
-      date.setHours(0, 0, 0, 0);
+      start.setHours(0, 0, 0, 0);
       break;
     case 'week':
-      date.setDate(date.getDate() - 7);
+      start.setDate(start.getDate() - 7);
+      start.setHours(0, 0, 0, 0);
       break;
     case 'month':
-      date.setMonth(date.getMonth() - 1);
+      start.setMonth(start.getMonth() - 1);
+      start.setHours(0, 0, 0, 0);
       break;
     case 'year':
-      date.setFullYear(date.getFullYear() - 1);
+      start.setFullYear(start.getFullYear() - 1);
+      start.setHours(0, 0, 0, 0);
       break;
     default:
-      return new Date(0); // Fecha muy antigua para mostrar todos
+      return { start: new Date(0), end };
   }
 
-  return date;
+  return { start, end };
 }
 
 export default useHistoryStore;

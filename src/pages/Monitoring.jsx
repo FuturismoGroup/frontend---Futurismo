@@ -422,7 +422,7 @@ const Monitoring = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 overflow-x-auto border-b border-gray-200">
+      <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 overflow-x-auto overflow-y-hidden border-b border-gray-200">
         <nav className="flex px-1 -mb-px space-x-4 sm:space-x-8 min-w-max">
           {viewConfig.map((view) => {
             const Icon = view.icon;

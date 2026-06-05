@@ -48,33 +48,30 @@ export const filterEventsByVisibility = (events, visibleCalendars) => {
   return events.filter(event => {
     const type = event.eventType || event.type;
 
-    // El orden importa: assigned_tour y los servicios reservados se evalúan
-    // ANTES que la regla genérica de `visibility === 'occupied'`, porque el
-    // backend devuelve esos tipos con visibility='occupied' (bloquean la
-    // disponibilidad del guía). Si dejáramos la regla de "Mi Agenda" arriba,
-    // los assigned_tour caerían en `personalOn` y el toggle "Tours asignados"
-    // dejaría de tener efecto — el bug reportado por los guías freelance.
+    // El orden importa: estas reglas evaluan ANTES que la genérica de
+    // `visibility === 'occupied'`, porque el backend marca assigned_tour y
+    // marketplace_* con visibility='occupied' (bloquean la disponibilidad del
+    // guía). Si dejáramos la regla de "Mi Agenda" arriba, esos eventos
+    // caerían en `personalOn` y los toggles del sidebar no tendrían efecto.
 
-    // "Tours asignados" (chip verde): SOLO los tours que un admin agendó
-    // manualmente sobre la agenda del guía vía /guides/:id/tours.
-    // Estos viven en personal_events con event_type = 'assigned_tour' y
-    // suelen llegar con visibility='occupied' porque bloquean la agenda.
-    if (type === 'assigned_tour') {
+    // "Tours asignados" (chip verde): TODO evento renderizado en verde.
+    // EventBlock pinta tanto `assigned_tour` como `company_tour` en verde via
+    // getEventTypeStyle, así que ambos deben caer bajo el toggle verde. De
+    // lo contrario el chip morado ("Reservas") ocultaría eventos verdes y
+    // viceversa — el "swap" que reportaron los guías freelance. Incluye:
+    //   - assigned_tour → tour que el admin agendó manualmente vía
+    //                     /guides/:id/tours (personal_events.event_type)
+    //   - company_tour  → reservations.guide_id (booking formal de agencia
+    //                     con guía asignado)
+    if (type === 'assigned_tour' || type === 'company_tour') {
       return companyOn;
     }
 
-    // "Reservas" (chip morado): todo lo que una agencia/cliente reserva sobre
-    // la agenda del guía. Incluye:
-    //   - company_tour      → reservations.guide_id (booking formal)
-    //   - marketplace_service / marketplace_pending → service_requests
-    //     (la agencia reserva al guía vía marketplace; el backend los pinta
-    //     en morado #8B5CF6 / ámbar #F59E0B respectivamente)
-    // Antes los eventos morados del marketplace iban a `companyOn`, lo que
-    // hacía que al apagar "Reservas" (chip morado) no se ocultaran y, en
-    // cambio, al apagar "Tours asignados" desaparecieran — exactamente el
-    // intercambio que reportaron los guías freelance.
+    // "Reservas" (chip morado): solicitudes del marketplace, que EventBlock
+    // pinta en morado (#8B5CF6 marketplace_service) o ámbar (#F59E0B
+    // marketplace_pending). Son las "reservas" que llegan al guía por el
+    // marketplace y son las únicas visualmente moradas en el calendario.
     if (
-      type === 'company_tour' ||
       type === 'marketplace_service' ||
       type === 'marketplace_pending' ||
       event.source === 'marketplace'

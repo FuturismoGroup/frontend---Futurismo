@@ -104,10 +104,10 @@ const DriversManagement = () => {
 
       setShowForm(false);
       resetForm();
-      toast.success(editingDriver ? 'Chofer actualizado exitosamente' : 'Chofer creado exitosamente');
+      // El toast de éxito/error lo emite el store (createDriver / updateDriver)
+      // para evitar duplicar mensajes en pantalla.
     } catch (error) {
       console.error('❌ Error al guardar chofer:', error);
-      toast.error(error.message || 'Error al guardar chofer');
     }
   };
 

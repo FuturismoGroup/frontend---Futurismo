@@ -1435,10 +1435,14 @@
       "typeLabels": {
         "reservation": "Reserva",
         "personal_event": "Evento Personal",
+        "personal": "Evento Personal",
         "company_tour": "Tour de Empresa",
+        "assigned_tour": "Tour Asignado",
         "occupied": "Tiempo Ocupado",
         "marketplace_service": "Servicio Marketplace",
-        "availability": "Disponibilidad"
+        "marketplace_pending": "Servicio Marketplace (Pendiente)",
+        "availability": "Disponibilidad",
+        "event": "Evento"
       }
     }
   },
@@ -1787,6 +1791,12 @@
       "museumKnowledge": "Conocimiento de Museos",
       "noMuseums": "No hay museos registrados",
       "unknownMuseum": "Museo desconocido",
+      "museum": "Museo",
+      "expertiseLevel": "Nivel de Expertise",
+      "bio": "Biografía",
+      "languages": "Idiomas",
+      "specialties": "Especialidades",
+      "certifications": "Certificaciones",
       "statistics": "Estadísticas del Guía"
     },
     "stats": {

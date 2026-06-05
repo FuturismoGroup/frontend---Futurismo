@@ -57,6 +57,14 @@ const GuideTourView = () => {
   const [lastLocation, setLastLocation] = useState(null);
   const watchIdRef = useRef(null);
   const sendIntervalRef = useRef(null);
+  // Guard contra callbacks async de geolocation que llegan tarde. La API de
+  // geolocation no permite cancelar un getCurrentPosition en vuelo, así que
+  // cuando navegamos de un tour in_progress a uno completado (mismo componente,
+  // solo cambia el param), el callback de la llamada inicial resolvía sobre el
+  // nuevo render y disparaba toast 'GPS activado' aunque ya se hubiera llamado
+  // a stopGpsTracking. El ref se apaga en stopGpsTracking y los callbacks
+  // descartan su resultado si el tracking ya no es válido.
+  const trackingActiveRef = useRef(false);
 
   // Función para enviar ubicación al backend (WebSocket primario, HTTP fallback)
   const sendLocationToBackend = useCallback(async (position) => {
@@ -94,6 +102,8 @@ const GuideTourView = () => {
       return;
     }
 
+    trackingActiveRef.current = true;
+
     const geoOptions = {
       enableHighAccuracy: true,
       timeout: 10000,
@@ -102,11 +112,13 @@ const GuideTourView = () => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        if (!trackingActiveRef.current) return; // tracking ya fue cancelado
         sendLocationToBackend(position);
         setGpsStatus('active');
         toast.success('GPS activado');
       },
       (error) => {
+        if (!trackingActiveRef.current) return;
         console.error('[GPS] Error inicial:', error);
         setGpsStatus('error');
       },
@@ -115,6 +127,7 @@ const GuideTourView = () => {
 
     watchIdRef.current = navigator.geolocation.watchPosition(
       (position) => {
+        if (!trackingActiveRef.current) return;
         setLastLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -124,6 +137,7 @@ const GuideTourView = () => {
         });
       },
       (error) => {
+        if (!trackingActiveRef.current) return;
         console.error('[GPS] Error en watch:', error);
         setGpsStatus('error');
       },
@@ -132,7 +146,10 @@ const GuideTourView = () => {
 
     sendIntervalRef.current = setInterval(() => {
       navigator.geolocation.getCurrentPosition(
-        sendLocationToBackend,
+        (position) => {
+          if (!trackingActiveRef.current) return;
+          sendLocationToBackend(position);
+        },
         (error) => console.error('[GPS] Error en intervalo:', error),
         geoOptions
       );
@@ -141,6 +158,7 @@ const GuideTourView = () => {
 
   // Detener tracking GPS
   const stopGpsTracking = useCallback(() => {
+    trackingActiveRef.current = false;
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
@@ -330,7 +348,11 @@ const GuideTourView = () => {
   };
 
   // Abrir modal para subir foto
-  const openPhotoModal = (stop) => {
+  // stop puede ser null cuando se sube una foto general del tour (sin parada).
+  // Esto cubre el caso de tours asignados que no tienen tour_stops configurados
+  // (típico cuando el admin asigna desde la agenda a un guía freelance):
+  // queremos que el guía pueda igual subir fotos del servicio.
+  const openPhotoModal = (stop = null) => {
     setSelectedStopForMedia(stop);
     setPhotoCaption('');
     setShowPhotoModal(true);
@@ -364,13 +386,15 @@ const GuideTourView = () => {
   };
 
   // Subir foto al servidor
+  // selectedStopForMedia puede ser null → foto general del tour (sin parada).
+  // El backend acepta tour_stop_id null y la agrupa bajo 'general' en stopPhotos.
   const uploadPhoto = async (file) => {
-    if (!activeTourId || !selectedStopForMedia) return;
+    if (!activeTourId) return;
 
     setUploadingPhoto(true);
     try {
       const options = {
-        tourStopId: selectedStopForMedia.id,
+        tourStopId: selectedStopForMedia?.id,
         caption: photoCaption.trim() || undefined,
         latitude: lastLocation?.latitude,
         longitude: lastLocation?.longitude
@@ -381,11 +405,11 @@ const GuideTourView = () => {
       if (response.success) {
         toast.success('Foto subida correctamente');
 
-        // Agregar foto al estado local
-        const stopId = selectedStopForMedia.id;
+        // Agrupar bajo el id de la parada o 'general' si no hay parada
+        const groupKey = selectedStopForMedia?.id || 'general';
         setStopPhotos(prev => ({
           ...prev,
-          [stopId]: [...(prev[stopId] || []), response.data]
+          [groupKey]: [...(prev[groupKey] || []), response.data]
         }));
 
         setShowPhotoModal(false);
@@ -676,6 +700,14 @@ const GuideTourView = () => {
             <h3 className="font-semibold text-gray-900">Itinerario</h3>
           </div>
 
+          {(!tourData?.stops || tourData.stops.length === 0) && (
+            <div className="p-6 text-center text-gray-500">
+              <MapPinIcon className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+              <p className="font-medium text-gray-700">Este servicio no tiene paradas configuradas</p>
+              <p className="text-sm mt-1">Puedes registrar fotos del servicio en la sección de abajo.</p>
+            </div>
+          )}
+
           <div className="divide-y">
             {tourData?.stops?.map((stop, index) => (
               <div key={stop.id} className="p-4">
@@ -853,6 +885,59 @@ const GuideTourView = () => {
           </div>
         </div>
 
+        {/* Fotos del servicio (a nivel de tour, sin parada específica).
+            Se muestra siempre que NO haya paradas configuradas para que el
+            guía freelance pueda registrar evidencia fotográfica del servicio
+            asignado igual que el guía de planta. */}
+        {(!tourData?.stops || tourData.stops.length === 0) && (
+          <div className="mt-6 bg-white rounded-lg shadow">
+            <div className="p-4 border-b flex items-center justify-between">
+              <h3 className="font-semibold text-gray-900">Fotos del Servicio</h3>
+              {!isReadOnly && (
+                <button
+                  onClick={() => openPhotoModal(null)}
+                  className="btn btn-primary flex items-center gap-2"
+                >
+                  <CameraIcon className="w-4 h-4" />
+                  Subir Foto
+                </button>
+              )}
+            </div>
+            <div className="p-4">
+              {stopPhotos.general?.length > 0 ? (
+                <div className="flex flex-wrap gap-3">
+                  {stopPhotos.general.map(photo => (
+                    <div key={photo.id} className="relative group">
+                      <img
+                        src={resolveFileUrl(photo.photoUrl)}
+                        alt={photo.caption || 'Foto del servicio'}
+                        className="w-24 h-24 object-cover rounded-lg border"
+                      />
+                      {!isReadOnly && (
+                        <button
+                          onClick={() => handleDeletePhoto('general', photo.id)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <XMarkIcon className="w-3 h-3" />
+                        </button>
+                      )}
+                      {photo.caption && (
+                        <p className="text-xs text-gray-500 mt-1 truncate max-w-[96px]">
+                          {photo.caption}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 text-center py-4">
+                  Aún no hay fotos del servicio. {!isReadOnly && 'Usa el botón "Subir Foto" para agregar evidencia del tour.'}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Acciones rápidas — Reportar/Finalizar solo aplican mientras el
             tour está en curso. Si ya está completado se ocultan para evitar
             contradicción con el badge "Tour completado" del encabezado. */}
@@ -959,7 +1044,7 @@ const GuideTourView = () => {
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-medium text-gray-900">
-                    Subir Foto - {selectedStopForMedia?.name}
+                    {selectedStopForMedia ? `Subir Foto - ${selectedStopForMedia.name}` : 'Subir Foto del Servicio'}
                   </h3>
                   <button
                     onClick={() => !uploadingPhoto && setShowPhotoModal(false)}

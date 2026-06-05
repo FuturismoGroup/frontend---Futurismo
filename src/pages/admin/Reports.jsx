@@ -94,6 +94,7 @@ function Reports() {
     bookingsByStatus: {
       pending: filteredReservations?.filter(r => r.status === 'pending').length || 0,
       confirmed: filteredReservations?.filter(r => r.status === 'confirmed').length || 0,
+      in_progress: filteredReservations?.filter(r => r.status === 'in_progress').length || 0,
       completed: filteredReservations?.filter(r => r.status === 'completed').length || 0,
       cancelled: filteredReservations?.filter(r => r.status === 'cancelled').length || 0
     },
@@ -133,6 +134,31 @@ function Reports() {
 
   const exportToExcel = async () => {
     try {
+      const formatReservationDateTime = (rawDate, rawTime) => {
+        if (!rawDate) return '';
+        const parsed = new Date(rawDate);
+        if (isNaN(parsed.getTime())) return '';
+        const day = String(parsed.getUTCDate()).padStart(2, '0');
+        const month = String(parsed.getUTCMonth() + 1).padStart(2, '0');
+        const year = parsed.getUTCFullYear();
+        let hours = String(parsed.getUTCHours()).padStart(2, '0');
+        let minutes = String(parsed.getUTCMinutes()).padStart(2, '0');
+        if (hours === '00' && minutes === '00' && typeof rawTime === 'string') {
+          const match = rawTime.match(/(\d{1,2}):(\d{2})/);
+          if (match) {
+            hours = match[1].padStart(2, '0');
+            minutes = match[2];
+          }
+        }
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+      };
+
+      const formatCodigo = (reservation) => {
+        if (reservation.reservation_code) return reservation.reservation_code;
+        if (!reservation.id) return 'N/A';
+        return String(reservation.id).substring(0, 8).toUpperCase();
+      };
+
       // Preparar datos para exportar usando las reservas ya filtradas
       const exportData = (filteredReservations || [])
         .map(reservation => {
@@ -145,9 +171,11 @@ function Reports() {
           if (!serviceName) serviceName = 'Sin especificar';
 
           return {
-            id: reservation.id,
-            codigo: reservation.reservation_code || reservation.id,
-            fecha: reservation.date || reservation.tour_date,
+            codigo: formatCodigo(reservation),
+            fecha: formatReservationDateTime(
+              reservation.date || reservation.tour_date,
+              reservation.time || reservation.tour_time
+            ),
             servicio: serviceName,
             cliente: reservation.client_name || reservation.agencyName || reservation.clientName || 'Cliente directo',
             participantes: reservation.group_size || reservation.participants || (reservation.adults || 0) + (reservation.children || 0),
@@ -297,6 +325,7 @@ function Reports() {
                   const statusLabels = {
                     pending: 'Pendiente',
                     confirmed: 'Confirmada',
+                    in_progress: 'En Progreso',
                     completed: 'Completada',
                     cancelled: 'Cancelada'
                   };
@@ -304,6 +333,7 @@ function Reports() {
                   const statusColors = {
                     pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
                     confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
+                    in_progress: 'bg-purple-100 text-purple-800 border-purple-200',
                     completed: 'bg-green-100 text-green-800 border-green-200',
                     cancelled: 'bg-red-100 text-red-800 border-red-200'
                   };
@@ -311,6 +341,7 @@ function Reports() {
                   const statusIcons = {
                     pending: '⏳',
                     confirmed: '✓',
+                    in_progress: '▶',
                     completed: '✓✓',
                     cancelled: '✗'
                   };
@@ -339,6 +370,7 @@ function Reports() {
                           className={`h-2 rounded-full transition-all duration-300 ${
                             status === 'pending' ? 'bg-yellow-500' :
                             status === 'confirmed' ? 'bg-blue-500' :
+                            status === 'in_progress' ? 'bg-purple-500' :
                             status === 'completed' ? 'bg-green-500' :
                             'bg-red-500'
                           }`}
@@ -384,7 +416,7 @@ function Reports() {
                           </div>
                         </div>
                         {/* Barra de progreso */}
-                        <div className="w-full bg-gray-200 rounded-full h-2 ml-11">
+                        <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full transition-all duration-300 ${colors[index] || 'bg-gray-500'}`}
                             style={{ width: `${percentage}%` }}
@@ -444,6 +476,7 @@ function Reports() {
                       const statusLabels = {
                         pending: 'Pendiente',
                         confirmed: 'Confirmada',
+                        in_progress: 'En Progreso',
                         completed: 'Completada',
                         cancelled: 'Cancelada'
                       };
@@ -451,6 +484,7 @@ function Reports() {
                       const statusColors = {
                         pending: 'bg-yellow-100 text-yellow-800',
                         confirmed: 'bg-blue-100 text-blue-800',
+                        in_progress: 'bg-purple-100 text-purple-800',
                         completed: 'bg-green-100 text-green-800',
                         cancelled: 'bg-red-100 text-red-800'
                       };

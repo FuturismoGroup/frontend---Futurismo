@@ -116,10 +116,15 @@ api.interceptors.response.use(
           errors: validationErrors
         };
 
-      default:
-        throw new Error(
-          error.response.data.message || ERROR_MESSAGES.GENERIC_ERROR
+      default: {
+        const payload = error.response.data || {};
+        const enrichedError = new Error(
+          payload.error || payload.message || ERROR_MESSAGES.GENERIC_ERROR
         );
+        enrichedError.response = error.response;
+        enrichedError.status = error.response.status;
+        throw enrichedError;
+      }
     }
   }
 );

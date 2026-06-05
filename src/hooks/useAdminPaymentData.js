@@ -60,17 +60,21 @@ const useAdminPaymentData = () => {
         toast.success(t('profile.payment.methodAdded'));
         return true;
       } else {
-        toast.error(response.data.error || t('profile.payment.error'));
+        toast.error(response.data.error || response.data.message || t('profile.payment.error'));
         return false;
       }
     } catch (error) {
       console.error('Error al agregar método de pago:', error);
-      toast.error(error.response?.data?.error || t('profile.payment.error'));
+      const serverMessage = error.response?.data?.error || error.response?.data?.message;
+      toast.error(serverMessage || error.message || t('profile.payment.error'));
       return false;
     } finally {
       setLoading(false);
     }
   };
+
+  const extractServerMessage = (error) =>
+    error?.response?.data?.error || error?.response?.data?.message || error?.message;
 
   const handleUpdatePaymentMethod = async (pmId, updateData) => {
     setLoading(true);
@@ -80,11 +84,11 @@ const useAdminPaymentData = () => {
         await fetchPaymentMethods();
         toast.success(t('profile.payment.saved'));
       } else {
-        toast.error(response.data.error || t('profile.payment.error'));
+        toast.error(response.data.error || response.data.message || t('profile.payment.error'));
       }
     } catch (error) {
       console.error('Error al actualizar método de pago:', error);
-      toast.error(error.response?.data?.error || t('profile.payment.error'));
+      toast.error(extractServerMessage(error) || t('profile.payment.error'));
     } finally {
       setLoading(false);
     }
@@ -98,11 +102,11 @@ const useAdminPaymentData = () => {
         await fetchPaymentMethods();
         toast.success(t('profile.payment.methodDeleted'));
       } else {
-        toast.error(response.data.error || t('profile.payment.error'));
+        toast.error(response.data.error || response.data.message || t('profile.payment.error'));
       }
     } catch (error) {
       console.error('Error al eliminar método de pago:', error);
-      toast.error(error.response?.data?.error || t('profile.payment.error'));
+      toast.error(extractServerMessage(error) || t('profile.payment.error'));
     } finally {
       setLoading(false);
     }
@@ -117,11 +121,11 @@ const useAdminPaymentData = () => {
         const newState = response.data.data?.isActive ? 'activado' : 'desactivado';
         toast.success(`Método de pago ${newState}`);
       } else {
-        toast.error(response.data.error || t('profile.payment.error'));
+        toast.error(response.data.error || response.data.message || t('profile.payment.error'));
       }
     } catch (error) {
       console.error('Error al cambiar estado:', error);
-      toast.error(error.response?.data?.error || t('profile.payment.error'));
+      toast.error(extractServerMessage(error) || t('profile.payment.error'));
     } finally {
       setLoading(false);
     }
@@ -135,11 +139,11 @@ const useAdminPaymentData = () => {
         await fetchPaymentMethods();
         toast.success(t('profile.payment.mainMethodUpdated'));
       } else {
-        toast.error(response.data.error || t('profile.payment.error'));
+        toast.error(response.data.error || response.data.message || t('profile.payment.error'));
       }
     } catch (error) {
       console.error('Error al establecer como principal:', error);
-      toast.error(error.response?.data?.error || t('profile.payment.error'));
+      toast.error(extractServerMessage(error) || t('profile.payment.error'));
     } finally {
       setLoading(false);
     }
