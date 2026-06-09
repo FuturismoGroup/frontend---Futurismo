@@ -210,29 +210,29 @@ const ActiveTourDetailsModal = ({ isOpen, onClose, tour, onViewOnMap }) => {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4">
         {/* Overlay */}
         <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={onClose}></div>
 
         {/* Modal Content - Estructura flex con altura máxima */}
-        <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden z-10">
+        <div className="relative bg-white sm:rounded-2xl shadow-2xl w-full max-w-4xl h-full sm:h-auto sm:max-h-[90vh] flex flex-col overflow-hidden z-10">
           {/* Header - Fijo (no scroll) */}
-          <div className="flex-shrink-0 bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-5 sm:px-8">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold text-white">
+          <div className="flex-shrink-0 bg-gradient-to-r from-blue-600 to-indigo-700 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white truncate">
                   {tour.tourName}
                 </h3>
-                <p className="mt-1 text-blue-100 text-sm">
+                <p className="mt-0.5 sm:mt-1 text-blue-100 text-xs sm:text-sm truncate">
                   {tour.destination}
                 </p>
               </div>
               <button
                 type="button"
-                className="bg-white bg-opacity-20 rounded-lg p-2 text-white hover:bg-opacity-30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-all"
+                className="bg-white bg-opacity-20 rounded-lg p-2 text-white hover:bg-opacity-30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-all flex-shrink-0 min-h-[40px] min-w-[40px] flex items-center justify-center"
                 onClick={onClose}
               >
-                <XMarkIcon className="h-6 w-6" />
+                <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
             </div>
 

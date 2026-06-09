@@ -67,32 +67,32 @@ const NewServiceModal = ({ isOpen, onClose, onSave, selectedCategory, categories
   const categoryName = getCategoryName();
 
   const modalContent = (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-white sm:rounded-xl shadow-xl w-full max-w-md h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-              <TagIcon className="w-5 h-5 mr-2 text-blue-600" />
-              {t('providers.services.new')}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b sticky top-0 bg-white z-10">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center">
+              <TagIcon className="w-5 h-5 mr-2 text-blue-600 flex-shrink-0" />
+              <span className="truncate">{t('providers.services.new')}</span>
             </h3>
             {categoryName && (
-              <p className="text-sm text-gray-500 mt-0.5 ml-7">
+              <p className="text-xs sm:text-sm text-gray-500 mt-0.5 ml-7 truncate">
                 {t('providers.form.fields.category')}: <span className="font-medium text-gray-700">{categoryName}</span>
               </p>
             )}
           </div>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors p-2 -mr-2 min-h-[40px] min-w-[40px] flex items-center justify-center flex-shrink-0"
           >
-            <XMarkIcon className="w-6 h-6" />
+            <XMarkIcon className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
 
         {/* Body */}
-        <form onSubmit={handleSubmit} className="px-6 py-4">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="px-4 sm:px-6 py-3 sm:py-4 flex-1 flex flex-col">
+          <div className="space-y-3 sm:space-y-4 flex-1">
             {/* Nombre del Servicio */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -102,7 +102,7 @@ const NewServiceModal = ({ isOpen, onClose, onSave, selectedCategory, categories
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 sm:py-2.5 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                   errors.name ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder={t('providers.services.namePlaceholder')}
@@ -121,7 +121,7 @@ const NewServiceModal = ({ isOpen, onClose, onSave, selectedCategory, categories
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 rows="3"
                 placeholder={t('providers.services.descriptionPlaceholder')}
               />
@@ -129,18 +129,18 @@ const NewServiceModal = ({ isOpen, onClose, onSave, selectedCategory, categories
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end space-x-3 mt-6 pt-4 border-t">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t">
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-4 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors text-sm sm:text-base w-full sm:w-auto"
             >
               {t('common.cancel')}
             </button>
             <button
               type="submit"
               disabled={saving}
-              className={`px-4 py-2 text-white rounded-lg transition-colors ${
+              className={`px-4 py-2.5 text-white rounded-lg transition-colors text-sm sm:text-base w-full sm:w-auto ${
                 saving
                   ? 'bg-blue-400 cursor-not-allowed'
                   : 'bg-blue-600 hover:bg-blue-700'

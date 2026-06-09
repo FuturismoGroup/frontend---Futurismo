@@ -10,6 +10,7 @@ import {
 import useIndependentAgendaStore from '../stores/independentAgendaStore';
 import useAuthStore from '../stores/authStore';
 import { isAdminRole, filterEventsForAdmin, filterEventsByVisibility, isTourEvent, isPersonalEvent, isOccupiedEvent } from '../utils/eventHelpers';
+import { toLocalDate } from '../utils/dateUtils';
 import {
   EVENT_TYPES,
   CALENDAR_CONFIG,
@@ -30,11 +31,10 @@ const useMonthView = () => {
     }
   } = useIndependentAgendaStore();
 
-  // Validar selectedDate para evitar "Invalid time value"
+  // Validar selectedDate para evitar "Invalid time value" y que un string
+  // "YYYY-MM-DD" rehidratado desde localStorage retroceda 1 día por el shift UTC.
   const selectedDate = React.useMemo(() => {
-    if (!rawSelectedDate) return new Date();
-    const dateObj = rawSelectedDate instanceof Date ? rawSelectedDate : new Date(rawSelectedDate);
-    return isNaN(dateObj.getTime()) ? new Date() : dateObj;
+    return toLocalDate(rawSelectedDate) || new Date();
   }, [rawSelectedDate]);
 
   const [monthEvents, setMonthEvents] = useState({});

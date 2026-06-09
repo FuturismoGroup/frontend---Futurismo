@@ -12,7 +12,11 @@ import { BREAKPOINTS } from '../constants/layoutContextConstants';
 export const getDeviceType = (width) => ({
   isMobile: width < BREAKPOINTS.TABLET,
   isTablet: width >= BREAKPOINTS.TABLET && width < BREAKPOINTS.DESKTOP,
-  isDesktop: width >= BREAKPOINTS.DESKTOP
+  isDesktop: width >= BREAKPOINTS.DESKTOP,
+  // isCompact: dispositivos que deben usar sidebar overlay (mobile + tablet)
+  isCompact: width < BREAKPOINTS.DESKTOP,
+  // isSmall: pantallas muy pequeñas (< 640px)
+  isSmall: width < BREAKPOINTS.MOBILE
 });
 
 /**

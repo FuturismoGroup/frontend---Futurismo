@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   BuildingOfficeIcon,
   UserGroupIcon,
@@ -29,11 +30,11 @@ const AGENCY_LEVELS = {
   PLATINUM: 'platinum'
 };
 
-const AGENCY_LEVEL_LABELS = {
-  [AGENCY_LEVELS.BRONZE]: 'Bronce',
-  [AGENCY_LEVELS.SILVER]: 'Plata',
-  [AGENCY_LEVELS.GOLD]: 'Oro',
-  [AGENCY_LEVELS.PLATINUM]: 'Platino'
+const AGENCY_LEVEL_KEYS = {
+  [AGENCY_LEVELS.BRONZE]: 'clientsManagement.levels.bronze',
+  [AGENCY_LEVELS.SILVER]: 'clientsManagement.levels.silver',
+  [AGENCY_LEVELS.GOLD]: 'clientsManagement.levels.gold',
+  [AGENCY_LEVELS.PLATINUM]: 'clientsManagement.levels.platinum'
 };
 
 const AGENCY_VALIDATIONS = {
@@ -43,17 +44,18 @@ const AGENCY_VALIDATIONS = {
   PHONE_REGEX: /^9\d{8}$/
 };
 
-const AGENCY_MESSAGES = {
-  CREATE_SUCCESS: 'Agencia creada exitosamente',
-  UPDATE_SUCCESS: 'Agencia actualizada exitosamente',
-  DELETE_SUCCESS: 'Agencia eliminada exitosamente',
-  CREATE_ERROR: 'Error al crear agencia',
-  UPDATE_ERROR: 'Error al actualizar agencia',
-  DELETE_ERROR: 'Error al eliminar agencia',
-  LOAD_ERROR: 'Error al cargar agencias'
+const AGENCY_MESSAGE_KEYS = {
+  CREATE_SUCCESS: 'clientsManagement.messages.createSuccess',
+  UPDATE_SUCCESS: 'clientsManagement.messages.updateSuccess',
+  DELETE_SUCCESS: 'clientsManagement.messages.deleteSuccess',
+  CREATE_ERROR: 'clientsManagement.messages.createError',
+  UPDATE_ERROR: 'clientsManagement.messages.updateError',
+  DELETE_ERROR: 'clientsManagement.messages.deleteError',
+  LOAD_ERROR: 'clientsManagement.messages.loadError'
 };
 
 const ClientsManagement = () => {
+  const { t } = useTranslation();
   const [showForm, setShowForm] = useState(false);
   const [editingAgency, setEditingAgency] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -114,11 +116,11 @@ const ClientsManagement = () => {
         }));
       } else {
         console.error('Error loading agencies:', result.error);
-        toast.error(AGENCY_MESSAGES.LOAD_ERROR);
+        toast.error(t(AGENCY_MESSAGE_KEYS.LOAD_ERROR));
       }
     } catch (error) {
       console.error('Error loading agencies:', error);
-      toast.error(AGENCY_MESSAGES.LOAD_ERROR);
+      toast.error(t(AGENCY_MESSAGE_KEYS.LOAD_ERROR));
     } finally {
       setIsLoading(false);
     }
@@ -144,7 +146,7 @@ const ClientsManagement = () => {
     setPagination(prev => ({ ...prev, page }));
   };
 
-  // Estadisticas con validacion defensiva
+  // Estadísticas con validacion defensiva
   const stats = {
     total: Array.isArray(agencies) ? agencies.length : 0,
     active: Array.isArray(agencies) ? agencies.filter(a => a.status === 'active').length : 0,
@@ -156,30 +158,30 @@ const ClientsManagement = () => {
     const newErrors = {};
 
     if (!formData.businessName || formData.businessName.length < AGENCY_VALIDATIONS.NAME_MIN_LENGTH) {
-      newErrors.businessName = `El nombre debe tener al menos ${AGENCY_VALIDATIONS.NAME_MIN_LENGTH} caracteres`;
+      newErrors.businessName = t('clientsManagement.validation.nameMinLength', { min: AGENCY_VALIDATIONS.NAME_MIN_LENGTH });
     }
 
     if (!formData.ruc) {
-      newErrors.ruc = 'El RUC es requerido';
+      newErrors.ruc = t('clientsManagement.validation.rucRequired');
     } else if (formData.ruc.length !== AGENCY_VALIDATIONS.RUC_LENGTH || !/^\d{11}$/.test(formData.ruc)) {
-      newErrors.ruc = 'El RUC debe tener 11 digitos';
+      newErrors.ruc = t('clientsManagement.validation.rucLength');
     }
 
     if (!formData.email || !AGENCY_VALIDATIONS.EMAIL_REGEX.test(formData.email)) {
-      newErrors.email = 'Ingrese un email valido';
+      newErrors.email = t('clientsManagement.validation.emailInvalid');
     }
 
     if (formData.phone && !AGENCY_VALIDATIONS.PHONE_REGEX.test(formData.phone)) {
-      newErrors.phone = 'El telefono debe tener 9 digitos y empezar con 9';
+      newErrors.phone = t('clientsManagement.validation.phoneInvalid');
     }
 
     // Para creacion, username y password son requeridos
     if (!editingAgency) {
       if (!formData.username || formData.username.length < 3) {
-        newErrors.username = 'El usuario debe tener al menos 3 caracteres';
+        newErrors.username = t('clientsManagement.validation.usernameMin');
       }
       if (!formData.password || formData.password.length < 8) {
-        newErrors.password = 'La contrasena debe tener al menos 8 caracteres';
+        newErrors.password = t('clientsManagement.validation.passwordMin');
       }
     }
 
@@ -205,9 +207,9 @@ const ClientsManagement = () => {
         };
         const result = await agencyService.updateAgency(editingAgency.id, updateData);
         if (result.success) {
-          toast.success(AGENCY_MESSAGES.UPDATE_SUCCESS);
+          toast.success(t(AGENCY_MESSAGE_KEYS.UPDATE_SUCCESS));
         } else {
-          throw new Error(result.error || AGENCY_MESSAGES.UPDATE_ERROR);
+          throw new Error(result.error || t(AGENCY_MESSAGE_KEYS.UPDATE_ERROR));
         }
       } else {
         // API-033: CreateAgency
@@ -224,9 +226,9 @@ const ClientsManagement = () => {
         };
         const result = await agencyService.createAgency(createData);
         if (result.success) {
-          toast.success(AGENCY_MESSAGES.CREATE_SUCCESS);
+          toast.success(t(AGENCY_MESSAGE_KEYS.CREATE_SUCCESS));
         } else {
-          throw new Error(result.error || AGENCY_MESSAGES.CREATE_ERROR);
+          throw new Error(result.error || t(AGENCY_MESSAGE_KEYS.CREATE_ERROR));
         }
       }
 
@@ -236,7 +238,7 @@ const ClientsManagement = () => {
       setShowForm(false);
       resetForm();
     } catch (error) {
-      toast.error(error.message || (editingAgency ? AGENCY_MESSAGES.UPDATE_ERROR : AGENCY_MESSAGES.CREATE_ERROR));
+      toast.error(error.message || (editingAgency ? t(AGENCY_MESSAGE_KEYS.UPDATE_ERROR) : t(AGENCY_MESSAGE_KEYS.CREATE_ERROR)));
     } finally {
       setIsLoading(false);
     }
@@ -289,14 +291,14 @@ const ClientsManagement = () => {
     try {
       const result = await agencyService.deleteAgency(deleteModal.agency.id);
       if (result.success) {
-        toast.success(AGENCY_MESSAGES.DELETE_SUCCESS);
+        toast.success(t(AGENCY_MESSAGE_KEYS.DELETE_SUCCESS));
         await loadAgencies();
       } else {
-        throw new Error(result.error || AGENCY_MESSAGES.DELETE_ERROR);
+        throw new Error(result.error || t(AGENCY_MESSAGE_KEYS.DELETE_ERROR));
       }
       setDeleteModal({ show: false, agency: null });
     } catch (error) {
-      toast.error(error.message || AGENCY_MESSAGES.DELETE_ERROR);
+      toast.error(error.message || t(AGENCY_MESSAGE_KEYS.DELETE_ERROR));
     } finally {
       setIsLoading(false);
     }
@@ -311,9 +313,10 @@ const ClientsManagement = () => {
   // Alternar verificación de la agencia (sello del admin)
   const handleToggleVerified = async (agency) => {
     const nextVerified = !agency.verified;
+    const agencyName = agency.businessName || agency.name;
     const confirmMsg = nextVerified
-      ? `¿Marcar a "${agency.businessName || agency.name}" como verificada?`
-      : `¿Quitar la verificación a "${agency.businessName || agency.name}"?`;
+      ? t('clientsManagement.verification.confirmVerify', { name: agencyName })
+      : t('clientsManagement.verification.confirmUnverify', { name: agencyName });
     if (!window.confirm(confirmMsg)) return;
 
     // Optimistic update para reflejar el cambio sin esperar al fetch
@@ -324,15 +327,15 @@ const ClientsManagement = () => {
     try {
       const result = await agencyService.setAgencyVerified(agency.id, nextVerified);
       if (!result.success) {
-        throw new Error(result.error || 'Error al actualizar verificación');
+        throw new Error(result.error || t('clientsManagement.verification.updateError'));
       }
-      toast.success(nextVerified ? 'Agencia verificada' : 'Verificación retirada');
+      toast.success(nextVerified ? t('clientsManagement.verification.verifiedToast') : t('clientsManagement.verification.unverifiedToast'));
     } catch (error) {
       // Revertir si falló
       setAgencies(prev => prev.map(a =>
         a.id === agency.id ? { ...a, verified: !nextVerified } : a
       ));
-      toast.error(error.message || 'Error al actualizar verificación');
+      toast.error(error.message || t('clientsManagement.verification.updateError'));
     }
   };
 
@@ -341,12 +344,12 @@ const ClientsManagement = () => {
     const amount = parseInt(pointsData.amount);
 
     if (!amount || amount <= 0) {
-      toast.error('Ingrese una cantidad valida de puntos');
+      toast.error(t('clientsManagement.points.errorInvalidAmount'));
       return;
     }
 
     if (!pointsData.reason || pointsData.reason.trim() === '') {
-      toast.error('Ingrese un motivo para agregar puntos');
+      toast.error(t('clientsManagement.points.errorReasonRequired'));
       return;
     }
 
@@ -360,15 +363,15 @@ const ClientsManagement = () => {
       });
 
       if (result.success) {
-        toast.success(`Se agregaron ${amount} puntos a ${pointsModal.agency.name || pointsModal.agency.businessName}`);
+        toast.success(t('clientsManagement.points.addedSuccess', { points: amount, name: pointsModal.agency.name || pointsModal.agency.businessName }));
         setPointsModal({ show: false, agency: null });
         setPointsData({ amount: '', reason: '' });
         await loadAgencies();
       } else {
-        throw new Error(result.error || 'Error al agregar puntos');
+        throw new Error(result.error || t('clientsManagement.points.errorAdding'));
       }
     } catch (error) {
-      toast.error(error.message || 'Error al agregar puntos');
+      toast.error(error.message || t('clientsManagement.points.errorAdding'));
     } finally {
       setIsLoading(false);
     }
@@ -421,8 +424,8 @@ const ClientsManagement = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Gestión de Agencias</h1>
-          <p className="text-sm sm:text-base text-gray-600">Administra agencias y empresas</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('clientsManagement.title')}</h1>
+          <p className="text-sm sm:text-base text-gray-600">{t('clientsManagement.subtitle')}</p>
         </div>
         <button
           onClick={() => {
@@ -432,7 +435,7 @@ const ClientsManagement = () => {
           className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
         >
           <PlusIcon className="h-5 w-5" />
-          <span>Nueva Agencia</span>
+          <span>{t('clientsManagement.newAgency')}</span>
         </button>
       </div>
 
@@ -442,7 +445,7 @@ const ClientsManagement = () => {
           <div className="flex items-center">
             <UserGroupIcon className="h-8 w-8 text-blue-600" />
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Total Agencias</p>
+              <p className="text-sm font-medium text-gray-500">{t('clientsManagement.stats.totalAgencies')}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
             </div>
           </div>
@@ -452,7 +455,7 @@ const ClientsManagement = () => {
           <div className="flex items-center">
             <CheckCircleIcon className="h-8 w-8 text-green-600" />
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Activos</p>
+              <p className="text-sm font-medium text-gray-500">{t('clientsManagement.stats.active')}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
             </div>
           </div>
@@ -462,7 +465,7 @@ const ClientsManagement = () => {
           <div className="flex items-center">
             <BuildingOfficeIcon className="h-8 w-8 text-purple-600" />
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Verificadas</p>
+              <p className="text-sm font-medium text-gray-500">{t('clientsManagement.stats.verified')}</p>
               <p className="text-2xl font-bold text-gray-900">{stats.verified}</p>
             </div>
           </div>
@@ -480,9 +483,9 @@ const ClientsManagement = () => {
               onChange={(e) => setFilters({ level: e.target.value })}
               className="w-full sm:w-auto border border-gray-300 rounded-lg px-3 py-2 text-sm"
             >
-              <option value="">Todos los niveles</option>
-              {Object.entries(AGENCY_LEVEL_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
+              <option value="">{t('clientsManagement.filters.allLevels')}</option>
+              {Object.entries(AGENCY_LEVEL_KEYS).map(([value, labelKey]) => (
+                <option key={value} value={value}>{t(labelKey)}</option>
               ))}
             </select>
 
@@ -490,7 +493,7 @@ const ClientsManagement = () => {
               onClick={clearFilters}
               className="text-sm text-gray-500 hover:text-gray-700 text-center sm:text-left"
             >
-              Limpiar filtros
+              {t('clientsManagement.filters.clearFilters')}
             </button>
           </div>
 
@@ -498,7 +501,7 @@ const ClientsManagement = () => {
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Buscar por nombre o RUC..."
+              placeholder={t('clientsManagement.filters.searchPlaceholder')}
               value={filters.search}
               onChange={(e) => setFilters({ search: e.target.value })}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
@@ -514,19 +517,19 @@ const ClientsManagement = () => {
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Agencia
+                  {t('clientsManagement.table.agency')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nivel
+                  {t('clientsManagement.table.level')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contacto
+                  {t('clientsManagement.table.contact')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Puntos
+                  {t('clientsManagement.table.points')}
                 </th>
                 <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Acciones
+                  {t('clientsManagement.table.actions')}
                 </th>
               </tr>
             </thead>
@@ -540,7 +543,7 @@ const ClientsManagement = () => {
                         {agency.verified && (
                           <CheckBadgeIcon
                             className="h-4 w-4 text-blue-500"
-                            title="Agencia verificada"
+                            title={t('clientsManagement.actions.verifiedTitle')}
                           />
                         )}
                       </div>
@@ -551,7 +554,7 @@ const ClientsManagement = () => {
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${getLevelColor(agency.level)}`}>
-                      {AGENCY_LEVEL_LABELS[agency.level] || agency.level || 'Bronce'}
+                      {AGENCY_LEVEL_KEYS[agency.level] ? t(AGENCY_LEVEL_KEYS[agency.level]) : (agency.level || t('clientsManagement.levels.bronze'))}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -579,7 +582,7 @@ const ClientsManagement = () => {
                       <button
                         onClick={() => handleViewDetails(agency)}
                         className="text-blue-600 hover:text-blue-800"
-                        title="Ver detalles"
+                        title={t('clientsManagement.actions.viewDetails')}
                       >
                         <EyeIcon className="h-5 w-5" />
                       </button>
@@ -588,7 +591,7 @@ const ClientsManagement = () => {
                         className={agency.verified
                           ? 'text-blue-600 hover:text-gray-600'
                           : 'text-gray-400 hover:text-blue-600'}
-                        title={agency.verified ? 'Quitar verificación' : 'Verificar agencia'}
+                        title={agency.verified ? t('clientsManagement.actions.unverify') : t('clientsManagement.actions.verify')}
                       >
                         {agency.verified
                           ? <CheckBadgeIcon className="h-5 w-5" />
@@ -600,21 +603,21 @@ const ClientsManagement = () => {
                           setPointsData({ amount: '', reason: '' });
                         }}
                         className="text-purple-600 hover:text-purple-800"
-                        title="Agregar puntos"
+                        title={t('clientsManagement.actions.addPoints')}
                       >
                         <GiftIcon className="h-5 w-5" />
                       </button>
                       <button
                         onClick={() => handleEdit(agency)}
                         className="text-yellow-600 hover:text-yellow-800"
-                        title="Editar"
+                        title={t('clientsManagement.actions.edit')}
                       >
                         <PencilIcon className="h-5 w-5" />
                       </button>
                       <button
                         onClick={() => showDeleteConfirmModal(agency)}
                         className="text-red-600 hover:text-red-800"
-                        title="Eliminar"
+                        title={t('clientsManagement.actions.delete')}
                       >
                         <TrashIcon className="h-5 w-5" />
                       </button>
@@ -624,7 +627,7 @@ const ClientsManagement = () => {
               )) : (
                 <tr>
                   <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
-                    No hay agencias disponibles
+                    {t('clientsManagement.noAgencies')}
                   </td>
                 </tr>
               )}
@@ -636,9 +639,11 @@ const ClientsManagement = () => {
         {pagination && pagination.totalPages > 1 && (
           <div className="px-6 py-4 border-t flex items-center justify-between">
             <div className="text-sm text-gray-700">
-              Mostrando {((pagination?.page || 1) - 1) * (pagination?.pageSize || 20) + 1} a{' '}
-              {Math.min((pagination?.page || 1) * (pagination?.pageSize || 20), pagination?.total || 0)} de{' '}
-              {pagination?.total || 0} resultados
+              {t('clientsManagement.pagination.showing', {
+                from: ((pagination?.page || 1) - 1) * (pagination?.pageSize || 20) + 1,
+                to: Math.min((pagination?.page || 1) * (pagination?.pageSize || 20), pagination?.total || 0),
+                total: pagination?.total || 0
+              })}
             </div>
             <div className="flex space-x-2">
               <button
@@ -646,14 +651,14 @@ const ClientsManagement = () => {
                 disabled={(pagination?.page || 1) === 1}
                 className="px-3 py-1 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
               >
-                Anterior
+                {t('clientsManagement.pagination.previous')}
               </button>
               <button
                 onClick={() => setPage((pagination?.page || 1) + 1)}
                 disabled={(pagination?.page || 1) === (pagination?.totalPages || 1)}
                 className="px-3 py-1 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
               >
-                Siguiente
+                {t('clientsManagement.pagination.next')}
               </button>
             </div>
           </div>
@@ -665,7 +670,7 @@ const ClientsManagement = () => {
         <div className="modal-overlay">
           <div className="modal-content p-4 sm:p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-6">
-              {editingAgency ? 'Editar Agencia' : 'Nueva Agencia'}
+              {editingAgency ? t('clientsManagement.editAgency') : t('clientsManagement.newAgency')}
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
@@ -673,7 +678,7 @@ const ClientsManagement = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Razon Social / Nombre Comercial *
+                    {t('clientsManagement.form.businessName')}
                   </label>
                   <input
                     type="text"
@@ -682,7 +687,7 @@ const ClientsManagement = () => {
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       errors.businessName ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Ej: Turismo Peru SAC"
+                    placeholder={t('clientsManagement.form.businessNamePlaceholder')}
                   />
                   {errors.businessName && (
                     <p className="text-sm text-red-600 mt-1">{errors.businessName}</p>
@@ -691,7 +696,7 @@ const ClientsManagement = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    RUC *
+                    {t('clientsManagement.form.ruc')}
                   </label>
                   <input
                     type="text"
@@ -711,7 +716,7 @@ const ClientsManagement = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email de la Agencia *
+                    {t('clientsManagement.form.agencyEmail')}
                   </label>
                   <input
                     type="email"
@@ -720,7 +725,7 @@ const ClientsManagement = () => {
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       errors.email ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="contacto@agencia.com"
+                    placeholder={t('clientsManagement.form.agencyEmailPlaceholder')}
                   />
                   {errors.email && (
                     <p className="text-sm text-red-600 mt-1">{errors.email}</p>
@@ -729,7 +734,7 @@ const ClientsManagement = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Telefono
+                    {t('clientsManagement.form.phone')}
                   </label>
                   <input
                     type="tel"
@@ -753,28 +758,28 @@ const ClientsManagement = () => {
 
               </div>
 
-              {/* Direccion */}
+              {/* Dirección */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Direccion
+                  {t('clientsManagement.form.address')}
                 </label>
                 <input
                   type="text"
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Av. Principal 123, Lima"
+                  placeholder={t('clientsManagement.form.addressPlaceholder')}
                 />
               </div>
 
               {/* Datos de usuario (solo para creacion) */}
               {!editingAgency && (
                 <div className="border-t pt-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">Datos de acceso al sistema</h4>
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">{t('clientsManagement.form.systemAccessData')}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Usuario *
+                        {t('clientsManagement.form.username')}
                       </label>
                       <input
                         type="text"
@@ -783,7 +788,7 @@ const ClientsManagement = () => {
                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                           errors.username ? 'border-red-500' : 'border-gray-300'
                         }`}
-                        placeholder="usuario_agencia"
+                        placeholder={t('clientsManagement.form.usernamePlaceholder')}
                       />
                       {errors.username && (
                         <p className="text-sm text-red-600 mt-1">{errors.username}</p>
@@ -792,7 +797,7 @@ const ClientsManagement = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Contrasena *
+                        {t('clientsManagement.form.password')}
                       </label>
                       <input
                         type="password"
@@ -801,7 +806,7 @@ const ClientsManagement = () => {
                         className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                           errors.password ? 'border-red-500' : 'border-gray-300'
                         }`}
-                        placeholder="Minimo 8 caracteres"
+                        placeholder={t('clientsManagement.form.passwordPlaceholder')}
                       />
                       {errors.password && (
                         <p className="text-sm text-red-600 mt-1">{errors.password}</p>
@@ -821,14 +826,14 @@ const ClientsManagement = () => {
                   }}
                   className="w-full sm:w-auto px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
                   className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? 'Guardando...' : (editingAgency ? 'Actualizar' : 'Crear')}
+                  {isLoading ? t('common.saving') : (editingAgency ? t('common.update') : t('common.create'))}
                 </button>
               </div>
             </form>
@@ -842,7 +847,7 @@ const ClientsManagement = () => {
           <div className="modal-content p-4 sm:p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                Detalles de la Agencia
+                {t('clientsManagement.agencyDetails')}
               </h3>
               <button
                 onClick={() => {
@@ -859,29 +864,33 @@ const ClientsManagement = () => {
               {/* Info basica */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-2">Informacion General</h4>
+                  <h4 className="text-sm font-medium text-gray-500 mb-2">{t('clientsManagement.details.generalInfo')}</h4>
                   <div className="space-y-2">
                     <div>
-                      <span className="text-sm text-gray-600">Razon Social:</span>
+                      <span className="text-sm text-gray-600">{t('clientsManagement.details.businessName')}</span>
                       <p className="font-medium">{selectedAgency.businessName || selectedAgency.name || selectedAgency.company_name}</p>
                     </div>
                     <div>
-                      <span className="text-sm text-gray-600">RUC:</span>
+                      <span className="text-sm text-gray-600">{t('clientsManagement.details.ruc')}</span>
                       <p className="font-medium">{selectedAgency.ruc || selectedAgency.tax_id || '-'}</p>
                     </div>
                     <div>
-                      <span className="text-sm text-gray-600">Nivel:</span>
+                      <span className="text-sm text-gray-600">{t('clientsManagement.details.level')}</span>
                       <p>
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getLevelColor(selectedAgency.level)}`}>
-                          {AGENCY_LEVEL_LABELS[selectedAgency.level] || selectedAgency.level || 'Bronce'}
+                          {AGENCY_LEVEL_KEYS[selectedAgency.level] ? t(AGENCY_LEVEL_KEYS[selectedAgency.level]) : (selectedAgency.level || t('clientsManagement.levels.bronze'))}
                         </span>
                       </p>
                     </div>
                     <div>
-                      <span className="text-sm text-gray-600">Estado:</span>
+                      <span className="text-sm text-gray-600">{t('clientsManagement.details.status')}</span>
                       <p>
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(selectedAgency.status)}`}>
-                          {selectedAgency.status === 'active' ? 'Activo' : selectedAgency.status === 'inactive' ? 'Inactivo' : selectedAgency.status === 'suspended' ? 'Suspendido' : selectedAgency.status === 'pending' ? 'Pendiente' : 'Activo'}
+                          {selectedAgency.status === 'active' ? t('clientsManagement.statusLabels.active')
+                            : selectedAgency.status === 'inactive' ? t('clientsManagement.statusLabels.inactive')
+                            : selectedAgency.status === 'suspended' ? t('clientsManagement.statusLabels.suspended')
+                            : selectedAgency.status === 'pending' ? t('clientsManagement.statusLabels.pending')
+                            : t('clientsManagement.statusLabels.active')}
                         </span>
                       </p>
                     </div>
@@ -889,7 +898,7 @@ const ClientsManagement = () => {
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-2">Contacto</h4>
+                  <h4 className="text-sm font-medium text-gray-500 mb-2">{t('clientsManagement.details.contact')}</h4>
                   <div className="space-y-2">
                     <div className="flex items-center">
                       <EnvelopeIcon className="h-4 w-4 mr-2 text-gray-400" />
@@ -909,29 +918,29 @@ const ClientsManagement = () => {
                 </div>
               </div>
 
-              {/* Estadisticas */}
+              {/* Estadísticas */}
               <div>
-                <h4 className="text-sm font-medium text-gray-500 mb-2">Estadisticas</h4>
+                <h4 className="text-sm font-medium text-gray-500 mb-2">{t('clientsManagement.details.statistics')}</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                   <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600">Total Reservas</p>
+                    <p className="text-sm text-gray-600">{t('clientsManagement.details.totalReservations')}</p>
                     <p className="text-lg font-semibold">{selectedAgency.total_reservations || selectedAgency.totalBookings || 0}</p>
                   </div>
                   <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600">Ingresos Totales</p>
+                    <p className="text-sm text-gray-600">{t('clientsManagement.details.totalRevenue')}</p>
                     <p className="text-lg font-semibold">
                       S/ {(selectedAgency.total_revenue || selectedAgency.totalRevenue || 0).toLocaleString()}
                     </p>
                   </div>
                   <div className="bg-purple-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600">Puntos Actuales</p>
+                    <p className="text-sm text-gray-600">{t('clientsManagement.details.currentPoints')}</p>
                     <p className="text-lg font-semibold text-purple-600">
                       <StarIcon className="h-4 w-4 inline mr-1 text-yellow-500" />
                       {(selectedAgency.available_points || selectedAgency.availablePoints || 0).toLocaleString()}
                     </p>
                   </div>
                   <div className="bg-purple-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600">Puntos Totales</p>
+                    <p className="text-sm text-gray-600">{t('clientsManagement.details.totalPoints')}</p>
                     <p className="text-lg font-semibold text-purple-600">
                       {(selectedAgency.total_points || selectedAgency.totalPoints || 0).toLocaleString()}
                     </p>
@@ -941,8 +950,8 @@ const ClientsManagement = () => {
 
               {/* Fechas */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm text-gray-500 pt-4 border-t">
-                <span>Agencia desde: {selectedAgency.created_at || selectedAgency.createdAt ? new Date(selectedAgency.created_at || selectedAgency.createdAt).toLocaleDateString() : '-'}</span>
-                <span>Ultima actualizacion: {selectedAgency.updated_at || selectedAgency.updatedAt ? new Date(selectedAgency.updated_at || selectedAgency.updatedAt).toLocaleDateString() : '-'}</span>
+                <span>{t('clientsManagement.details.agencySince')} {selectedAgency.created_at || selectedAgency.createdAt ? new Date(selectedAgency.created_at || selectedAgency.createdAt).toLocaleDateString() : '-'}</span>
+                <span>{t('clientsManagement.details.lastUpdate')} {selectedAgency.updated_at || selectedAgency.updatedAt ? new Date(selectedAgency.updated_at || selectedAgency.updatedAt).toLocaleDateString() : '-'}</span>
               </div>
             </div>
           </div>
@@ -956,7 +965,7 @@ const ClientsManagement = () => {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2 sm:gap-3">
                 <ExclamationTriangleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Confirmar Eliminacion</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">{t('clientsManagement.delete.title')}</h3>
               </div>
               <button
                 onClick={() => setDeleteModal({ show: false, agency: null })}
@@ -967,8 +976,8 @@ const ClientsManagement = () => {
             </div>
 
             <p className="text-sm sm:text-base text-gray-600 mb-6">
-              Esta seguro de que desea eliminar a <span className="font-semibold">{deleteModal.agency.businessName || deleteModal.agency.name}</span>?
-              Esta accion no se puede deshacer.
+              {t('clientsManagement.delete.confirmText', { name: deleteModal.agency.businessName || deleteModal.agency.name })}{' '}
+              {t('clientsManagement.delete.irreversible')}
             </p>
 
             <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
@@ -976,14 +985,14 @@ const ClientsManagement = () => {
                 onClick={() => setDeleteModal({ show: false, agency: null })}
                 className="w-full sm:w-auto px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
-                Cancelar
+                {t('common.cancel')}
               </button>
               <button
                 onClick={confirmDelete}
                 disabled={isLoading}
                 className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:bg-gray-300"
               >
-                {isLoading ? 'Eliminando...' : 'Eliminar'}
+                {isLoading ? t('clientsManagement.delete.deleting') : t('common.delete')}
               </button>
             </div>
           </div>
@@ -997,7 +1006,7 @@ const ClientsManagement = () => {
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center gap-2 sm:gap-3">
                 <GiftIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-500" />
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Agregar Puntos</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">{t('clientsManagement.points.title')}</h3>
               </div>
               <button
                 onClick={() => {
@@ -1012,12 +1021,12 @@ const ClientsManagement = () => {
 
             <div className="mb-4">
               <p className="text-sm text-gray-600 mb-2">
-                Agregando puntos a: <span className="font-semibold">{pointsModal.agency.businessName || pointsModal.agency.name}</span>
+                {t('clientsManagement.points.addingTo', { name: pointsModal.agency.businessName || pointsModal.agency.name })}
               </p>
               <p className="text-sm text-gray-500">
-                Balance actual: <span className="font-medium text-purple-600">
+                {t('clientsManagement.points.currentBalance')} <span className="font-medium text-purple-600">
                   <StarIcon className="h-3 w-3 inline mr-1 text-yellow-500" />
-                  {(pointsModal.agency.available_points || pointsModal.agency.availablePoints || 0).toLocaleString()} puntos
+                  {(pointsModal.agency.available_points || pointsModal.agency.availablePoints || 0).toLocaleString()} {t('clientsManagement.points.pointsLabel')}
                 </span>
               </p>
             </div>
@@ -1028,14 +1037,14 @@ const ClientsManagement = () => {
             }} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Cantidad de puntos
+                  {t('clientsManagement.points.amount')}
                 </label>
                 <input
                   type="number"
                   value={pointsData.amount}
                   onChange={(e) => setPointsData({ ...pointsData, amount: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Ej: 1000"
+                  placeholder={t('clientsManagement.points.amountPlaceholder')}
                   min="1"
                   required
                 />
@@ -1043,13 +1052,13 @@ const ClientsManagement = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Motivo
+                  {t('clientsManagement.points.reason')}
                 </label>
                 <textarea
                   value={pointsData.reason}
                   onChange={(e) => setPointsData({ ...pointsData, reason: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Ej: Bonificacion por meta cumplida"
+                  placeholder={t('clientsManagement.points.reasonPlaceholder')}
                   rows="3"
                   required
                 />
@@ -1059,7 +1068,7 @@ const ClientsManagement = () => {
                 <div className="flex">
                   <div className="ml-3">
                     <p className="text-sm text-blue-800">
-                      Los puntos se agregaran inmediatamente al balance de la agencia y podran ser canjeados en la tienda de premios.
+                      {t('clientsManagement.points.infoText')}
                     </p>
                   </div>
                 </div>
@@ -1074,14 +1083,14 @@ const ClientsManagement = () => {
                   }}
                   className="w-full sm:w-auto px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
                   className="w-full sm:w-auto px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-300"
                 >
-                  {isLoading ? 'Agregando...' : 'Agregar Puntos'}
+                  {isLoading ? t('clientsManagement.points.adding') : t('clientsManagement.points.addPointsBtn')}
                 </button>
               </div>
             </form>

@@ -20,7 +20,7 @@ const ChatContainer = () => {
   return (
     <div className="flex h-full w-full bg-gray-50 rounded-lg overflow-hidden shadow-sm border border-gray-200">
       {/* Chat list - hidden on mobile when chat is selected */}
-      <div className={`w-full lg:w-80 flex flex-col ${isMobileView ? 'hidden lg:block' : 'block'}`}>
+      <div className={`w-full lg:w-72 xl:w-80 flex flex-col ${isMobileView ? 'hidden lg:block' : 'block'}`}>
         <ChatList
           onSelectChat={handleSelectChat}
           selectedChatId={selectedChat?.id}
@@ -30,30 +30,30 @@ const ChatContainer = () => {
       </div>
 
       {/* Chat window - visible on mobile when chat is selected */}
-      <div className={`flex-1 flex flex-col ${!isMobileView && !selectedChat ? 'hidden lg:flex' : 'flex'}`}>
+      <div className={`flex-1 flex flex-col min-w-0 ${!isMobileView && !selectedChat ? 'hidden lg:flex' : 'flex'}`}>
         {selectedChat ? (
-          <ChatWindow 
-            chat={selectedChat} 
+          <ChatWindow
+            chat={selectedChat}
             onClose={handleCloseChat}
           />
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50">
-            <div className="text-center max-w-md px-6">
-              <div className="mb-6 relative">
+          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 p-4 sm:p-6">
+            <div className="text-center max-w-md w-full">
+              <div className="mb-4 sm:mb-6 relative">
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-32 h-32 bg-blue-100 rounded-full opacity-20 animate-pulse"></div>
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 bg-blue-100 rounded-full opacity-20 animate-pulse"></div>
                 </div>
-                <div className="relative bg-white rounded-full p-6 inline-block shadow-lg">
-                  <ChatBubbleLeftRightIcon className="w-20 h-20 text-blue-500" />
+                <div className="relative bg-white rounded-full p-4 sm:p-6 inline-block shadow-lg">
+                  <ChatBubbleLeftRightIcon className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 text-blue-500" />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
                 {t('chat.welcome')}
               </h3>
-              <p className="text-gray-600 mb-8 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 lg:mb-8 leading-relaxed">
                 {t('chat.selectConversation')}
               </p>
-              <div className="grid grid-cols-2 gap-4 text-left">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-left">
                 <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                   <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
                     <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

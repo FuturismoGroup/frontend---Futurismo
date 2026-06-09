@@ -255,10 +255,10 @@ const GuideDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
           <ArrowPathIcon className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
-          <p className="text-gray-600">{t('guideDashboard.loading')}</p>
+          <p className="text-sm sm:text-base text-gray-600">{t('guideDashboard.loading')}</p>
         </div>
       </div>
     );
@@ -269,16 +269,16 @@ const GuideDashboard = () => {
   const isCompletedTab = activeTab === 'completed';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="w-full -m-3 sm:-m-4 lg:-m-6">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 lg:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 break-words">
                 {t('guideDashboard.greeting', { name: user?.first_name || user?.name || 'Guía' })}
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-xs sm:text-sm lg:text-base text-gray-600 mt-1">
                 {t('guideDashboard.subtitle')}
               </p>
             </div>
@@ -288,37 +288,37 @@ const GuideDashboard = () => {
                 if (completedTours.length > 0) loadCompletedTours();
               }}
               disabled={loading}
-              className="btn btn-outline flex items-center gap-2"
+              className="btn btn-outline flex items-center justify-center gap-2 text-sm whitespace-nowrap flex-shrink-0"
             >
               <ArrowPathIcon className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              {t('guideDashboard.refresh')}
+              <span>{t('guideDashboard.refresh')}</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 lg:py-6">
         {/* Estadisticas - 5 cards incluyendo Tours Hoy */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-500">{t('guideDashboard.toursToday')}</p>
-            <p className="text-2xl font-bold text-orange-600">{stats.today}</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('guideDashboard.toursToday')}</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-orange-600">{stats.today}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-500">{t('guideDashboard.totalTours')}</p>
-            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('guideDashboard.totalTours')}</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-500">{t('guideDashboard.confirmed')}</p>
-            <p className="text-2xl font-bold text-blue-600">{stats.confirmed}</p>
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('guideDashboard.confirmed')}</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">{stats.confirmed}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-500">{t('guideDashboard.inProgress')}</p>
-            <p className="text-2xl font-bold text-green-600">{stats.inProgress}</p>
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('guideDashboard.inProgress')}</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{stats.inProgress}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-500">{t('guideDashboard.totalTourists')}</p>
-            <p className="text-2xl font-bold text-purple-600">{stats.totalTourists}</p>
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4 col-span-2 sm:col-span-1">
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('guideDashboard.totalTourists')}</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-purple-600">{stats.totalTourists}</p>
           </div>
         </div>
 

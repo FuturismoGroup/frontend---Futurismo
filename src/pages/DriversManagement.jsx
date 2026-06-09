@@ -55,23 +55,23 @@ const DriversManagement = () => {
     const newErrors = {};
 
     if (!formData.firstName || formData.firstName.length < 2) {
-      newErrors.firstName = 'El nombre debe tener al menos 2 caracteres';
+      newErrors.firstName = t('driversManagement.errors.firstNameMin');
     }
 
     if (!formData.lastName || formData.lastName.length < 2) {
-      newErrors.lastName = 'El apellido debe tener al menos 2 caracteres';
+      newErrors.lastName = t('driversManagement.errors.lastNameMin');
     }
 
     if (!formData.dni || formData.dni.length !== 8) {
-      newErrors.dni = 'El DNI debe tener 8 dígitos';
+      newErrors.dni = t('driversManagement.errors.dniLength');
     }
 
     if (!formData.licenseNumber) {
-      newErrors.licenseNumber = 'El número de licencia es requerido';
+      newErrors.licenseNumber = t('driversManagement.errors.licenseNumberRequired');
     }
 
     if (!formData.licenseExpiry) {
-      newErrors.licenseExpiry = 'La fecha de vencimiento es requerida';
+      newErrors.licenseExpiry = t('driversManagement.errors.licenseExpiryRequired');
     }
 
     setErrors(newErrors);
@@ -83,7 +83,7 @@ const DriversManagement = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      toast.error('Por favor corrija los errores en el formulario');
+      toast.error(t('driversManagement.errors.fixFormErrors'));
       return;
     }
 
@@ -150,73 +150,143 @@ const DriversManagement = () => {
 
   // Manejar eliminación
   const handleDelete = async (driver) => {
-    if (window.confirm(`¿Está seguro de eliminar al chofer ${driver.fullName}?`)) {
+    if (window.confirm(t('driversManagement.confirmDelete', { name: driver.fullName }))) {
       await deleteDriver(driver.id);
     }
   };
 
 
+  // Filtrar choferes segun el searchTerm
+  const filteredDrivers = drivers.filter(driver => {
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
+    const fullName = driver.fullName || `${driver.first_name || driver.firstName || ''} ${driver.last_name || driver.lastName || ''}`.trim();
+    const dni = driver.dni || '';
+    return fullName.toLowerCase().includes(search) || dni.includes(search);
+  });
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="w-full">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <TruckIcon className="h-8 w-8 text-blue-600 mr-3" />
-              <h1 className="text-3xl font-bold text-gray-900">Gestión de Choferes</h1>
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <TruckIcon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-blue-600 flex-shrink-0" />
+              <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 truncate">{t('driversManagement.title')}</h1>
             </div>
             <button
               onClick={() => {
                 resetForm();
                 setShowForm(true);
               }}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
+              className="bg-blue-600 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-blue-700 flex items-center justify-center text-sm sm:text-base whitespace-nowrap flex-shrink-0"
             >
-              <PlusIcon className="h-5 w-5 mr-2" />
-              Nuevo Chofer
+              <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2" />
+              <span>{t('driversManagement.newDriver')}</span>
             </button>
           </div>
         </div>
 
 
         {/* Búsqueda simple */}
-        <div className="bg-white rounded-lg shadow mb-6 p-4">
+        <div className="bg-white rounded-lg shadow mb-4 sm:mb-6 p-3 sm:p-4">
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Buscar por nombre o DNI..."
+              placeholder={t('driversManagement.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
             />
           </div>
         </div>
 
-        {/* Lista de choferes */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        {/* Vista mobile - Cards */}
+        <div className="md:hidden space-y-3">
+          {loading ? (
+            <div className="bg-white rounded-lg shadow p-8 flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : filteredDrivers.length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500 text-sm">
+              {t('driversManagement.notFound')}
+            </div>
+          ) : (
+            filteredDrivers.map((driver) => {
+              const fullName = driver.fullName || `${driver.first_name || driver.firstName || ''} ${driver.last_name || driver.lastName || ''}`.trim() || t('driversManagement.noName');
+              const licNum = driver.license_number || driver.licenseNumber || 'N/A';
+              const licType = LICENSE_CATEGORY_LABELS[driver.license_type || driver.licenseCategory]
+                ? t(LICENSE_CATEGORY_LABELS[driver.license_type || driver.licenseCategory])
+                : (driver.license_type || driver.licenseCategory || 'N/A');
+              const licExp = driver.license_expiry || driver.licenseExpiry;
+              const created = driver.createdAt;
+              return (
+                <div key={driver.id} className="bg-white rounded-lg shadow border border-gray-100 p-4">
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-base font-semibold text-gray-900 truncate">{fullName}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">DNI: {driver.dni}</p>
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <button
+                        onClick={() => handleEdit(driver)}
+                        className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg min-h-[40px] min-w-[40px] flex items-center justify-center"
+                        title={t('driversManagement.actions.edit')}
+                      >
+                        <PencilIcon className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(driver)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg min-h-[40px] min-w-[40px] flex items-center justify-center"
+                        title={t('driversManagement.actions.delete')}
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm border-t border-gray-100 pt-3">
+                    <div>
+                      <p className="text-gray-500">{t('driversManagement.card.license')}</p>
+                      <p className="text-gray-900 font-medium truncate">{licNum}</p>
+                      <p className="text-xs text-gray-500 truncate">{licType}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">{t('driversManagement.card.expires')}</p>
+                      <p className="text-gray-900 font-medium">{licExp ? formatDateSafe(licExp) : 'N/A'}</p>
+                      <p className="text-xs text-gray-500">{created ? formatTimestampSafe(created) : ''}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Lista de choferes - Desktop tabla */}
+        <div className="hidden md:block bg-white rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Nombre
+                    {t('driversManagement.table.name')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    DNI
+                    {t('driversManagement.table.dni')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Licencia
+                    {t('driversManagement.table.license')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Vencimiento
+                    {t('driversManagement.table.expiry')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Registrado
+                    {t('driversManagement.table.registered')}
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
+                    {t('driversManagement.table.actions')}
                   </th>
                 </tr>
               </thead>
@@ -232,7 +302,7 @@ const DriversManagement = () => {
                 ) : drivers.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
-                      No se encontraron choferes
+                      {t('driversManagement.notFound')}
                     </td>
                   </tr>
                 ) : (
@@ -251,7 +321,7 @@ const DriversManagement = () => {
                     <tr key={driver.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {driver.fullName || `${driver.first_name || driver.firstName || ''} ${driver.last_name || driver.lastName || ''}`.trim() || 'Sin nombre'}
+                          {driver.fullName || `${driver.first_name || driver.firstName || ''} ${driver.last_name || driver.lastName || ''}`.trim() || t('driversManagement.noName')}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -286,14 +356,14 @@ const DriversManagement = () => {
                           <button
                             onClick={() => handleEdit(driver)}
                             className="text-indigo-600 hover:text-indigo-900"
-                            title="Editar"
+                            title={t('driversManagement.actions.edit')}
                           >
                             <PencilIcon className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => handleDelete(driver)}
                             className="text-red-600 hover:text-red-900"
-                            title="Eliminar"
+                            title={t('driversManagement.actions.delete')}
                           >
                             <TrashIcon className="h-5 w-5" />
                           </button>
@@ -310,21 +380,31 @@ const DriversManagement = () => {
 
         {/* Modal de formulario */}
         {showForm && (
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <h2 className="text-2xl font-bold mb-6">
-                  {editingDriver ? 'Editar Chofer' : 'Nuevo Chofer'}
+          <div className="fixed inset-0 bg-gray-900/70 flex items-center sm:items-center justify-center p-0 sm:p-4 z-50">
+            <div className="bg-white sm:rounded-xl max-w-4xl w-full h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto flex flex-col">
+              <div className="flex items-center justify-between p-4 sm:p-6 border-b sticky top-0 bg-white z-10">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">
+                  {editingDriver ? t('driversManagement.editDriver') : t('driversManagement.newDriver')}
                 </h2>
+                <button
+                  type="button"
+                  onClick={() => { setShowForm(false); resetForm(); }}
+                  className="p-2 -mr-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg min-h-[40px] min-w-[40px] flex items-center justify-center"
+                  aria-label={t('driversManagement.actions.close')}
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="p-4 sm:p-6 flex-1">
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                   {/* Información Personal */}
                   <div>
-                    <h3 className="text-lg font-medium mb-4">Información Personal</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">{t('driversManagement.section.personalInfo')}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Nombre *
+                          {t('driversManagement.form.firstName')}
                         </label>
                         <input
                           type="text"
@@ -337,7 +417,7 @@ const DriversManagement = () => {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Apellido *
+                          {t('driversManagement.form.lastName')}
                         </label>
                         <input
                           type="text"
@@ -350,7 +430,7 @@ const DriversManagement = () => {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          DNI *
+                          {t('driversManagement.form.dni')}
                         </label>
                         <input
                           type="text"
@@ -383,11 +463,11 @@ const DriversManagement = () => {
 
                   {/* Información de Licencia */}
                   <div>
-                    <h3 className="text-lg font-medium mb-4">Información de Licencia</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">{t('driversManagement.section.licenseInfo')}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Número de Licencia *
+                          {t('driversManagement.form.licenseNumber')}
                         </label>
                         <input
                           type="text"
@@ -400,7 +480,7 @@ const DriversManagement = () => {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Categoría de Licencia *
+                          {t('driversManagement.form.licenseCategory')}
                         </label>
                         <select
                           value={formData.licenseCategory}
@@ -415,7 +495,7 @@ const DriversManagement = () => {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Fecha de Vencimiento *
+                          {t('driversManagement.form.licenseExpiry')}
                         </label>
                         <input
                           type="date"
@@ -430,21 +510,21 @@ const DriversManagement = () => {
 
 
                   {/* Botones */}
-                  <div className="flex justify-end space-x-4">
+                  <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-2">
                     <button
                       type="button"
                       onClick={() => {
                         setShowForm(false);
                         resetForm();
                       }}
-                      className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+                      className="px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm sm:text-base w-full sm:w-auto"
                     >
                       {t('common.cancel')}
                     </button>
                     <button
                       type="submit"
                       disabled={loading}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                      className="px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm sm:text-base w-full sm:w-auto"
                     >
                       {loading ? t('common.saving') : (editingDriver ? t('common.update') : t('common.create'))}
                     </button>

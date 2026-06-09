@@ -39,8 +39,8 @@ const AdminReservations = () => {
       // Mapear datos de la API al formato esperado por el componente
       const mappedReservations = reservationsData.map(res => ({
         id: res.id,
-        serviceType: res.tour?.name || 'Tour no especificado',
-        clientName: res.client?.name || 'Cliente no especificado',
+        serviceType: res.tour?.name || t('reservations.comp.noTour'),
+        clientName: res.client?.name || t('common.notSpecified'),
         date: res.date,
         time: normalizeTimeValue(res.time) || '00:00',
         participants: res.participants || (res.adults || 0) + (res.children || 0),
@@ -61,12 +61,12 @@ const AdminReservations = () => {
       setAllReservations(mappedReservations);
     } catch (err) {
       console.error('Error fetching reservations:', err);
-      setError(err.message || 'Error al cargar reservas');
+      setError(err.message || t('adminReservations.errorLoadingFallback'));
       setAllReservations([]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [t]);
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -129,15 +129,19 @@ const AdminReservations = () => {
     let confirmMessage = '';
     if (reservation.status === 'pending' && newStatus === 'confirmed') {
       const pointsToEarn = calculatePointsForReservation(reservation);
-      confirmMessage = `¿Confirmar esta reserva?\n\n` +
-        `La agencia ganará ${pointsToEarn} puntos automáticamente.\n` +
-        `Cliente: ${reservation.clientName}\n` +
-        `Servicio: ${reservation.serviceType}\n` +
-        `Monto: S/. ${reservation.totalAmount}`;
+      confirmMessage = t('adminReservations.confirmMessages.confirmReservation', {
+        points: pointsToEarn,
+        client: reservation.clientName,
+        service: reservation.serviceType,
+        amount: reservation.totalAmount
+      });
     } else if (newStatus === 'cancelled') {
-      confirmMessage = `¿Cancelar esta reserva?\n\nCliente: ${reservation.clientName}\nServicio: ${reservation.serviceType}`;
+      confirmMessage = t('adminReservations.confirmMessages.cancelReservation', {
+        client: reservation.clientName,
+        service: reservation.serviceType
+      });
     } else {
-      confirmMessage = `¿Cambiar el estado de la reserva a "${newStatus}"?`;
+      confirmMessage = t('adminReservations.confirmMessages.changeStatus', { status: newStatus });
     }
 
     if (!window.confirm(confirmMessage)) return;
@@ -146,25 +150,25 @@ const AdminReservations = () => {
       // Llamar a API-005: PATCH /api/reservations/:id/status
       const payload = { status: newStatus };
       if (newStatus === 'cancelled') {
-        payload.cancellationReason = 'Cancelado por administrador';
+        payload.cancellationReason = t('adminReservations.alerts.cancelledByAdmin');
       }
 
       const response = await api.patch(`/reservations/${reservationId}/status`, payload);
 
       // Mostrar mensaje de exito
       if (newStatus === 'confirmed' && response.data?.pointsAwarded) {
-        alert(`Reserva confirmada. La agencia ha ganado ${response.data.pointsAwarded} puntos.`);
+        alert(t('adminReservations.alerts.confirmedWithPoints', { points: response.data.pointsAwarded }));
       } else if (newStatus === 'cancelled') {
-        alert('Reserva cancelada exitosamente.');
+        alert(t('adminReservations.alerts.cancelledOk'));
       } else {
-        alert(`Estado actualizado a: ${newStatus}`);
+        alert(t('adminReservations.alerts.statusUpdated', { status: newStatus }));
       }
 
       // Recargar la lista de reservas
       await fetchReservations();
     } catch (err) {
       console.error('Error updating reservation status:', err);
-      alert(`Error al actualizar estado: ${err.response?.data?.message || err.message}`);
+      alert(t('adminReservations.alerts.updateError', { error: err.response?.data?.message || err.message }));
     }
   };
 
@@ -196,7 +200,7 @@ const AdminReservations = () => {
       <div className="p-6 flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando reservas...</p>
+          <p className="mt-4 text-gray-600">{t('adminReservations.loading')}</p>
         </div>
       </div>
     );
@@ -208,13 +212,13 @@ const AdminReservations = () => {
       <div className="p-6">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
           <XCircleIcon className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-red-800 mb-2">Error al cargar reservas</h3>
+          <h3 className="text-lg font-medium text-red-800 mb-2">{t('adminReservations.errorLoading')}</h3>
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={fetchReservations}
             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
           >
-            Reintentar
+            {t('adminReservations.retry')}
           </button>
         </div>
       </div>
@@ -228,10 +232,10 @@ const AdminReservations = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <CalendarIcon className="w-8 h-8 mr-3 text-blue-500" />
-            Gestión de Reservas
+            {t('adminReservations.title')}
           </h1>
           <p className="text-gray-600 mt-1">
-            Administra y confirma las reservas de las agencias
+            {t('adminReservations.subtitle')}
           </p>
         </div>
       </div>
@@ -323,7 +327,7 @@ const AdminReservations = () => {
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Buscar por cliente, servicio o ID..."
+                placeholder={t('adminReservations.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
@@ -337,16 +341,16 @@ const AdminReservations = () => {
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="border border-gray-300 rounded-lg px-3 py-2"
               >
-                <option value="all">Todos los estados</option>
-                <option value="pending">Pendientes</option>
-                <option value="confirmed">Confirmadas</option>
-                <option value="cancelled">Canceladas</option>
+                <option value="all">{t('adminReservations.allStatuses')}</option>
+                <option value="pending">{t('adminReservations.statusPendingPlural')}</option>
+                <option value="confirmed">{t('adminReservations.statusConfirmedPlural')}</option>
+                <option value="cancelled">{t('adminReservations.statusCancelledPlural')}</option>
               </select>
             </div>
           </div>
 
           <div className="text-sm text-gray-600">
-            Mostrando {filteredReservations.length} de {allReservations.length} reservas
+            {t('adminReservations.showingCount', { shown: filteredReservations.length, total: allReservations.length })}
           </div>
         </div>
       </div>
@@ -358,22 +362,22 @@ const AdminReservations = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Reserva
+                  {t('adminReservations.table.reservation')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Cliente
+                  {t('adminReservations.table.client')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fecha & Hora
+                  {t('adminReservations.table.dateTime')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Participantes
+                  {t('adminReservations.table.participants')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Monto
+                  {t('adminReservations.table.amount')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Estado
+                  {t('adminReservations.table.status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('common.actions')}
@@ -424,8 +428,8 @@ const AdminReservations = () => {
                     <span className={`inline-flex items-center space-x-1 px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(reservation.status)}`}>
                       {getStatusIcon(reservation.status)}
                       <span>
-                        {reservation.status === 'confirmed' ? 'Confirmada' :
-                         reservation.status === 'pending' ? 'Pendiente' : 'Cancelada'}
+                        {reservation.status === 'confirmed' ? t('adminReservations.statusLabels.confirmed') :
+                         reservation.status === 'pending' ? t('adminReservations.statusLabels.pending') : t('adminReservations.statusLabels.cancelled')}
                       </span>
                     </span>
                   </td>
@@ -434,32 +438,32 @@ const AdminReservations = () => {
                       <button
                         onClick={() => openReservationModal(reservation)}
                         className="text-blue-600 hover:text-blue-900"
-                        title="Ver detalles"
+                        title={t('adminReservations.tooltips.viewDetails')}
                       >
                         <EyeIcon className="w-4 h-4" />
                       </button>
-                      
+
                       {reservation.status === 'pending' && (
                         <>
                           <button
                             onClick={() => handleStatusChange(reservation.id, 'confirmed')}
                             className="text-green-600 hover:text-green-900"
-                            title="Confirmar reserva"
+                            title={t('adminReservations.tooltips.confirmReservation')}
                           >
                             <CheckCircleIcon className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleStatusChange(reservation.id, 'cancelled')}
                             className="text-red-600 hover:text-red-900"
-                            title="Cancelar reserva"
+                            title={t('adminReservations.tooltips.cancelReservation')}
                           >
                             <XCircleIcon className="w-4 h-4" />
                           </button>
                         </>
                       )}
-                      
+
                       {reservation.status === 'confirmed' && (
-                        <div className="flex items-center space-x-1 text-yellow-600" title="Puntos otorgados">
+                        <div className="flex items-center space-x-1 text-yellow-600" title={t('adminReservations.tooltips.pointsAwarded')}>
                           <StarIcon className="w-4 h-4" />
                           <span className="text-xs">
                             {reservation.pointsAwarded || calculatePointsForReservation(reservation)}
@@ -477,10 +481,10 @@ const AdminReservations = () => {
             <div className="text-center py-8">
               <CalendarIcon className="mx-auto h-12 w-12 text-gray-400" />
               <h3 className="mt-2 text-sm font-medium text-gray-900">
-                No se encontraron reservas
+                {t('adminReservations.empty.title')}
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                No hay reservas que coincidan con los filtros seleccionados.
+                {t('adminReservations.empty.subtitle')}
               </p>
             </div>
           )}
@@ -494,7 +498,7 @@ const AdminReservations = () => {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Detalles de la Reserva
+                  {t('adminReservations.modal.title')}
                 </h3>
                 <button
                   onClick={closeModal}
@@ -509,20 +513,20 @@ const AdminReservations = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      ID de Reserva
+                      {t('adminReservations.modal.reservationId')}
                     </label>
                     <p className="text-sm text-gray-900">{selectedReservation.id}</p>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Estado
+                      {t('adminReservations.modal.status')}
                     </label>
                     <span className={`inline-flex items-center space-x-1 px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(selectedReservation.status)}`}>
                       {getStatusIcon(selectedReservation.status)}
                       <span>
-                        {selectedReservation.status === 'confirmed' ? 'Confirmada' :
-                         selectedReservation.status === 'pending' ? 'Pendiente' : 'Cancelada'}
+                        {selectedReservation.status === 'confirmed' ? t('adminReservations.statusLabels.confirmed') :
+                         selectedReservation.status === 'pending' ? t('adminReservations.statusLabels.pending') : t('adminReservations.statusLabels.cancelled')}
                       </span>
                     </span>
                   </div>
@@ -531,7 +535,7 @@ const AdminReservations = () => {
                 {/* Información del servicio */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tipo de Servicio
+                    {t('adminReservations.modal.serviceType')}
                   </label>
                   <p className="text-lg font-semibold text-gray-900">{selectedReservation.serviceType}</p>
                 </div>
@@ -539,7 +543,7 @@ const AdminReservations = () => {
                 {/* Información del cliente */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Cliente
+                    {t('adminReservations.modal.client')}
                   </label>
                   <p className="text-lg text-gray-900">{selectedReservation.clientName}</p>
                 </div>
@@ -548,7 +552,7 @@ const AdminReservations = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha
+                      {t('adminReservations.modal.date')}
                     </label>
                     <div className="flex items-center space-x-2">
                       <CalendarIcon className="w-4 h-4 text-gray-500" />
@@ -557,10 +561,10 @@ const AdminReservations = () => {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Hora
+                      {t('adminReservations.modal.time')}
                     </label>
                     <div className="flex items-center space-x-2">
                       <ClockIcon className="w-4 h-4 text-gray-500" />
@@ -573,17 +577,17 @@ const AdminReservations = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Participantes
+                      {t('adminReservations.modal.participants')}
                     </label>
                     <div className="flex items-center space-x-2">
                       <UserGroupIcon className="w-4 h-4 text-gray-500" />
-                      <span className="text-sm text-gray-900">{selectedReservation.participants} personas</span>
+                      <span className="text-sm text-gray-900">{selectedReservation.participants} {t('adminReservations.modal.people')}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Monto Total
+                      {t('adminReservations.modal.totalAmount')}
                     </label>
                     <div className="flex items-center space-x-2">
                       <CurrencyDollarIcon className="w-4 h-4 text-gray-500" />
@@ -596,7 +600,7 @@ const AdminReservations = () => {
                 {selectedReservation.guideAssigned && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Guía Asignado
+                      {t('adminReservations.modal.assignedGuide')}
                     </label>
                     <div className="flex items-center space-x-2">
                       <UserIcon className="w-4 h-4 text-gray-500" />
@@ -611,7 +615,7 @@ const AdminReservations = () => {
                     <div className="flex items-center space-x-2">
                       <StarIcon className="w-5 h-5 text-yellow-600" />
                       <span className="text-sm font-medium text-yellow-800">
-                        Al confirmar esta reserva, la agencia ganará {calculatePointsForReservation(selectedReservation)} puntos
+                        {t('adminReservations.modal.pointsToEarn', { points: calculatePointsForReservation(selectedReservation) })}
                       </span>
                     </div>
                   </div>
@@ -623,7 +627,7 @@ const AdminReservations = () => {
                     <div className="flex items-center space-x-2">
                       <StarIcon className="w-5 h-5 text-green-600" />
                       <span className="text-sm font-medium text-green-800">
-                        La agencia ganó {selectedReservation.pointsAwarded || calculatePointsForReservation(selectedReservation)} puntos por esta reserva
+                        {t('adminReservations.modal.pointsEarned', { points: selectedReservation.pointsAwarded || calculatePointsForReservation(selectedReservation) })}
                       </span>
                     </div>
                   </div>
@@ -640,9 +644,9 @@ const AdminReservations = () => {
                       className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center space-x-2"
                     >
                       <CheckCircleIcon className="w-4 h-4" />
-                      <span>Confirmar Reserva</span>
+                      <span>{t('adminReservations.modal.confirmReservation')}</span>
                     </button>
-                    
+
                     <button
                       onClick={() => {
                         handleStatusChange(selectedReservation.id, 'cancelled');
@@ -651,7 +655,7 @@ const AdminReservations = () => {
                       className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center space-x-2"
                     >
                       <XCircleIcon className="w-4 h-4" />
-                      <span>Cancelar Reserva</span>
+                      <span>{t('adminReservations.modal.cancelReservation')}</span>
                     </button>
                   </div>
                 )}

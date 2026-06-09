@@ -96,102 +96,139 @@ const ProviderCard = ({
     const colors = colorClasses[categoryColor] || colorClasses.gray;
 
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all p-4">
-        <div className="flex items-center justify-between gap-4">
-          {/* Icono de categoría */}
-          <div className="flex-shrink-0">
-            <div className={`w-14 h-14 rounded-xl ${colors.badge} flex items-center justify-center shadow-sm`}>
-              {renderCategoryIcon('w-7 h-7')}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all p-3 sm:p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+          {/* Top row en mobile: icono + nombre + acciones */}
+          <div className="flex items-start gap-3 sm:contents">
+            {/* Icono de categoría */}
+            <div className="flex-shrink-0">
+              <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${colors.badge} flex items-center justify-center shadow-sm`}>
+                {renderCategoryIcon('w-6 h-6 sm:w-7 sm:h-7')}
+              </div>
+            </div>
+
+            {/* Información principal */}
+            <div className="flex-1 min-w-0">
+              {/* Nombre y estado */}
+              <div className="flex items-center gap-2 mb-1 sm:mb-2 flex-wrap">
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 truncate flex-1 min-w-0">
+                  {provider.name}
+                </h3>
+                <span className={`px-2 sm:px-2.5 py-0.5 sm:py-1 text-xs font-bold rounded-full flex-shrink-0 ${
+                  provider.status === 'active'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-gray-400 text-white'
+                }`}>
+                  {provider.status === 'active' ? t('providers.status.active') : t('providers.status.inactive')}
+                </span>
+              </div>
+
+              {/* Metadatos */}
+              <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-1 text-xs sm:text-sm text-gray-600">
+                <span className="flex items-center min-w-0">
+                  <MapPinIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
+                  <span className="truncate">{locationName || t('providers.card.noLocation')}</span>
+                </span>
+                <span className="flex items-center min-w-0">
+                  <span className="mr-1 inline-flex flex-shrink-0">{renderCategoryIcon('w-3.5 h-3.5 sm:w-4 sm:h-4')}</span>
+                  <span className="truncate">{categoryName}</span>
+                </span>
+                <span className="flex items-center font-semibold text-yellow-600">
+                  <StarIconSolid className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 text-yellow-400" />
+                  {provider.rating?.toFixed(1) || '0.0'}
+                </span>
+                {provider.capacity && (
+                  <span className="flex items-center">
+                    {provider.capacity} {t('providers.card.people')}
+                  </span>
+                )}
+              </div>
+
+              {/* Servicios en línea */}
+              {provider.services && provider.services.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {provider.services.filter(s => s).slice(0, 3).map((service, index) => (
+                    <span
+                      key={index}
+                      className={`inline-block px-2 py-0.5 text-xs font-medium ${colors.badge} rounded truncate max-w-[150px]`}
+                    >
+                      {getServiceName(service)}
+                    </span>
+                  ))}
+                  {provider.services.length > 3 && (
+                    <span className="inline-block px-2 py-0.5 text-xs font-medium bg-gray-200 text-gray-700 rounded">
+                      +{provider.services.length - 3}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Información principal */}
-          <div className="flex-1 min-w-0">
-            {/* Nombre y estado */}
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-lg font-bold text-gray-900 truncate">
-                {provider.name}
-              </h3>
-              <span className={`px-2.5 py-1 text-xs font-bold rounded-full flex-shrink-0 ${
-                provider.status === 'active'
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-400 text-white'
-              }`}>
-                {provider.status === 'active' ? t('providers.status.active') : t('providers.status.inactive')}
-              </span>
+          {/* Contacto + Acciones (solo en sm+) */}
+          <div className="hidden sm:flex sm:items-center sm:gap-4 sm:flex-shrink-0">
+            {/* Contacto */}
+            <div className="text-right">
+              <div className="text-sm font-medium text-gray-900 mb-1 truncate max-w-[160px]">
+                {provider.contact.contactPerson}
+              </div>
+              <div className="flex items-center justify-end text-xs text-gray-500">
+                <PhoneIcon className="w-3 h-3 mr-1 flex-shrink-0" />
+                <span className="truncate">{provider.contact.phone}</span>
+              </div>
             </div>
 
-            {/* Metadatos */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
-              <span className="flex items-center">
-                <MapPinIcon className="w-4 h-4 mr-1" />
-                {locationName || t('providers.card.noLocation')}
-              </span>
-              <span className="flex items-center">
-                <span className="mr-1 inline-flex">{renderCategoryIcon('w-4 h-4')}</span>
-                {categoryName}
-              </span>
-              <span className="flex items-center font-semibold text-yellow-600">
-                <StarIconSolid className="w-4 h-4 mr-1 text-yellow-400" />
-                {provider.rating?.toFixed(1) || '0.0'}
-              </span>
-              {provider.capacity && (
-                <span className="flex items-center">
-                  {provider.capacity} {t('providers.card.people')}
-                </span>
-              )}
-            </div>
-
-            {/* Servicios en línea */}
-            {provider.services && provider.services.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1">
-                {provider.services.filter(s => s).slice(0, 3).map((service, index) => (
-                  <span
-                    key={index}
-                    className={`inline-block px-2 py-0.5 text-xs font-medium ${colors.badge} rounded`}
-                  >
-                    {getServiceName(service)}
-                  </span>
-                ))}
-                {provider.services.length > 3 && (
-                  <span className="inline-block px-2 py-0.5 text-xs font-medium bg-gray-200 text-gray-700 rounded">
-                    +{provider.services.length - 3}
-                  </span>
-                )}
+            {/* Acciones — solo visibles si el usuario puede gestionar */}
+            {canManage && (
+              <div className="flex flex-col gap-2 flex-shrink-0">
+                <button
+                  onClick={() => onEdit()}
+                  className="p-2 text-blue-700 hover:bg-blue-50 bg-blue-50/50 rounded-lg transition-colors"
+                  title={t('common.edit')}
+                >
+                  <PencilIcon className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => onDelete()}
+                  className="p-2 text-red-700 hover:bg-red-50 bg-red-50/50 rounded-lg transition-colors"
+                  title={t('common.delete')}
+                >
+                  <TrashIcon className="w-4 h-4" />
+                </button>
               </div>
             )}
           </div>
 
-          {/* Contacto */}
-          <div className="text-right flex-shrink-0">
-            <div className="text-sm font-medium text-gray-900 mb-1">
-              {provider.contact.contactPerson}
+          {/* Contacto + acciones en mobile (fila completa) */}
+          <div className="flex sm:hidden items-center justify-between gap-2 pt-2 border-t border-gray-100">
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-medium text-gray-900 truncate">
+                {provider.contact.contactPerson}
+              </div>
+              <div className="flex items-center text-xs text-gray-500 mt-0.5">
+                <PhoneIcon className="w-3 h-3 mr-1 flex-shrink-0" />
+                <span className="truncate">{provider.contact.phone}</span>
+              </div>
             </div>
-            <div className="flex items-center justify-end text-xs text-gray-500">
-              <PhoneIcon className="w-3 h-3 mr-1" />
-              {provider.contact.phone}
-            </div>
+            {canManage && (
+              <div className="flex gap-1 flex-shrink-0">
+                <button
+                  onClick={() => onEdit()}
+                  className="p-2 text-blue-700 hover:bg-blue-50 bg-blue-50/50 rounded-lg transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
+                  title={t('common.edit')}
+                >
+                  <PencilIcon className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => onDelete()}
+                  className="p-2 text-red-700 hover:bg-red-50 bg-red-50/50 rounded-lg transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
+                  title={t('common.delete')}
+                >
+                  <TrashIcon className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
-
-          {/* Acciones — solo visibles si el usuario puede gestionar */}
-          {canManage && (
-            <div className="flex flex-col gap-2 flex-shrink-0">
-              <button
-                onClick={() => onEdit()}
-                className="p-2 text-blue-700 hover:bg-blue-50 bg-blue-50/50 rounded-lg transition-colors"
-                title={t('common.edit')}
-              >
-                <PencilIcon className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => onDelete()}
-                className="p-2 text-red-700 hover:bg-red-50 bg-red-50/50 rounded-lg transition-colors"
-                title={t('common.delete')}
-              >
-                <TrashIcon className="w-4 h-4" />
-              </button>
-            </div>
-          )}
         </div>
       </div>
     );
@@ -399,23 +436,25 @@ const ProviderCard = ({
 
       {/* Footer con acciones mejorado — solo visible si el usuario puede gestionar */}
       {canManage && (
-        <div className="p-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end space-x-2">
+        <div className="p-3 sm:p-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2">
           <button
             onClick={() => onEdit()}
-            className="flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+            className="flex items-center justify-center flex-1 sm:flex-initial px-3 sm:px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
             title={t('common.edit')}
           >
-            <PencilIcon className="w-4 h-4 mr-1.5" />
-            {t('common.edit')}
+            <PencilIcon className="w-4 h-4 sm:mr-1.5" />
+            <span className="hidden sm:inline">{t('common.edit')}</span>
+            <span className="sm:hidden ml-1.5">{t('common.edit')}</span>
           </button>
 
           <button
             onClick={() => onDelete()}
-            className="flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+            className="flex items-center justify-center flex-1 sm:flex-initial px-3 sm:px-4 py-2 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
             title={t('common.delete')}
           >
-            <TrashIcon className="w-4 h-4 mr-1.5" />
-            {t('common.delete')}
+            <TrashIcon className="w-4 h-4 sm:mr-1.5" />
+            <span className="hidden sm:inline">{t('common.delete')}</span>
+            <span className="sm:hidden ml-1.5">{t('common.delete')}</span>
           </button>
         </div>
       )}

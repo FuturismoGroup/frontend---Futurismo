@@ -29,7 +29,7 @@ const Reservations = () => {
               >
                 <ListBulletIcon className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">{t('reservations.list')}</span>
-                <span className="sm:hidden">Lista</span>
+                <span className="sm:hidden">{t('reservations.list')}</span>
               </button>
               <button
                 className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors ${
@@ -41,7 +41,7 @@ const Reservations = () => {
               >
                 <CalendarIcon className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">{t('reservations.calendar')}</span>
-                <span className="sm:hidden">Calendario</span>
+                <span className="sm:hidden">{t('reservations.calendar')}</span>
               </button>
             </div>
 

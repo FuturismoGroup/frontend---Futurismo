@@ -162,15 +162,15 @@ const LoginRegister = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
-      <div className={`w-full ${isRegistering ? 'max-w-5xl' : 'max-w-md'}`}>
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-3 sm:p-4 lg:p-6">
+      <div className={`w-full ${isRegistering ? 'max-w-5xl' : 'max-w-md'} py-4`}>
         {/* Logo y título */}
-        <div className="text-center mb-6 sm:mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-primary rounded-full mb-3 sm:mb-4">
-            <span className="text-2xl sm:text-3xl text-white">🌎</span>
+        <div className="text-center mb-4 sm:mb-6 lg:mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-primary rounded-full mb-2 sm:mb-3 lg:mb-4">
+            <span className="text-xl sm:text-2xl lg:text-3xl text-white">🌎</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Futurismo</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">{t('auth.systemTitle')}</p>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900">Futurismo</h1>
+          <p className="text-xs sm:text-sm lg:text-base text-gray-600 mt-1 sm:mt-2">{t('auth.systemTitle')}</p>
         </div>
 
         {/* Selector de idioma */}

@@ -18,12 +18,24 @@ const ReservationDetail = ({ reservation, onClose }) => {
       case 'pending': case 'pendiente': return 'text-yellow-600 bg-yellow-50';
       case 'cancelled': case 'cancelada': return 'text-red-600 bg-red-50';
       case 'completed': case 'completada': return 'text-blue-600 bg-blue-50';
+      case 'in_progress': case 'en_proceso': return 'text-indigo-600 bg-indigo-50';
       default: return 'text-gray-600 bg-gray-50';
     }
   };
 
   const getStatusLabel = (status) => {
-    const labels = { pending: t('reservations.pending'), confirmed: t('reservations.confirmed'), cancelled: t('reservations.cancelled'), completed: t('reservations.completed') };
+    const labels = {
+      pending: t('reservations.pending'),
+      confirmed: t('reservations.confirmed'),
+      cancelled: t('reservations.cancelled'),
+      completed: t('reservations.completed'),
+      in_progress: t('reservations.inProgress'),
+      pendiente: t('reservations.pending'),
+      confirmada: t('reservations.confirmed'),
+      cancelada: t('reservations.cancelled'),
+      completada: t('reservations.completed'),
+      en_proceso: t('reservations.inProgress')
+    };
     return labels[status] || status;
   };
 
@@ -110,11 +122,11 @@ const ReservationDetail = ({ reservation, onClose }) => {
               <h3 className="font-semibold text-lg mb-4">{t('reservations.tourInfo')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Tour</p>
+                  <p className="text-sm text-gray-600">{t('reservations.tour')}</p>
                   <p className="font-medium">{reservation.tourName}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Fecha y Hora</p>
+                  <p className="text-sm text-gray-600">{t('reservations.dateTime')}</p>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1">
                       <CalendarIcon className="w-4 h-4 text-gray-500" />
@@ -127,17 +139,17 @@ const ReservationDetail = ({ reservation, onClose }) => {
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Pasajeros</p>
+                  <p className="text-sm text-gray-600">{t('reservations.passengers')}</p>
                   <div className="flex items-center gap-1">
                     <UserGroupIcon className="w-4 h-4 text-gray-500" />
                     <span className="font-medium">
-                      {reservation.adults} adultos
-                      {reservation.children > 0 && `, ${reservation.children} niños`}
+                      {t('reservations.comp.adultsLabel', { count: reservation.adults })}
+                      {reservation.children > 0 && `, ${t('reservations.comp.childrenLabel', { count: reservation.children })}`}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Lugar de Recojo</p>
+                  <p className="text-sm text-gray-600">{t('reservations.pickupLocation')}</p>
                   <div className="flex items-center gap-1">
                     <MapPinIcon className="w-4 h-4 text-gray-500" />
                     <span className="font-medium">{reservation.pickupLocation || t('reservations.comp.noSpecified')}</span>
@@ -150,7 +162,7 @@ const ReservationDetail = ({ reservation, onClose }) => {
             <div className="bg-blue-50 rounded-lg p-6">
               <h3 className="font-semibold text-lg mb-4 flex items-center">
                 <UserGroupIcon className="w-5 h-5 mr-2 text-blue-600" />
-                Grupos de la Reserva ({(reservation.groups || []).length || 1})
+                {t('reservations.comp.groupsOfReservation', { count: (reservation.groups || []).length || 1 })}
               </h3>
               
               {/* Si hay grupos múltiples */}
@@ -164,26 +176,26 @@ const ReservationDetail = ({ reservation, onClose }) => {
                       <div key={index} className="border border-blue-200 rounded-lg p-4 bg-white">
                         <h4 className="font-medium text-blue-900 mb-3 flex items-center">
                           <UserIcon className="w-4 h-4 mr-2" />
-                          Grupo #{index + 1}
+                          {t('reservations.comp.groupNumber', { n: index + 1 })}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
-                            <p className="text-sm text-gray-600">Representante</p>
+                            <p className="text-sm text-gray-600">{t('reservations.representative')}</p>
                             <p className="font-medium">{group.representativeName}</p>
                           </div>
                           <div>
-                            <p className="text-sm text-gray-600">Teléfono</p>
+                            <p className="text-sm text-gray-600">{t('reservations.phone')}</p>
                             <div className="flex items-center gap-1">
                               <PhoneIcon className="w-4 h-4 text-gray-500" />
                               <span className="font-medium">{group.representativePhone}</span>
                             </div>
                           </div>
                           <div>
-                            <p className="text-sm text-gray-600">Personas</p>
+                            <p className="text-sm text-gray-600">{t('reservations.totalPeople')}</p>
                             <p className="font-medium">
-                              {gAdults} adultos, {gChildren} niños
+                              {t('reservations.comp.adultsChildrenSummary', { adults: gAdults, children: gChildren })}
                               <span className="text-sm text-gray-500 ml-1">
-                                ({gTotal} persona{gTotal !== 1 ? 's' : ''})
+                                {t('reservations.comp.personsCount', { count: gTotal, plural: gTotal !== 1 ? 's' : '' })}
                               </span>
                             </p>
                           </div>
@@ -196,11 +208,11 @@ const ReservationDetail = ({ reservation, onClose }) => {
                 /* Compatibilidad con reservas anteriores */
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Representante</p>
+                    <p className="text-sm text-gray-600">{t('reservations.representative')}</p>
                     <p className="font-medium">{reservation.representativeName || reservation.agency?.businessName || reservation.clientName || t('reservations.comp.noName')}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Teléfono</p>
+                    <p className="text-sm text-gray-600">{t('reservations.phone')}</p>
                     <div className="flex items-center gap-1">
                       <PhoneIcon className="w-4 h-4 text-gray-500" />
                       <span className="font-medium">{reservation.representativePhone || reservation.agency?.phone || reservation.clientPhone || t('reservations.comp.notAvailable')}</span>
@@ -221,7 +233,7 @@ const ReservationDetail = ({ reservation, onClose }) => {
               <div className="bg-green-50 rounded-lg p-6">
                 <h3 className="font-semibold text-lg mb-4 flex items-center">
                   <UserGroupIcon className="w-5 h-5 mr-2 text-green-600" />
-                  Integrantes del Grupo ({(reservation.groupMembers || reservation.companions || []).length})
+                  {t('reservations.comp.groupMembersTitle', { count: (reservation.groupMembers || reservation.companions || []).length })}
                 </h3>
                 <div className="space-y-4">
                   {(reservation.groupMembers || reservation.companions || []).map((member, index) => {
@@ -231,32 +243,32 @@ const ReservationDetail = ({ reservation, onClose }) => {
                         <div className="flex items-center mb-3">
                           <UserIcon className="w-4 h-4 mr-2 text-green-500" />
                           <h4 className="font-medium text-gray-900">
-                            Integrante #{index + 1}
+                            {t('reservations.comp.memberNumber', { n: index + 1 })}
                             {isMinor && (
                               <span className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
-                                Menor de edad
+                                {t('reservations.minor')}
                               </span>
                             )}
                           </h4>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                           <div>
-                            <p className="text-sm text-gray-600">Nombre</p>
+                            <p className="text-sm text-gray-600">{t('reservations.name')}</p>
                             <p className="font-medium">{member.name}</p>
                           </div>
                           <div>
-                            <p className="text-sm text-gray-600">Documento</p>
+                            <p className="text-sm text-gray-600">{t('reservations.document')}</p>
                             <p className="font-medium">{member.document || t('reservations.comp.noSpecified')}</p>
                           </div>
                           {member.age && (
                             <div>
-                              <p className="text-sm text-gray-600">Edad</p>
-                              <p className="font-medium">{member.age} años</p>
+                              <p className="text-sm text-gray-600">{t('reservations.age')}</p>
+                              <p className="font-medium">{member.age} {t('reservations.years')}</p>
                             </div>
                           )}
                           {member.phone && (
                             <div>
-                              <p className="text-sm text-gray-600">Teléfono</p>
+                              <p className="text-sm text-gray-600">{t('reservations.phone')}</p>
                               <div className="flex items-center gap-1">
                                 <PhoneIcon className="w-4 h-4 text-gray-500" />
                                 <span className="font-medium">{member.phone}</span>
@@ -265,14 +277,14 @@ const ReservationDetail = ({ reservation, onClose }) => {
                           )}
                           {member.guardianName && (
                             <div className="md:col-span-2">
-                              <p className="text-sm text-gray-600">Tutor/Responsable</p>
+                              <p className="text-sm text-gray-600">{t('reservations.guardian')}</p>
                               <p className="font-medium text-orange-700">{member.guardianName}</p>
                             </div>
                           )}
                           {/* Compatibilidad con el formato anterior */}
                           {member.relationship && (
                             <div>
-                              <p className="text-sm text-gray-600">Relación</p>
+                              <p className="text-sm text-gray-600">{t('reservations.relation')}</p>
                               <p className="font-medium capitalize">{member.relationship}</p>
                             </div>
                           )}
@@ -289,7 +301,7 @@ const ReservationDetail = ({ reservation, onClose }) => {
               <div className="bg-indigo-50 rounded-lg p-6">
                 <h3 className="font-semibold text-lg mb-4 flex items-center">
                   <UserGroupIcon className="w-5 h-5 mr-2 text-indigo-600" />
-                  Recursos Asignados
+                  {t('reservations.comp.assignedResources')}
                 </h3>
                 {(() => {
                   const guideName = reservation.tourAssignment?.guideName
@@ -306,9 +318,9 @@ const ReservationDetail = ({ reservation, onClose }) => {
                         <div className="flex items-center gap-3">
                           <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600 flex-shrink-0" />
                           <div>
-                            <p className="font-medium text-yellow-800">Asignación Pendiente</p>
+                            <p className="font-medium text-yellow-800">{t('reservations.comp.assignmentPending')}</p>
                             <p className="text-sm text-yellow-700 mt-1">
-                              El administrador aún no ha asignado los recursos para este servicio.
+                              {t('reservations.comp.adminNotYetAssigned')}
                             </p>
                           </div>
                         </div>
@@ -321,28 +333,28 @@ const ReservationDetail = ({ reservation, onClose }) => {
                       <div className="bg-white rounded-lg p-4 border border-indigo-200">
                         <div className="flex items-center gap-2 mb-2">
                           <UserIcon className="w-4 h-4 text-indigo-600" />
-                          <p className="text-sm font-medium text-gray-600">Guía</p>
+                          <p className="text-sm font-medium text-gray-600">{t('reservations.comp.resourceGuide')}</p>
                         </div>
                         <p className="font-semibold text-gray-900">
-                          {guideName || <span className="text-yellow-600 font-normal">Pendiente</span>}
+                          {guideName || <span className="text-yellow-600 font-normal">{t('reservations.comp.resourcePending')}</span>}
                         </p>
                       </div>
                       <div className="bg-white rounded-lg p-4 border border-indigo-200">
                         <div className="flex items-center gap-2 mb-2">
                           <UserIcon className="w-4 h-4 text-indigo-600" />
-                          <p className="text-sm font-medium text-gray-600">Conductor</p>
+                          <p className="text-sm font-medium text-gray-600">{t('reservations.comp.resourceDriver')}</p>
                         </div>
                         <p className="font-semibold text-gray-900">
-                          {driverName || <span className="text-yellow-600 font-normal">Pendiente</span>}
+                          {driverName || <span className="text-yellow-600 font-normal">{t('reservations.comp.resourcePending')}</span>}
                         </p>
                       </div>
                       <div className="bg-white rounded-lg p-4 border border-indigo-200">
                         <div className="flex items-center gap-2 mb-2">
                           <TruckIcon className="w-4 h-4 text-indigo-600" />
-                          <p className="text-sm font-medium text-gray-600">Vehículo</p>
+                          <p className="text-sm font-medium text-gray-600">{t('reservations.comp.resourceVehicle')}</p>
                         </div>
                         <p className="font-semibold text-gray-900">
-                          {vehicleInfo || <span className="text-yellow-600 font-normal">Pendiente</span>}
+                          {vehicleInfo || <span className="text-yellow-600 font-normal">{t('reservations.comp.resourcePending')}</span>}
                         </p>
                       </div>
                     </div>
@@ -354,14 +366,14 @@ const ReservationDetail = ({ reservation, onClose }) => {
             {/* Información de Pago - Oculto para agencias */}
             {!isAgency && (
               <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="font-semibold text-lg mb-4">Información de Pago</h3>
+                <h3 className="font-semibold text-lg mb-4">{t('reservations.paymentInfo')}</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center pb-3 border-b border-gray-200">
-                    <span className="text-gray-600">Subtotal</span>
+                    <span className="text-gray-600">{t('reservations.subtotal')}</span>
                     <span className="font-medium">S/. {parseFloat(totalAmount).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center text-lg font-semibold">
-                    <span>Total</span>
+                    <span>{t('reservations.total')}</span>
                     <span className="text-primary-600">S/. {parseFloat(totalAmount).toFixed(2)}</span>
                   </div>
                 </div>
@@ -371,9 +383,9 @@ const ReservationDetail = ({ reservation, onClose }) => {
                     <div className="flex items-start gap-3">
                       <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                       <div className="text-sm">
-                        <p className="font-medium text-yellow-800">Pago Pendiente</p>
+                        <p className="font-medium text-yellow-800">{t('reservations.pendingPayment')}</p>
                         <p className="text-yellow-700 mt-1">
-                          El cliente debe realizar el pago antes de la fecha del tour
+                          {t('reservations.paymentDue')}
                         </p>
                       </div>
                     </div>
@@ -385,21 +397,21 @@ const ReservationDetail = ({ reservation, onClose }) => {
             {/* Notas adicionales */}
             {reservation.specialRequirements && (
               <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="font-semibold text-lg mb-2">Requerimientos Especiales</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('reservations.comp.specialReqsTitle')}</h3>
                 <p className="text-gray-700">{reservation.specialRequirements}</p>
               </div>
             )}
 
             {/* Historial de actividad */}
             <div>
-              <h3 className="font-semibold text-lg mb-4">Historial de Actividad</h3>
+              <h3 className="font-semibold text-lg mb-4">{t('reservations.activityHistory')}</h3>
               <div className="space-y-3">
                 <div className="flex gap-3">
                   <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                     <CheckCircleIcon className="w-4 h-4 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium">Reserva creada</p>
+                    <p className="text-sm font-medium">{t('reservations.reservationCreated')}</p>
                     <p className="text-xs text-gray-500">{formatters.formatDateTime(reservation.createdAt)}</p>
                   </div>
                 </div>
@@ -409,8 +421,8 @@ const ReservationDetail = ({ reservation, onClose }) => {
                       <CheckCircleIcon className="w-4 h-4 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Reserva confirmada</p>
-                      <p className="text-xs text-gray-500">Hace 2 días</p>
+                      <p className="text-sm font-medium">{t('reservations.reservationConfirmed')}</p>
+                      <p className="text-xs text-gray-500">{t('reservations.comp.twoDaysAgo')}</p>
                     </div>
                   </div>
                 )}
@@ -420,8 +432,8 @@ const ReservationDetail = ({ reservation, onClose }) => {
                       <CurrencyDollarIcon className="w-4 h-4 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Pago confirmado</p>
-                      <p className="text-xs text-gray-500">Hace 1 día</p>
+                      <p className="text-sm font-medium">{t('reservations.paymentConfirmed')}</p>
+                      <p className="text-xs text-gray-500">{t('reservations.comp.oneDayAgo')}</p>
                     </div>
                   </div>
                 )}
@@ -439,14 +451,14 @@ const ReservationDetail = ({ reservation, onClose }) => {
                 className="btn btn-outline flex items-center gap-2"
               >
                 <EyeIcon className="w-4 h-4" />
-                Previsualizar
+                {t('reservations.comp.preview')}
               </button>
               <button
                 onClick={handleDownloadVoucher}
                 className="btn btn-outline flex items-center gap-2"
               >
                 <ArrowDownTrayIcon className="w-4 h-4" />
-                Descargar Voucher
+                {t('reservations.downloadVoucher')}
               </button>
             </div>
 
@@ -457,12 +469,12 @@ const ReservationDetail = ({ reservation, onClose }) => {
                   className="btn btn-success flex items-center gap-2"
                 >
                   <CheckCircleIcon className="w-4 h-4" />
-                  Confirmar Pago
+                  {t('reservations.confirmPayment')}
                 </button>
               )}
               <button className="btn btn-primary flex items-center gap-2">
                 <PencilIcon className="w-4 h-4" />
-                Editar Reserva
+                {t('reservations.editReservation')}
               </button>
             </div>
           </div>
@@ -474,7 +486,7 @@ const ReservationDetail = ({ reservation, onClose }) => {
               onClick={onClose}
               className="btn btn-outline"
             >
-              Cerrar
+              {t('common.close')}
             </button>
           </div>
         )}

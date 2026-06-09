@@ -337,8 +337,8 @@ const ServiceRequestForm = () => {
               <div>
                 <h3 className="font-semibold text-red-800">Tarifa no disponible</h3>
                 <p className="text-sm text-red-700 mt-1">
-                  Este guia aun no tiene una tarifa por persona configurada.
-                  No es posible enviar una solicitud hasta que el guia establezca su precio.
+                  Este guía aún no tiene una tarifa por persona configurada.
+                  No es posible enviar una solicitud hasta que el guía establezca su precio.
                 </p>
                 <button
                   type="button"
@@ -544,7 +544,7 @@ const ServiceRequestForm = () => {
 
             {/* Seccion 4: Mensaje y requerimientos */}
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Informacion adicional</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Información adicional</h2>
 
               <div className="space-y-4">
                 <div>

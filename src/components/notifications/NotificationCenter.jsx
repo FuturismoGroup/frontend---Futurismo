@@ -32,7 +32,7 @@ const NotificationCenter = () => {
   const handleMarkAllAsRead = async () => {
     if (user?.id && unreadCount > 0) {
       try {
-        await markAllAsRead(user.id);
+        await markAllAsRead();
       } catch (error) {
         console.error('Error marking all as read:', error);
       }
@@ -42,7 +42,7 @@ const NotificationCenter = () => {
   const handleClearAll = async () => {
     if (user?.id && notifications && notifications.length > 0) {
       try {
-        await clearAll(user.id);
+        await clearAll();
       } catch (error) {
         console.error('Error clearing notifications:', error);
       }

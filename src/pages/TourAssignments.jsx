@@ -312,7 +312,7 @@ const TourAssignments = () => {
       await fetchReservations({});
       setShowAssignModal(false);
     } catch (error) {
-      toast.error(error.message || 'Error en la asignacion');
+      toast.error(error.message || 'Error en la asignación');
     } finally {
       setIsAssigning(false);
     }
@@ -320,7 +320,7 @@ const TourAssignments = () => {
 
   // Remover asignacion
   const handleRemoveAssignment = async (reservationId, type = 'guide') => {
-    if (window.confirm('Esta seguro de remover esta asignacion?')) {
+    if (window.confirm('¿Está seguro de remover esta asignación?')) {
       try {
         const reservation = reservations.find(r => r.id === reservationId);
         const tourId = reservation?.tour_id || reservation?.tourId || reservation?.tour?.id;
@@ -330,7 +330,7 @@ const TourAssignments = () => {
           await fetchReservations({});
         }
       } catch {
-        toast.error('Error al remover la asignacion');
+        toast.error('Error al remover la asignación');
       }
     }
   };
@@ -359,10 +359,10 @@ const TourAssignments = () => {
     setDownloadingPdfId(reservation.id);
     try {
       await assignmentPdfService.downloadPDF(reservation.id);
-      toast.success('Ficha de asignacion descargada exitosamente');
+      toast.success('Ficha de asignación descargada exitosamente');
     } catch (error) {
       console.error('Error descargando PDF:', error);
-      toast.error('Error al descargar la ficha de asignacion');
+      toast.error('Error al descargar la ficha de asignación');
     } finally {
       setDownloadingPdfId(null);
     }
@@ -397,13 +397,13 @@ const TourAssignments = () => {
           </h1>
         </div>
         <p className="text-gray-600">
-          Asigna guias, choferes y vehiculos a las reservas pendientes
+          Asigna guías, choferes y vehículos a las reservas pendientes
         </p>
       </div>
 
       {/* Quick Access Management */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Gestion de Recursos</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Gestión de Recursos</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/drivers')}
@@ -440,7 +440,7 @@ const TourAssignments = () => {
             <div className="flex items-center">
               <TruckIcon className="w-6 h-6 text-purple-600 mr-3" />
               <div>
-                <h4 className="font-semibold text-gray-900">Vehiculos</h4>
+                <h4 className="font-semibold text-gray-900">Vehículos</h4>
                 <p className="text-sm text-gray-600">Gestionar flota</p>
               </div>
               <ChevronRightIcon className="w-4 h-4 text-gray-400 ml-auto" />
@@ -524,7 +524,7 @@ const TourAssignments = () => {
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Buscar por tour o codigo..."
+                placeholder="Buscar por tour o código..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
@@ -603,7 +603,7 @@ const TourAssignments = () => {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pax</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Guia</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chofer</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehiculo</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehículo</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
                   <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                 </tr>
@@ -780,7 +780,7 @@ const TourAssignments = () => {
                     ) : (
                       <div className="text-sm text-gray-500">
                         <UserIcon className="h-4 w-4 inline mr-2" />
-                        Sin guia asignado
+                        Sin guía asignado
                       </div>
                     )}
 
@@ -810,7 +810,7 @@ const TourAssignments = () => {
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center text-green-700">
                           <TruckIcon className="h-4 w-4 mr-2" />
-                          <span>{assignmentData.vehiclePlate || 'Vehiculo asignado'}</span>
+                          <span>{assignmentData.vehiclePlate || 'Vehículo asignado'}</span>
                         </div>
                         <button
                           onClick={() => handleRemoveAssignment(reservation.id, 'vehicle')}
@@ -876,7 +876,7 @@ const TourAssignments = () => {
         <div className="bg-white rounded-lg shadow-sm border p-8 text-center">
           <ExclamationTriangleIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No hay reservas pendientes de asignacion
+            No hay reservas pendientes de asignación
           </h3>
           <p className="text-gray-500">
             {reservations.length === 0
@@ -915,7 +915,7 @@ const TourAssignments = () => {
               {[
                 { key: 'guide', label: 'Guia', icon: UserIcon },
                 { key: 'driver', label: 'Chofer', icon: UserIcon },
-                { key: 'vehicle', label: 'Vehiculo', icon: TruckIcon }
+                { key: 'vehicle', label: 'Vehículo', icon: TruckIcon }
               ].map(({ key, label, icon: Icon }) => (
                 <button
                   key={key}
@@ -950,7 +950,7 @@ const TourAssignments = () => {
                       onChange={(e) => setSelectedGuide(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                      <option value="">Seleccione un guia</option>
+                      <option value="">Seleccione un guía</option>
                       {availableGuides.map((guide) => {
                         // Idiomas: soporta array de strings, array de {code, level}, o JSON string (incl. doble-codificado)
                         const rawLangs = parseJsonField(guide.languages);
@@ -983,7 +983,7 @@ const TourAssignments = () => {
                 {availableGuides.length === 0 && !checkingAvailability && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                     <p className="text-sm text-yellow-800">
-                      No hay guias disponibles para esta reserva en la fecha seleccionada.
+                      No hay guías disponibles para esta reserva en la fecha seleccionada.
                     </p>
                   </div>
                 )}
@@ -1033,7 +1033,7 @@ const TourAssignments = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Seleccionar Vehiculo
+                    Seleccionar Vehículo
                   </label>
                   {checkingAvailability ? (
                     <div className="text-center py-4">
@@ -1063,7 +1063,7 @@ const TourAssignments = () => {
                       <p>Capacidad requerida: {selectedReservation.participants || ((selectedReservation.adults || 0) + (selectedReservation.children || 0))} pasajeros</p>
                       {selectedVehicle && availableVehicles.find(v => v.id === selectedVehicle) && (
                         <p className="mt-1">
-                          Vehiculo seleccionado: {availableVehicles.find(v => v.id === selectedVehicle).capacity} plazas
+                          Vehículo seleccionado: {availableVehicles.find(v => v.id === selectedVehicle).capacity} plazas
                         </p>
                       )}
                     </div>

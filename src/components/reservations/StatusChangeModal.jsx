@@ -14,8 +14,9 @@ import { getStatusBadge } from '../../utils/reservationHelpers';
 
 // Transiciones permitidas para admin (sigue la API-005)
 const ADMIN_TRANSITIONS = {
-  pending: ['confirmed', 'cancelled'],
-  confirmed: ['completed', 'cancelled'],
+  pending: ['confirmed', 'in_progress', 'cancelled'],
+  confirmed: ['in_progress', 'cancelled'],
+  in_progress: ['completed', 'cancelled'],
   cancelled: [],
   completed: []
 };
@@ -24,32 +25,39 @@ const ADMIN_TRANSITIONS = {
 const AGENCY_TRANSITIONS = {
   pending: ['cancelled'],
   confirmed: ['cancelled'],
+  in_progress: [],
   cancelled: [],
   completed: []
 };
 
-// Configuracion de estados
+// Configuracion de estados (usar t() en el componente para los labels)
 const STATUS_CONFIG = {
   pending: {
-    label: 'Pendiente',
+    labelKey: 'reservations.pending',
     bgClass: 'bg-gray-100',
     textClass: 'text-gray-800',
     hoverClass: 'hover:bg-gray-200'
   },
   confirmed: {
-    label: 'Confirmada',
+    labelKey: 'reservations.confirmed',
     bgClass: 'bg-green-100',
     textClass: 'text-green-800',
     hoverClass: 'hover:bg-green-200'
   },
+  in_progress: {
+    labelKey: 'reservations.inProgress',
+    bgClass: 'bg-indigo-100',
+    textClass: 'text-indigo-800',
+    hoverClass: 'hover:bg-indigo-200'
+  },
   completed: {
-    label: 'Completada',
+    labelKey: 'reservations.completed',
     bgClass: 'bg-blue-100',
     textClass: 'text-blue-800',
     hoverClass: 'hover:bg-blue-200'
   },
   cancelled: {
-    label: 'Cancelada',
+    labelKey: 'reservations.cancelled',
     bgClass: 'bg-red-100',
     textClass: 'text-red-800',
     hoverClass: 'hover:bg-red-200'
@@ -94,7 +102,8 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
         newStatus,
         newStatus === 'cancelled' ? cancellationReason : null
       );
-      toast.success(`Estado cambiado a ${STATUS_CONFIG[newStatus]?.label || newStatus}`);
+      const newLabel = STATUS_CONFIG[newStatus]?.labelKey ? t(STATUS_CONFIG[newStatus].labelKey) : newStatus;
+      toast.success(t('reservations.comp.statusChangedTo', { status: newLabel }));
       onStatusChanged?.();
     } catch (error) {
       toast.error(error.message || t('reservations.comp.statusChangeError'));
@@ -104,7 +113,8 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
   };
 
   const getStatusLabel = (status) => {
-    return STATUS_CONFIG[status]?.label || status;
+    const cfg = STATUS_CONFIG[status];
+    return cfg?.labelKey ? t(cfg.labelKey) : status;
   };
 
   return (
@@ -129,13 +139,13 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
         {/* Info de la reserva */}
         <div className="mb-4 p-3 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">
-            <span className="font-medium">Reserva:</span> #{reservation.id?.substring(0, 8)}
+            <span className="font-medium">{t('reservations.comp.reservationLabel')}</span> #{reservation.id?.substring(0, 8)}
           </p>
           <p className="text-sm text-gray-600 mt-1">
-            <span className="font-medium">Tour:</span> {reservation.tourName || reservation.tour?.name || 'Sin tour'}
+            <span className="font-medium">{t('reservations.comp.tourLabel')}</span> {reservation.tourName || reservation.tour?.name || t('reservations.comp.noTour')}
           </p>
           <p className="text-sm text-gray-600 mt-2">
-            <span className="font-medium">Estado actual:</span>{' '}
+            <span className="font-medium">{t('reservations.comp.currentStatusLabel')}</span>{' '}
             <span className={`badge ${getStatusBadge(currentStatus)}`}>
               {getStatusLabel(currentStatus)}
             </span>
@@ -161,7 +171,7 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
                   disabled={isLoading}
                   className={`w-full px-4 py-2 text-sm rounded ${config.bgClass} ${config.textClass} ${config.hoverClass} disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
                 >
-                  {isLoading ? 'Procesando...' : config.label}
+                  {isLoading ? t('common.processing') : t(config.labelKey)}
                 </button>
               );
             })}
@@ -170,12 +180,12 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
             {cancellationFormVisible && (
               <div className="mt-3 space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
-                  {t('reservations.cancellationReason', 'Razon de cancelacion')} *
+                  {t('reservations.cancellationReason', 'Razón de cancelación')} *
                 </label>
                 <textarea
                   value={cancellationReason}
                   onChange={(e) => setCancellationReason(e.target.value)}
-                  placeholder="Ingrese el motivo de la cancelacion..."
+                  placeholder={t('reservations.comp.cancellationReasonPlaceholder')}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
                   rows={3}
                   disabled={isLoading}
@@ -185,7 +195,7 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
                   disabled={isLoading || !cancellationReason.trim()}
                   className="w-full px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? 'Cancelando...' : 'Confirmar Cancelacion'}
+                  {isLoading ? t('reservations.comp.cancelling') : t('reservations.comp.confirmCancellation')}
                 </button>
               </div>
             )}
@@ -196,7 +206,7 @@ const StatusChangeModal = ({ reservation, isOpen, onClose, onStatusChanged }) =>
               {t('reservations.noTransitionsAvailable', 'No hay transiciones de estado disponibles para esta reserva.')}
             </p>
             <p className="text-xs text-gray-400 mt-1">
-              Las reservas canceladas o completadas no pueden cambiar de estado.
+              {t('reservations.comp.finalStatusHint')}
             </p>
           </div>
         )}

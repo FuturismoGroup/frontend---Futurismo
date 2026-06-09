@@ -58,24 +58,24 @@ const NewLocationModal = ({ isOpen, onClose, onSave, locations }) => {
   if (!isOpen) return null;
 
   const modalContent = (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-white sm:rounded-lg shadow-xl w-full max-w-md h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-            <MapPinIcon className="w-5 h-5 mr-2 text-blue-600" />
-            {t('providers.form.fields.location')}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b sticky top-0 bg-white z-10">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center min-w-0">
+            <MapPinIcon className="w-5 h-5 mr-2 text-blue-600 flex-shrink-0" />
+            <span className="truncate">{t('providers.form.fields.location')}</span>
           </h3>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors p-2 -mr-2 min-h-[40px] min-w-[40px] flex items-center justify-center flex-shrink-0"
           >
-            <XMarkIcon className="w-6 h-6" />
+            <XMarkIcon className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
 
         {/* Body */}
-        <form onSubmit={handleSubmit} className="px-6 py-4">
+        <form onSubmit={handleSubmit} className="px-4 sm:px-6 py-3 sm:py-4 flex-1 flex flex-col">
           <div className="space-y-4">
             {/* Nombre */}
             <div>
@@ -146,17 +146,17 @@ const NewLocationModal = ({ isOpen, onClose, onSave, locations }) => {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end space-x-3 mt-6 pt-4 border-t">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t">
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-4 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors text-sm sm:text-base w-full sm:w-auto"
             >
               {t('common.cancel')}
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2.5 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base w-full sm:w-auto"
             >
               {t('common.create')}
             </button>

@@ -16,6 +16,7 @@ import WorkingHoursModal from '../calendar/Input/WorkingHoursModal';
 import QuickEditModal from '../calendar/Input/QuickEditModal';
 import useIndependentAgendaStore from '../../stores/independentAgendaStore';
 import useAuthStore from '../../stores/authStore';
+import { toLocalDate } from '../../utils/dateUtils';
 
 const FreelancePersonalAgenda = () => {
   const { user } = useAuthStore();
@@ -99,7 +100,9 @@ const FreelancePersonalAgenda = () => {
   };
 
   const navigatePrevious = () => {
-    const currentDate = new Date(selectedDate);
+    // toLocalDate evita que un selectedDate rehidratado como string YYYY-MM-DD
+    // se interprete como UTC y retroceda un día al instanciar el Date.
+    const currentDate = toLocalDate(selectedDate) || new Date();
     switch (currentView) {
       case 'day':
         currentDate.setDate(currentDate.getDate() - 1);
@@ -115,7 +118,7 @@ const FreelancePersonalAgenda = () => {
   };
 
   const navigateNext = () => {
-    const currentDate = new Date(selectedDate);
+    const currentDate = toLocalDate(selectedDate) || new Date();
     switch (currentView) {
       case 'day':
         currentDate.setDate(currentDate.getDate() + 1);

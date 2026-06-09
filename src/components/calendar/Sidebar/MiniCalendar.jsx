@@ -16,6 +16,7 @@ import {
 } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useIndependentAgendaStore from '../../../stores/independentAgendaStore';
+import { toLocalDate } from '../../../utils/dateUtils';
 
 const MiniCalendar = () => {
   const { t, i18n } = useTranslation();
@@ -27,10 +28,10 @@ const MiniCalendar = () => {
   // Validar selectedDate y derivar el mes mostrado de él, en lugar de un
   // useState local independiente. Antes las flechas del mini sólo movían
   // un estado interno y el calendario principal nunca se enteraba.
+  // toLocalDate evita que un string "YYYY-MM-DD" rehidratado se interprete
+  // como UTC y muestre el mes/día corrido por el offset de Lima.
   const selectedDate = React.useMemo(() => {
-    if (!rawSelectedDate) return new Date();
-    const dateObj = rawSelectedDate instanceof Date ? rawSelectedDate : new Date(rawSelectedDate);
-    return isNaN(dateObj.getTime()) ? new Date() : dateObj;
+    return toLocalDate(rawSelectedDate) || new Date();
   }, [rawSelectedDate]);
 
   const currentMonth = selectedDate;

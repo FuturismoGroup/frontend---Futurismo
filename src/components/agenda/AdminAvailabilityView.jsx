@@ -27,6 +27,7 @@ import useIndependentAgendaStore from '../../stores/independentAgendaStore';
 import useAuthStore from '../../stores/authStore';
 import useGuidesStore from '../../stores/guidesStore';
 import { useTranslation } from 'react-i18next';
+import { toLocalDate } from '../../utils/dateUtils';
 
 const AdminAvailabilityView = () => {
   const { t } = useTranslation();
@@ -685,7 +686,17 @@ const AdminAvailabilityView = () => {
                           {evt.date && (
                             <div className="flex items-center space-x-2 text-gray-700">
                               <CalendarDaysIcon className="w-4 h-4 text-gray-400" />
-                              <span>{evt.date}</span>
+                              <span>
+                                {(() => {
+                                  // evt.date llega como "YYYY-MM-DD". new Date(...) lo
+                                  // interpretaba como UTC y restaba 5h en Lima, mostrando
+                                  // el día anterior. toLocalDate ancla al día calendario.
+                                  const d = toLocalDate(evt.date);
+                                  return d
+                                    ? format(d, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })
+                                    : evt.date;
+                                })()}
+                              </span>
                             </div>
                           )}
 

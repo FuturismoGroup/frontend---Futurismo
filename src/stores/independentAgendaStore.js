@@ -28,21 +28,39 @@ const initialState = {
 };
 
 /**
- * Valida y convierte un valor a fecha válida
+ * Valida y convierte un valor a fecha válida.
+ *
+ * Importante: cuando el valor llega como string "YYYY-MM-DD" puro (p.ej. al
+ * rehidratar desde localStorage o cuando el backend devuelve eventos), usar
+ * `new Date(str)` lo interpreta como medianoche UTC y, en zonas al oeste
+ * (Lima = UTC-5), retrocede al día anterior. Eso producía el desfase de 1 día
+ * en el calendario tras un refresh o al recibir eventos del backend.
+ *
+ * Para strings ISO completos (con hora/offset) seguimos usando el parser
+ * nativo, que respeta el offset y devuelve el instante real registrado.
+ *
  * @param {any} date - Valor a convertir a fecha
  * @returns {Date} - Fecha válida o fecha actual si es inválida
  */
 const toValidDate = (date) => {
   if (!date) return new Date();
 
-  const dateObj = date instanceof Date ? date : new Date(date);
-
-  // Verificar si es una fecha válida
-  if (isNaN(dateObj.getTime())) {
-    return new Date();
+  if (date instanceof Date) {
+    return isNaN(date.getTime()) ? new Date() : date;
   }
 
-  return dateObj;
+  if (typeof date === 'string') {
+    // YYYY-MM-DD puro: parsear como fecha local sin desfase.
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      const [year, month, day] = date.split('-').map(Number);
+      return new Date(year, month - 1, day, 0, 0, 0, 0);
+    }
+    const parsed = new Date(date);
+    return isNaN(parsed.getTime()) ? new Date() : parsed;
+  }
+
+  const dateObj = new Date(date);
+  return isNaN(dateObj.getTime()) ? new Date() : dateObj;
 };
 
 const useIndependentAgendaStore = create(

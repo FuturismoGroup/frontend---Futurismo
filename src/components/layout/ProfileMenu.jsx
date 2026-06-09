@@ -52,31 +52,24 @@ const ProfileMenu = ({ user, viewport, onLogout }) => {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 touch-manipulation group"
+        className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-2 py-1.5 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 touch-manipulation group min-h-[44px]"
       >
-        <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-sm ring-2 ring-white group-hover:ring-blue-100 transition-all">
-          <span className="text-white text-sm font-semibold tracking-tight">
+        <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-sm ring-2 ring-white group-hover:ring-blue-100 transition-all flex-shrink-0">
+          <span className="text-white text-xs sm:text-sm font-semibold tracking-tight">
             {getUserInitials()}
           </span>
         </div>
-        {!viewport.isMobile && (
-          <>
-            <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-              {getFirstName()}
-            </span>
-            <ChevronDownIcon className={`w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-all duration-200 ${
-              isOpen ? 'rotate-180' : ''
-            }`} />
-          </>
-        )}
+        {/* Nombre solo en desktop (>=1024px) */}
+        <span className="hidden lg:inline text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors max-w-[120px] truncate">
+          {getFirstName()}
+        </span>
+        <ChevronDownIcon className={`hidden lg:block w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-all duration-200 flex-shrink-0 ${
+          isOpen ? 'rotate-180' : ''
+        }`} />
       </button>
 
       {isOpen && (
-        <div className={`
-          absolute right-0 mt-2 w-56 sm:w-48 bg-white rounded-xl sm:rounded-lg 
-          shadow-lg border border-gray-200 py-2 z-50
-          ${viewport.isMobile ? 'mr-2' : ''}
-        `}>
+        <div className="absolute right-0 mt-2 w-60 max-w-[calc(100vw-1rem)] bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
           <div className="px-4 py-3 border-b border-gray-100">
             <p className="text-sm font-medium text-gray-900 truncate">
               {getUserName()}

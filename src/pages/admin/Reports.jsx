@@ -67,7 +67,7 @@ function Reports() {
       await loadDashboard();
     } catch (error) {
       console.error('Error cargando reportes:', error);
-      toast.error('Error al cargar los reportes');
+      toast.error(t('adminReports.errorLoading'));
     }
   };
 
@@ -119,7 +119,7 @@ function Reports() {
 
       // Si aún no hay nombre, usar un fallback
       if (!destination) {
-        destination = 'Servicio sin nombre';
+        destination = t('adminReports.unnamedService');
       }
 
       destinationCounts[destination] = (destinationCounts[destination] || 0) + 1;
@@ -168,7 +168,7 @@ function Reports() {
             const tour = tours.find(t => t.id === reservation.service_id);
             serviceName = tour ? (tour.name || tour.title) : 'Sin especificar';
           }
-          if (!serviceName) serviceName = 'Sin especificar';
+          if (!serviceName) serviceName = t('adminReports.notSpecified');
 
           return {
             codigo: formatCodigo(reservation),
@@ -177,12 +177,12 @@ function Reports() {
               reservation.time || reservation.tour_time
             ),
             servicio: serviceName,
-            cliente: reservation.client_name || reservation.agencyName || reservation.clientName || 'Cliente directo',
+            cliente: reservation.client_name || reservation.agencyName || reservation.clientName || t('adminReports.directClient'),
             participantes: reservation.group_size || reservation.participants || (reservation.adults || 0) + (reservation.children || 0),
             monto: reservation.total_amount || reservation.total || 0,
             estado: reservation.status || 'pendiente',
             estado_pago: reservation.payment_status || reservation.paymentStatus || 'pendiente',
-            guia: reservation.guideName || 'Por asignar'
+            guia: reservation.guideName || t('adminReports.toAssign')
           };
         });
 
@@ -193,15 +193,15 @@ function Reports() {
 
       // Usar el servicio de exportación correcto
       exportService.exportToExcel(
-        exportData, 
+        exportData,
         `reporte_${format(startDate, 'yyyy-MM-dd')}_${format(endDate, 'yyyy-MM-dd')}`,
-        'Reporte de Reservas'
+        t('adminReports.reportTitle')
       );
-      
-      toast.success('Reporte exportado exitosamente');
+
+      toast.success(t('adminReports.exportSuccess'));
     } catch (error) {
       console.error('Error al exportar reporte:', error);
-      toast.error('Error al exportar el reporte');
+      toast.error(t('adminReports.exportError'));
     }
   };
 
@@ -229,7 +229,7 @@ function Reports() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center gap-3">
             <ChartBarIcon className="h-8 w-8 text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-900">Reportes</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('adminReports.title')}</h1>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
@@ -255,13 +255,16 @@ function Reports() {
               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <DocumentArrowDownIcon className="h-5 w-5" />
-              Exportar Excel
+              {t('adminReports.exportExcel')}
             </button>
           </div>
         </div>
 
         <p className="mt-2 text-gray-600">
-          Mostrando datos desde {format(startDate, 'dd/MM/yyyy', { locale: es })} hasta {format(endDate, 'dd/MM/yyyy', { locale: es })}
+          {t('adminReports.dateRangeLabel', {
+            from: format(startDate, 'dd/MM/yyyy', { locale: es }),
+            to: format(endDate, 'dd/MM/yyyy', { locale: es })
+          })}
         </p>
       </div>
 
@@ -275,10 +278,10 @@ function Reports() {
           {filteredReservations.length === 0 && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
               <p className="text-yellow-800 font-medium">
-                No hay reservas en el período seleccionado
+                {t('adminReports.noReservationsInPeriod')}
               </p>
               <p className="text-yellow-600 text-sm mt-1">
-                Intenta seleccionar un rango de fechas diferente
+                {t('adminReports.trySelectDifferentRange')}
               </p>
             </div>
           )}
@@ -287,30 +290,30 @@ function Reports() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard
               icon={TicketIcon}
-              title="Total Reservas"
+              title={t('adminReports.cards.totalReservations')}
               value={reportData.totalBookings}
-              subtitle="En el período seleccionado"
+              subtitle={t('adminReports.cards.inSelectedPeriod')}
               color="blue"
             />
             <StatCard
               icon={CurrencyDollarIcon}
-              title="Ingresos Totales"
+              title={t('adminReports.cards.totalRevenue')}
               value={`S/. ${(reportData.totalRevenue || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-              subtitle="Suma de todas las reservas"
+              subtitle={t('adminReports.cards.sumOfAllReservations')}
               color="green"
             />
             <StatCard
               icon={UserGroupIcon}
-              title="Total Usuarios"
+              title={t('adminReports.cards.totalUsers')}
               value={reportData.totalUsers}
-              subtitle="Usuarios registrados"
+              subtitle={t('adminReports.cards.registeredUsers')}
               color="purple"
             />
             <StatCard
               icon={MapIcon}
-              title="Total Proveedores"
+              title={t('adminReports.cards.totalProviders')}
               value={reportData.totalProviders}
-              subtitle="Proveedores activos"
+              subtitle={t('adminReports.cards.activeProviders')}
               color="orange"
             />
           </div>
@@ -319,15 +322,15 @@ function Reports() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Estados de reservas */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Estados de Reservas</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('adminReports.reservationsStatusTitle')}</h2>
               <div className="space-y-4">
                 {Object.entries(reportData.bookingsByStatus || {}).map(([status, count]) => {
                   const statusLabels = {
-                    pending: 'Pendiente',
-                    confirmed: 'Confirmada',
-                    in_progress: 'En Progreso',
-                    completed: 'Completada',
-                    cancelled: 'Cancelada'
+                    pending: t('common.status.pending'),
+                    confirmed: t('common.status.confirmed'),
+                    in_progress: t('common.status.inProgress'),
+                    completed: t('common.status.completed'),
+                    cancelled: t('common.status.cancelled')
                   };
 
                   const statusColors = {
@@ -385,7 +388,7 @@ function Reports() {
 
             {/* Top destinos */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Top 5 Servicios</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('adminReports.top5Services')}</h2>
               <div className="space-y-4">
                 {(reportData.topDestinations || []).length > 0 ? (
                   reportData.topDestinations.map((destination, index) => {
@@ -426,7 +429,7 @@ function Reports() {
                     );
                   })
                 ) : (
-                  <p className="text-gray-500 text-center py-4">No hay datos disponibles</p>
+                  <p className="text-gray-500 text-center py-4">{t('common.noData')}</p>
                 )}
               </div>
             </div>
@@ -436,9 +439,9 @@ function Reports() {
           {filteredReservations.length > 0 && (
             <div className="bg-white rounded-lg shadow overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Detalle de Reservas</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t('adminReports.reservationsDetailTitle')}</h2>
                 <p className="text-sm text-gray-600 mt-1">
-                  {filteredReservations.length} {filteredReservations.length === 1 ? 'reserva encontrada' : 'reservas encontradas'}
+                  {filteredReservations.length} {filteredReservations.length === 1 ? t('adminReports.reservationFound') : t('adminReports.reservationsFound')}
                 </p>
               </div>
               <div className="overflow-x-auto">
@@ -446,39 +449,39 @@ function Reports() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Código
+                        {t('search.code')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Fecha
+                        {t('adminReports.table.date')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Servicio
+                        {t('adminReports.table.service')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Cliente
+                        {t('adminReports.table.client')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Participantes
+                        {t('adminReports.table.participants')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Monto
+                        {t('adminReports.table.amount')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Estado
+                        {t('adminReports.table.status')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Pago
+                        {t('adminReports.table.payment')}
                       </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {filteredReservations.map((reservation) => {
                       const statusLabels = {
-                        pending: 'Pendiente',
-                        confirmed: 'Confirmada',
-                        in_progress: 'En Progreso',
-                        completed: 'Completada',
-                        cancelled: 'Cancelada'
+                        pending: t('common.status.pending'),
+                        confirmed: t('common.status.confirmed'),
+                        in_progress: t('common.status.inProgress'),
+                        completed: t('common.status.completed'),
+                        cancelled: t('common.status.cancelled')
                       };
 
                       const statusColors = {
@@ -490,10 +493,10 @@ function Reports() {
                       };
 
                       const paymentLabels = {
-                        pending: 'Pendiente',
-                        partial: 'Parcial',
-                        paid: 'Pagado',
-                        refunded: 'Reembolsado'
+                        pending: t('common.status.pending'),
+                        partial: t('common.status.partial'),
+                        paid: t('common.status.paid'),
+                        refunded: t('common.status.refunded')
                       };
 
                       const paymentColors = {

@@ -1270,9 +1270,9 @@ const FinancialDashboard = () => {
   // Mostrar loading o error
   if (isLoading && expenses.length === 0 && income.length === 0) {
     return (
-      <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="w-full">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-center h-64">
+          <div className="flex items-center justify-center min-h-[60vh] p-4">
             <div className="text-center">
               {error ? (
                 <>
@@ -1280,7 +1280,7 @@ const FinancialDashboard = () => {
                     <span className="text-red-600 text-2xl">⚠</span>
                   </div>
                   <p className="text-red-600 font-medium">Error al cargar datos financieros</p>
-                  <p className="mt-2 text-gray-600 text-sm">{error}</p>
+                  <p className="mt-2 text-gray-600 text-sm break-words max-w-md mx-auto">{error}</p>
                   <button
                     onClick={() => window.location.reload()}
                     className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -1291,7 +1291,7 @@ const FinancialDashboard = () => {
               ) : (
                 <>
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Cargando datos financieros...</p>
+                  <p className="mt-4 text-sm sm:text-base text-gray-600">Cargando datos financieros...</p>
                 </>
               )}
             </div>
@@ -1302,42 +1302,42 @@ const FinancialDashboard = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="w-full">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                 Control Financiero
               </h1>
-              <p className="text-gray-600">
+              <p className="text-xs sm:text-sm lg:text-base text-gray-600">
                 Gestiona tus ingresos y gastos como guía freelance
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3">
               <button
                 onClick={() => setShowIncomeForm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs sm:text-sm whitespace-nowrap"
               >
                 <PlusIcon className="w-4 h-4" />
-                Registrar Ingreso
+                <span className="hidden xs:inline sm:inline">Registrar </span>Ingreso
               </button>
               <button
                 onClick={() => setShowExpenseForm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-xs sm:text-sm whitespace-nowrap"
               >
                 <MinusIcon className="w-4 h-4" />
-                Registrar Gasto
+                <span className="hidden xs:inline sm:inline">Registrar </span>Gasto
               </button>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-lg shadow-md mb-6">
+        <div className="bg-white rounded-lg shadow-md mb-4 sm:mb-6">
           <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6 overflow-x-auto">
+            <nav className="flex gap-4 sm:gap-6 lg:gap-8 px-3 sm:px-4 lg:px-6 overflow-x-auto">
               {[
                 { id: 'dashboard', label: 'Dashboard', icon: ChartBarIcon },
                 { id: 'calculator', label: 'Calculadora', icon: CalculatorIcon },
@@ -1350,14 +1350,14 @@ const FinancialDashboard = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 py-4 border-b-2 font-medium text-sm whitespace-nowrap ${
+                    className={`flex items-center gap-1.5 sm:gap-2 py-3 sm:py-4 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
                       activeTab === tab.id
                         ? 'border-blue-500 text-blue-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
-                    {tab.label}
+                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <span>{tab.label}</span>
                   </button>
                 );
               })}
@@ -1367,9 +1367,9 @@ const FinancialDashboard = () => {
 
         {/* Tab Content */}
         {activeTab === 'dashboard' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
               <StatCard
                 title="Ingresos Totales"
                 value={formatCurrency(localStats.totalIncome)}

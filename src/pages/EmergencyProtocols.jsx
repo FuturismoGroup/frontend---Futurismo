@@ -210,78 +210,78 @@ const EmergencyProtocols = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            <ShieldCheckIcon className="w-8 h-8 mr-3 text-red-500" />
-            Protocolos de Emergencia
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4 sm:mb-6">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+            <ShieldCheckIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-red-500 flex-shrink-0" />
+            <span className="truncate">Protocolos de Emergencia</span>
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-xs sm:text-sm lg:text-base text-gray-600 mt-1">
             Gestión de protocolos y materiales de emergencia para guías
           </p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="grid grid-cols-2 sm:flex sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Boton de descarga: solo se muestra si HAY protocolos. */}
           {Array.isArray(filteredProtocols) && filteredProtocols.length > 0 && (
             <button
               onClick={handleDownloadAllProtocols}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
+              className="px-3 sm:px-4 py-2 sm:py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm whitespace-nowrap"
               title="Descargar PDF con todos los protocolos"
             >
-              <ArrowDownTrayIcon className="w-4 h-4" />
-              <span>Descargar Todos</span>
+              <ArrowDownTrayIcon className="w-4 h-4 flex-shrink-0" />
+              <span className="truncate"><span className="hidden sm:inline">Descargar </span>Todos</span>
             </button>
           )}
 
           <button
             onClick={() => setShowMaterials(true)}
-            className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center space-x-2"
+            className="px-3 sm:px-4 py-2 sm:py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm whitespace-nowrap"
           >
-            <CogIcon className="w-4 h-4" />
+            <CogIcon className="w-4 h-4 flex-shrink-0" />
             <span>Materiales</span>
           </button>
 
           {user?.role === 'admin' && (
             <button
               onClick={() => setIsEditing(true)}
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
+              className="col-span-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm whitespace-nowrap"
             >
-              <PlusIcon className="w-4 h-4" />
-              <span>Nuevo Protocolo</span>
+              <PlusIcon className="w-4 h-4 flex-shrink-0" />
+              <span><span className="hidden sm:inline">Nuevo </span>Protocolo</span>
             </button>
           )}
         </div>
       </div>
 
       {/* Filtros y búsqueda */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="flex flex-col md:flex-row md:items-center space-y-3 md:space-y-0 md:space-x-4">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6">
+        <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
           {/* Búsqueda */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Buscar protocolos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="pl-10 pr-4 py-2 sm:py-2.5 w-full text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               />
             </div>
           </div>
 
           {/* Filtro por categoria - usa category.id (UUID) */}
-          <div className="flex items-center space-x-2">
-            <FunnelIcon className="w-4 h-4 text-gray-500" />
+          <div className="flex items-center gap-2 min-w-0">
+            <FunnelIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2"
+              className="border border-gray-300 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base flex-1 min-w-0 outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Todas las categorias</option>
+              <option value="">Todas las categorías</option>
               {(categories || []).map(category => (
                 <option key={category.id} value={category.id}>
                   {getIconDisplay(category.icon)} {category.name}
@@ -291,7 +291,7 @@ const EmergencyProtocols = () => {
           </div>
 
           {/* Vista */}
-          <div className="flex items-center space-x-1 border border-gray-300 rounded-lg p-1">
+          <div className="flex items-center justify-end space-x-1 border border-gray-300 rounded-lg p-1 flex-shrink-0">
             <button
               onClick={() => setViewMode('cards')}
               className={`p-2 rounded ${viewMode === 'cards' ? 'bg-blue-500 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
@@ -359,7 +359,7 @@ const EmergencyProtocols = () => {
           )}
         </div>
       ) : viewMode === 'cards' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {filteredProtocols.map(protocol => {
             const category = getCategoryInfo(protocol);
             const priorityLabel = getPriorityLabel(protocol);

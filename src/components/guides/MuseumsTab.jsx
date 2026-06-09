@@ -180,7 +180,7 @@ const MuseumsTab = ({
                   </div>
                 </label>
                 <span className="text-xs text-gray-500">
-                  {t('guides.comp.fileFormats')}
+                  {t('guides.comp.acceptedFormats')}
                 </span>
               </div>
             </div>

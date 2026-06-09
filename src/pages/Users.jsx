@@ -66,7 +66,7 @@ const Users = () => {
       if (result.success) {
         setSelectedUser(result.data);
       } else if (result.status === 410) {
-        toast.error('Este usuario ha sido eliminado');
+        toast.error(t('usersAdmin.alreadyDeleted'));
         setCurrentView('list');
         setSelectedUser(null);
         // Refrescar lista para eliminar el usuario obsoleto
@@ -89,11 +89,11 @@ const Users = () => {
         await deleteUser(deleteModal.user.id);
         // Solo cerrar el modal si la eliminación fue exitosa
         setDeleteModal({ isOpen: false, user: null });
-        toast.success('Usuario eliminado correctamente');
+        toast.success(t('usersAdmin.deletedSuccess'));
       } catch (error) {
         // Mostrar el error pero mantener el modal abierto
         console.error('Error al eliminar usuario:', error);
-        toast.error(`Error al eliminar usuario: ${error.message}`);
+        toast.error(t('usersAdmin.deletedError', { message: error.message }));
         // NO cerrar el modal para que el usuario pueda reintentar
       }
     }
@@ -135,19 +135,20 @@ const Users = () => {
     };
 
     return (
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-        <div className="flex items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 lg:mb-8">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
           {currentView !== 'list' && (
             <button
               onClick={handleCancel}
-              className="mr-4 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex-shrink-0 p-2 -ml-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label={t('common.back')}
             >
               <ArrowLeftIcon className="h-5 w-5" />
             </button>
           )}
-          <div className="flex items-center">
-            <UsersIcon className="h-8 w-8 text-blue-600 mr-3" />
-            <h1 className="text-3xl font-bold text-gray-900">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <UsersIcon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-blue-600 flex-shrink-0" />
+            <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 truncate">
               {titles[currentView]}
             </h1>
           </div>
@@ -156,10 +157,10 @@ const Users = () => {
         {currentView === 'list' && (
           <button
             onClick={handleCreateUser}
-            className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            className="inline-flex items-center justify-center px-3 sm:px-4 py-2 sm:py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors text-sm sm:text-base whitespace-nowrap flex-shrink-0"
           >
-            <UserPlusIcon className="h-5 w-5 mr-2" />
-            Nuevo Usuario
+            <UserPlusIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2" />
+            <span>{t('usersAdmin.newUser')}</span>
           </button>
         )}
       </div>
@@ -223,52 +224,52 @@ const Users = () => {
     };
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Cabecera con foto y datos principales */}
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex flex-col sm:flex-row items-start gap-6">
+        <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
             <div className="flex-shrink-0">
               {photoSrc ? (
                 <img
                   src={resolveFileUrl(photoSrc)}
                   alt={user.firstName}
-                  className="h-28 w-28 rounded-full object-cover border-4 border-gray-100"
+                  className="h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 rounded-full object-cover border-4 border-gray-100"
                 />
               ) : (
-                <div className="h-28 w-28 rounded-full bg-primary-100 flex items-center justify-center border-4 border-gray-100">
-                  <span className="text-3xl font-bold text-primary-600">
+                <div className="h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28 rounded-full bg-primary-100 flex items-center justify-center border-4 border-gray-100">
+                  <span className="text-2xl sm:text-3xl font-bold text-primary-600">
                     {user.firstName?.[0]}{user.lastName?.[0]}
                   </span>
                 </div>
               )}
             </div>
-            <div className="flex-1 min-w-0">
-              <h2 className="text-2xl font-bold text-gray-900">
+            <div className="flex-1 min-w-0 text-center sm:text-left w-full">
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 break-words">
                 {user.firstName} {user.lastName}
               </h2>
-              <p className="text-gray-500 mt-1">@{user.username}</p>
+              <p className="text-sm text-gray-500 mt-1 break-all">@{user.username}</p>
 
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusInfo.className}`}>
+              <div className="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                <span className={`inline-flex items-center px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium ${statusInfo.className}`}>
                   {statusInfo.label}
                 </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                <span className="inline-flex items-center px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium bg-blue-100 text-blue-800">
                   {getRoleLabel(roleName)}
                 </span>
                 {isGuide && guide?.rating && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800">
+                  <span className="inline-flex items-center px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium bg-amber-100 text-amber-800">
                     {'★'} {Number(guide.rating).toFixed(1)}
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 w-full sm:w-auto">
               <button
                 onClick={() => handleEditUser(user)}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                className="inline-flex items-center justify-center w-full sm:w-auto px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
               >
-                Editar Usuario
+                {t('usersAdmin.editUserBtn')}
               </button>
             </div>
           </div>
@@ -277,25 +278,25 @@ const Users = () => {
         {/* Información personal y contacto */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Información Personal</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('usersAdmin.personalInfo')}</h3>
             <dl className="space-y-3">
               <div>
-                <dt className="text-sm font-medium text-gray-500">Nombre completo</dt>
+                <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.fullName')}</dt>
                 <dd className="text-sm text-gray-900">{user.firstName} {user.lastName}</dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Email</dt>
+                <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.email')}</dt>
                 <dd className="text-sm text-gray-900">{user.email}</dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Teléfono</dt>
-                <dd className="text-sm text-gray-900">{user.phone || 'No registrado'}</dd>
+                <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.phone')}</dt>
+                <dd className="text-sm text-gray-900">{user.phone || t('usersAdmin.notRegistered')}</dd>
               </div>
               {(user.documentType || user.documentNumber) && (
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Documento</dt>
+                  <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.document')}</dt>
                   <dd className="text-sm text-gray-900">
-                    {(user.documentType || 'DNI').toUpperCase()}: {user.documentNumber || 'No registrado'}
+                    {(user.documentType || 'DNI').toUpperCase()}: {user.documentNumber || t('usersAdmin.notRegistered')}
                   </dd>
                 </div>
               )}
@@ -303,31 +304,31 @@ const Users = () => {
           </div>
 
           <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Información del Sistema</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('usersAdmin.systemInfo')}</h3>
             <dl className="space-y-3">
               <div>
-                <dt className="text-sm font-medium text-gray-500">Usuario</dt>
+                <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.username')}</dt>
                 <dd className="text-sm text-gray-900">@{user.username}</dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Último Login</dt>
+                <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.lastLogin')}</dt>
                 <dd className="text-sm text-gray-900">
                   {user.lastLogin
                     ? new Date(user.lastLogin).toLocaleDateString('es-PE') + ' ' +
                       new Date(user.lastLogin).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })
-                    : 'Nunca'
+                    : t('usersAdmin.never')
                   }
                 </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-500">Fecha de Registro</dt>
+                <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.registerDate')}</dt>
                 <dd className="text-sm text-gray-900">
                   {new Date(user.createdAt).toLocaleDateString('es-PE')}
                 </dd>
               </div>
               {user.updatedAt && (
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Última Actualización</dt>
+                  <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.lastUpdate')}</dt>
                   <dd className="text-sm text-gray-900">
                     {new Date(user.updatedAt).toLocaleDateString('es-PE')}
                   </dd>
@@ -342,40 +343,40 @@ const Users = () => {
           <>
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Información del Guía {isFreelance ? 'Freelance' : 'de Planta'}
+                {isFreelance ? t('usersAdmin.guideInfoFreelance') : t('usersAdmin.guideInfoPlant')}
               </h3>
               <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Tipo</dt>
+                  <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.type')}</dt>
                   <dd className="text-sm text-gray-900">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                       isFreelance ? 'bg-orange-100 text-orange-800' : 'bg-teal-100 text-teal-800'
                     }`}>
-                      {isFreelance ? 'Freelance' : 'Planta'}
+                      {isFreelance ? t('usersAdmin.freelance') : t('usersAdmin.plant')}
                     </span>
                   </dd>
                 </div>
                 {(guide.yearsOfExperience != null || guide.years_of_experience != null) && (
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Años de Experiencia</dt>
-                    <dd className="text-sm text-gray-900">{guide.yearsOfExperience ?? guide.years_of_experience ?? 0} años</dd>
+                    <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.yearsExperience')}</dt>
+                    <dd className="text-sm text-gray-900">{guide.yearsOfExperience ?? guide.years_of_experience ?? 0} {t('usersAdmin.yearsAbbr')}</dd>
                   </div>
                 )}
                 {(guide.licenseNumber || guide.license_number) && (
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">N° de Licencia</dt>
+                    <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.licenseNumber')}</dt>
                     <dd className="text-sm text-gray-900">{guide.licenseNumber || guide.license_number}</dd>
                   </div>
                 )}
                 {guide.bio && (
                   <div className="sm:col-span-2 lg:col-span-3">
-                    <dt className="text-sm font-medium text-gray-500">Biografía</dt>
+                    <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.bio')}</dt>
                     <dd className="text-sm text-gray-900">{guide.bio}</dd>
                   </div>
                 )}
                 {guide.education && (
                   <div className="sm:col-span-2 lg:col-span-3">
-                    <dt className="text-sm font-medium text-gray-500">Educación</dt>
+                    <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.education')}</dt>
                     <dd className="text-sm text-gray-900">{guide.education}</dd>
                   </div>
                 )}
@@ -385,7 +386,7 @@ const Users = () => {
             {/* Idiomas */}
             {languages.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Idiomas</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('usersAdmin.languages')}</h3>
                 <div className="flex flex-wrap gap-2">
                   {languages.map((lang, i) => (
                     <span key={i} className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
@@ -402,7 +403,7 @@ const Users = () => {
             {/* Especialidades */}
             {specialties.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Especialidades</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('usersAdmin.specialties')}</h3>
                 <div className="flex flex-wrap gap-2">
                   {specialties.map((spec, i) => (
                     <span key={i} className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -416,17 +417,17 @@ const Users = () => {
             {/* Museos */}
             {museums.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Experiencia en Museos</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('usersAdmin.museumExperience')}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {museums.map((museum, i) => (
                     <div key={i} className="border border-orange-200 rounded-lg bg-orange-50 p-3">
                       <p className="font-medium text-orange-800 text-sm">
-                        {typeof museum === 'string' ? museum : museum.name || museum.id || `Museo #${i + 1}`}
+                        {typeof museum === 'string' ? museum : museum.name || museum.id || t('usersAdmin.museumNumber', { n: i + 1 })}
                       </p>
                       {typeof museum === 'object' && (
                         <div className="mt-1 text-xs text-orange-600 space-y-0.5">
-                          {museum.years && <p>{museum.years} años de experiencia</p>}
-                          {museum.expertise && <p>Nivel: {museum.expertise}</p>}
+                          {museum.years && <p>{t('usersAdmin.yearsOfExperience', { count: museum.years })}</p>}
+                          {museum.expertise && <p>{t('usersAdmin.levelColon', { level: museum.expertise })}</p>}
                         </div>
                       )}
                     </div>
@@ -440,41 +441,41 @@ const Users = () => {
         {/* Datos de la Agencia (solo si es agencia) */}
         {isAgency && agency && (
           <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Información de la Agencia</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('usersAdmin.agencyInfo')}</h3>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {(agency.businessName || agency.business_name) && (
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Razón Social</dt>
+                  <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.businessName')}</dt>
                   <dd className="text-sm text-gray-900">{agency.businessName || agency.business_name}</dd>
                 </div>
               )}
               {agency.ruc && (
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">RUC</dt>
+                  <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.ruc')}</dt>
                   <dd className="text-sm text-gray-900">{agency.ruc}</dd>
                 </div>
               )}
               {(agency.agencyPhone || agency.agency_phone) && (
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Teléfono</dt>
+                  <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.phone')}</dt>
                   <dd className="text-sm text-gray-900">{agency.agencyPhone || agency.agency_phone}</dd>
                 </div>
               )}
               {(agency.agencyEmail || agency.agency_email) && (
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Email</dt>
+                  <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.email')}</dt>
                   <dd className="text-sm text-gray-900">{agency.agencyEmail || agency.agency_email}</dd>
                 </div>
               )}
               {(agency.agencyAddress || agency.agency_address) && (
                 <div className="sm:col-span-2">
-                  <dt className="text-sm font-medium text-gray-500">Dirección</dt>
+                  <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.address')}</dt>
                   <dd className="text-sm text-gray-900">{agency.agencyAddress || agency.agency_address}</dd>
                 </div>
               )}
               {agency.level && (
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Nivel</dt>
+                  <dt className="text-sm font-medium text-gray-500">{t('usersAdmin.level')}</dt>
                   <dd className="text-sm text-gray-900">{agency.level}</dd>
                 </div>
               )}
@@ -486,7 +487,7 @@ const Users = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="w-full">
       <div className="max-w-7xl mx-auto">
         {renderHeader()}
 
@@ -519,16 +520,15 @@ const Users = () => {
             <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-0">
               <InformationCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 sm:mr-3 flex-shrink-0" />
               <div className="text-xs sm:text-sm text-blue-800">
-                <h4 className="font-medium mb-1 sm:mb-2">Gestión de Usuarios</h4>
+                <h4 className="font-medium mb-1 sm:mb-2">{t('usersAdmin.infoBoxTitle')}</h4>
                 <p className="mb-2">
-                  Desde aquí puedes administrar todos los usuarios del sistema. Puedes crear nuevos usuarios,
-                  editar información existente, asignar roles y permisos, y controlar el acceso al sistema.
+                  {t('usersAdmin.infoBoxText')}
                 </p>
                 <ul className="mt-2 list-disc list-inside space-y-1 text-xs sm:text-sm">
-                  <li>Los roles determinan los permisos base del usuario</li>
-                  <li>Puedes personalizar permisos individuales para cada usuario</li>
-                  <li>Los usuarios inactivos no pueden acceder al sistema</li>
-                  <li>Se puede resetear la contraseña desde las acciones de usuario</li>
+                  <li>{t('usersAdmin.infoBoxBullets.rolesPermissions')}</li>
+                  <li>{t('usersAdmin.infoBoxBullets.customPermissions')}</li>
+                  <li>{t('usersAdmin.infoBoxBullets.inactiveAccess')}</li>
+                  <li>{t('usersAdmin.infoBoxBullets.resetPassword')}</li>
                 </ul>
               </div>
             </div>

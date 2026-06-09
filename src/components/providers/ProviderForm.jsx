@@ -48,12 +48,12 @@ const ProviderForm = ({ provider, onSave, onCancel }) => {
   return (
     <div
       {...getModalProps()}
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center sm:items-center justify-center p-0 sm:p-3 lg:p-4"
     >
       <div
         {...getDialogProps()}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col overflow-hidden"
-        style={{ maxHeight: 'calc(100vh - 2rem)' }}
+        className="bg-white sm:rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col overflow-hidden h-full sm:h-auto"
+        style={{ maxHeight: 'calc(100dvh - 0px)' }}
         onClick={(e) => e.stopPropagation()}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full min-h-0">

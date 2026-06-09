@@ -277,7 +277,7 @@ const RewardsStore = () => {
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
                   >
-                    <option value="">Todas las categorias</option>
+                    <option value="">Todas las categorías</option>
                     {/* Prioriza categorias desde BD, fallback a constantes */}
                     {rewardCategories && rewardCategories.length > 0
                       ? rewardCategories.map((cat) => (

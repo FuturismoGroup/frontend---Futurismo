@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { VISIBILITY_LEVELS, EVENT_TYPES } from '../../../stores/independentAgendaStore';
 import { calculateDuration, shouldShowEventDetails } from '../../../utils/eventHelpers';
+import { toLocalDate } from '../../../utils/dateUtils';
 
 const EventTooltip = ({ 
   event, 
@@ -109,14 +110,17 @@ const EventTooltip = ({
                       )}
                     </div>
 
-                    {/* Date */}
+                    {/* Date — parsear YYYY-MM-DD como fecha local para que un
+                        evento del 19 no se muestre como del 18 por el shift UTC. */}
                     <div className="flex items-center space-x-2 text-sm text-gray-600">
                       <span>📅</span>
                       <span>
-                        {event.date && !isNaN(new Date(event.date)) 
-                          ? format(new Date(event.date), 'EEEE, d \'de\' MMMM \'de\' yyyy', { locale: es })
-                          : t('calendar.dateNotAvailable')
-                        }
+                        {(() => {
+                          const localDate = toLocalDate(event.date);
+                          return localDate
+                            ? format(localDate, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })
+                            : t('calendar.dateNotAvailable');
+                        })()}
                       </span>
                     </div>
 

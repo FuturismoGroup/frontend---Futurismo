@@ -189,16 +189,16 @@ const AppSidebarEnhanced = () => {
   const menuStructure = getMenuStructure();
 
   const handleNavClick = () => {
-    if (viewport.isMobile) {
+    if (viewport.isCompact) {
       closeSidebar();
     }
   };
 
   return (
     <div className="h-full bg-white shadow-xl lg:shadow-lg flex flex-col overflow-hidden">
-      <SidebarHeader 
-        isMobile={viewport.isMobile} 
-        onClose={closeSidebar} 
+      <SidebarHeader
+        isCompact={viewport.isCompact}
+        onClose={closeSidebar}
       />
 
       {/* Navigation con scroll mejorado */}

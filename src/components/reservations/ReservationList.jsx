@@ -76,11 +76,13 @@ const ReservationList = () => {
       confirmada: t('reservations.confirmed'),
       cancelada: t('reservations.cancelled'),
       completada: t('reservations.completed'),
+      en_proceso: t('reservations.inProgress'),
       // Inglés (compatibilidad BD)
       pending: t('reservations.pending'),
       confirmed: t('reservations.confirmed'),
       cancelled: t('reservations.cancelled'),
-      completed: t('reservations.completed')
+      completed: t('reservations.completed'),
+      in_progress: t('reservations.inProgress')
     };
     return labels[status] || status;
   };
@@ -218,7 +220,7 @@ const ReservationList = () => {
               >
                 <ArrowDownTrayIcon className="w-4 h-4" />
                 <span className="hidden sm:inline">{t('search.export')} ({filteredReservations.length})</span>
-                <span className="sm:hidden">Exportar ({filteredReservations.length})</span>
+                <span className="sm:hidden">{t('search.export')} ({filteredReservations.length})</span>
               </button>
             </div>
 
@@ -243,7 +245,7 @@ const ReservationList = () => {
                 value={destinationFilter}
                 onChange={(e) => setDestinationFilter(e.target.value)}
               >
-                <option value="">Todos los destinos</option>
+                <option value="">{t('search.allDestinations', 'Todos los destinos')}</option>
                 {availableDestinations.map((destination) => (
                   <option key={destination} value={destination}>
                     {destination}
@@ -321,7 +323,7 @@ const ReservationList = () => {
                   title={t('search.clear')}
                 >
                   <XMarkIcon className="w-4 h-4" />
-                  <span className="sm:hidden">Limpiar</span>
+                  <span className="sm:hidden">{t('search.clear')}</span>
                   <span className="hidden sm:inline">{t('search.clear')}</span>
                 </button>
               )}
@@ -339,7 +341,7 @@ const ReservationList = () => {
                   {t('search.code')}
                 </th>
                 <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  Tour / Destino
+                  {t('search.tourDestination', 'Tour / Destino')}
                 </th>
                 <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                   {t('search.dateTime')}
@@ -367,8 +369,8 @@ const ReservationList = () => {
                   </td>
                   <td className="hidden sm:table-cell px-6 py-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{reservation.tourName || 'Sin tour'}</p>
-                      <p className="text-sm text-gray-500">{reservation.destination || 'Sin destino'}</p>
+                      <p className="text-sm font-medium text-gray-900">{reservation.tourName || t('reservations.comp.noTour')}</p>
+                      <p className="text-sm text-gray-500">{reservation.destination || t('reservations.comp.noDestination')}</p>
                     </div>
                   </td>
                   <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap">
@@ -465,8 +467,8 @@ const ReservationList = () => {
 
                       {/* Tour and destination info */}
                       <div>
-                        <p className="text-sm font-medium text-gray-900 mb-1">{reservation.tourName || 'Sin tour'}</p>
-                        <p className="text-sm text-gray-600">{reservation.destination || 'Sin destino'}</p>
+                        <p className="text-sm font-medium text-gray-900 mb-1">{reservation.tourName || t('reservations.comp.noTour')}</p>
+                        <p className="text-sm text-gray-600">{reservation.destination || t('reservations.comp.noDestination')}</p>
                       </div>
 
                       {/* Date, time, passengers info */}
@@ -481,7 +483,7 @@ const ReservationList = () => {
                         </div>
                         <div className="flex items-center gap-1">
                           <UserGroupIcon className="w-3 h-3" />
-                          <span>{reservation.adults + reservation.children} pax</span>
+                          <span>{reservation.adults + reservation.children} {t('search.pax', 'pax')}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <CurrencyDollarIcon className="w-3 h-3" />
@@ -524,7 +526,7 @@ const ReservationList = () => {
                               className="flex items-center gap-1 px-2 py-1.5 text-xs text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
                             >
                               <DocumentTextIcon className="w-3.5 h-3.5" />
-                              Voucher
+                              {t('reservations.voucher', 'Voucher')}
                             </button>
                           </>
                         )}
@@ -556,7 +558,7 @@ const ReservationList = () => {
                   {t('search.showing')} {startIndex + 1} a {Math.min(startIndex + itemsPerPage, filteredReservations.length)} {t('search.of')} {filteredReservations.length} {t('search.reservationsPlural')}
                 </span>
                 <span className="sm:hidden">
-                  {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredReservations.length)} de {filteredReservations.length}
+                  {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredReservations.length)} {t('search.of')} {filteredReservations.length}
                 </span>
               </div>
               <div className="flex gap-1 sm:gap-2 justify-center">

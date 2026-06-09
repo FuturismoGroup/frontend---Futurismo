@@ -35,23 +35,6 @@ const Monitoring = () => {
   const isAdmin = user?.role === 'admin' || user?.role === 'administrator';
   const isAgency = user?.role === 'agency';
 
-  // Ubicaciones de respaldo en Lima/Ica para tours sin GPS aún reportado.
-  // Permite que un tour activo siempre aparezca en el mapa, aunque el guía
-  // todavía no haya enviado su primera coordenada (currentLocation: null
-  // ocultaría el marcador en LiveMapResponsive).
-  const FALLBACK_TOUR_LOCATIONS = [
-    { lat: -12.0464, lng: -77.0428, name: 'Plaza San Martín' },
-    { lat: -12.0432, lng: -77.0282, name: 'Centro Histórico' },
-    { lat: -12.1182, lng: -77.0377, name: 'Miraflores' },
-    { lat: -12.1467, lng: -77.0217, name: 'Barranco' },
-    { lat: -12.0700, lng: -77.0500, name: 'San Isidro' },
-    { lat: -12.0897, lng: -77.0438, name: 'Lince' },
-    { lat: -12.0608, lng: -77.0372, name: 'Cercado de Lima' },
-    { lat: -12.1026, lng: -77.0265, name: 'San Borja' },
-    { lat: -13.7167, lng: -76.2000, name: 'Pisco' },
-    { lat: -14.0678, lng: -75.7286, name: 'Ica' }
-  ];
-
   // Función para cargar tours activos (memoizada con useCallback)
   const loadActiveTours = useCallback(async () => {
     try {
@@ -64,31 +47,27 @@ const Monitoring = () => {
         // result.data puede ser { data: [...], total, timestamp } o directamente un array
         const rawTours = Array.isArray(result.data) ? result.data : (result.data?.data || []);
 
-        // Mapear datos del backend al formato esperado por el frontend
-        const tours = rawTours.map((tour, index) => {
-          // Si el guía aún no ha enviado GPS, usar una ubicación de respaldo
-          // distribuida por índice para que el tour igual sea visible en el mapa.
-          const fallback = FALLBACK_TOUR_LOCATIONS[index % FALLBACK_TOUR_LOCATIONS.length];
+        // Mapear datos del backend. Si el guía aún no ha enviado GPS la
+        // ubicación queda en null: el tour sigue listado pero NO aparece como
+        // marcador en el mapa con coordenadas inventadas. Antes se asignaban
+        // ubicaciones de respaldo distribuidas en Lima/Ica, lo que daba la
+        // impresión visual de que "todos los guías están en la misma zona"
+        // aunque ninguno tenga GPS realmente conectado.
+        const tours = rawTours.map((tour) => {
           const hasGps = !!(tour.guideLocation?.lat && tour.guideLocation?.lng);
 
           return {
             ...tour,
             id: tour.activeTourId || tour.reservationId,
             tourists: tour.passengers,
-            // Si hay GPS real lo usamos; si no, un fallback para mantener la
-            // consistencia entre la lista y el mapa.
             currentLocation: hasGps
               ? {
                   lat: tour.guideLocation.lat,
                   lng: tour.guideLocation.lng,
                   name: tour.currentStop || t('monitoring.inTransit')
                 }
-              : {
-                  lat: fallback.lat,
-                  lng: fallback.lng,
-                  name: tour.currentStop || fallback.name,
-                  isApproximate: true
-                },
+              : null,
+            hasGps,
             // Mapear status para el mapa (backend usa 'enroute', frontend espera 'enroute')
             status: tour.status === 'on_route' ? 'enroute' : tour.status,
             // Formatear tiempos
@@ -113,7 +92,7 @@ const Monitoring = () => {
     } finally {
       setServicesLoading(false);
     }
-  }, []); // Sin dependencias porque monitoringService y los setters son estables
+  }, [t]);
 
   // WebSocket: escuchar ubicaciones GPS en tiempo real
   useEffect(() => {
@@ -143,6 +122,7 @@ const Monitoring = () => {
                 speed: data.speed,
                 recordedAt: data.recordedAt
               },
+              hasGps: true,
               lastLocationUpdate: data.recordedAt
             };
           }
@@ -403,15 +383,15 @@ const Monitoring = () => {
       ];
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden -m-3 sm:-m-4 lg:-m-6">
       {/* Header */}
-      <div className="flex-shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 sm:pb-4 lg:px-8 lg:pt-8 lg:pb-5">
-        <div className="flex flex-col gap-3 sm:gap-0 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-center sm:text-left">
-            <h1 className="text-xl font-bold text-gray-900 break-words sm:text-2xl">
+      <div className="flex-shrink-0 px-3 pt-3 pb-2 sm:px-4 sm:pt-4 sm:pb-3 lg:px-6 lg:pt-5 lg:pb-4">
+        <div className="flex flex-col gap-2 sm:gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-left">
+            <h1 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900 break-words">
               {isGuide ? t('monitoring.myToursTitle') : t('monitoring.title')}
             </h1>
-            <p className="mt-1 text-sm text-gray-700 sm:mt-2 sm:text-base">
+            <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm lg:text-base text-gray-700">
               {isGuide
                 ? t('monitoring.guideDescription')
                 : t('monitoring.description')
@@ -422,7 +402,7 @@ const Monitoring = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 overflow-x-auto overflow-y-hidden border-b border-gray-200">
+      <div className="flex-shrink-0 px-3 sm:px-4 lg:px-6 overflow-x-auto overflow-y-hidden border-b border-gray-200">
         <nav className="flex px-1 -mb-px space-x-4 sm:space-x-8 min-w-max">
           {viewConfig.map((view) => {
             const Icon = view.icon;
@@ -533,6 +513,14 @@ const Monitoring = () => {
                         <div className="flex items-center gap-1 text-xs mb-2">
                           <MapPinIcon className="w-3 h-3 text-indigo-500 flex-shrink-0" />
                           <span className="text-indigo-600 font-medium truncate">{service.currentStop || t('monitoring.inTransit')}</span>
+                        </div>
+
+                        {/* Estado de GPS del guía */}
+                        <div className="flex items-center gap-1 text-[10px] mb-2">
+                          <span className={`w-1.5 h-1.5 rounded-full ${service.hasGps ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></span>
+                          <span className={service.hasGps ? 'text-green-700' : 'text-gray-500 italic'}>
+                            {service.hasGps ? 'GPS conectado' : 'Esperando GPS del guía…'}
+                          </span>
                         </div>
 
                         {/* Barra de progreso */}

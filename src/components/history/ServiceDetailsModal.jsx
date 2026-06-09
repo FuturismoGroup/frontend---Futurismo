@@ -124,31 +124,31 @@ const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center overflow-y-auto">
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose} aria-hidden="true"></div>
+      <div className="fixed inset-0 bg-gray-900/70 transition-opacity" onClick={onClose} aria-hidden="true"></div>
 
       {/* Modal content */}
-      <div className="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full mx-4 flex flex-col max-h-[90vh]">
+      <div className="relative bg-white sm:rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-2xl sm:mx-4 flex flex-col h-full sm:h-auto sm:max-h-[90vh]">
         {/* Header fijo */}
-        <div className="px-4 pt-5 pb-4 sm:px-6 border-b border-gray-200 flex-shrink-0">
+        <div className="px-3 sm:px-4 lg:px-6 pt-3 sm:pt-4 lg:pt-5 pb-3 sm:pb-4 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">
+            <h3 className="text-base sm:text-lg leading-6 font-medium text-gray-900 truncate">
               {t('history.details.title')}
             </h3>
             <button
               type="button"
-              className="bg-white rounded-md text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="bg-white rounded-md text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 p-2 -mr-2 min-h-[40px] min-w-[40px] flex items-center justify-center"
               onClick={onClose}
             >
               <span className="sr-only">{t('common.close')}</span>
-              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+              <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
             </button>
           </div>
         </div>
 
         {/* Contenido scrolleable */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-6">
+        <div className="flex-1 overflow-y-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
           <div className="w-full text-left">
             <div className="space-y-6">
               {/* Información básica */}

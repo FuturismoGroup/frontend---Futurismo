@@ -14,10 +14,11 @@ import toast from 'react-hot-toast';
 // Components
 import EventFormFields from './EventFormFields';
 
-// Hooks  
+// Hooks
 import useEventForm from '../../../hooks/useEventForm';
 import useIndependentAgendaStore from '../../../stores/independentAgendaStore';
 import useAuthStore from '../../../stores/authStore';
+import { toLocalDate } from '../../../utils/dateUtils';
 
 const QuickAddModal = ({ 
   isOpen, 
@@ -56,11 +57,12 @@ const QuickAddModal = ({
 
     const updates = {};
 
-    if (selectedDate) {
-      updates.date = format(selectedDate, 'yyyy-MM-dd');
-    } else {
-      updates.date = format(new Date(), 'yyyy-MM-dd');
-    }
+    // El padre puede pasar selectedDate como Date o como string. Convertimos
+    // siempre con toLocalDate para evitar que un YYYY-MM-DD se parsee como UTC
+    // (lo que retrocedía 1 día en Lima al hacer format luego). Si la conversión
+    // falla, cae a hoy.
+    const normalizedDate = toLocalDate(selectedDate) || new Date();
+    updates.date = format(normalizedDate, 'yyyy-MM-dd');
 
     if (selectedTime) {
       updates.startTime = selectedTime;
@@ -230,7 +232,10 @@ const QuickAddModal = ({
 QuickAddModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  selectedDate: PropTypes.instanceOf(Date),
+  selectedDate: PropTypes.oneOfType([
+    PropTypes.instanceOf(Date),
+    PropTypes.string
+  ]),
   selectedTime: PropTypes.string,
   mode: PropTypes.oneOf(['event', 'occupied'])
 };

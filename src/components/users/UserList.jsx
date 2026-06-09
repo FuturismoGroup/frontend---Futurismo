@@ -208,47 +208,47 @@ const UserList = ({ onEdit, onView, onDelete }) => {
       {/* Modal de confirmación para resetear contraseña */}
       {passwordResetModal.isOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
+          <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
             <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={cancelPasswordReset} />
 
-            <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 transform transition-all">
+            <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full p-4 sm:p-6 transform transition-all">
               <button
                 onClick={cancelPasswordReset}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute top-3 sm:top-4 right-3 sm:right-4 text-gray-400 hover:text-gray-600 transition-colors p-1 min-h-[40px] min-w-[40px] flex items-center justify-center"
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
 
               <div className="text-center">
-                <div className="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-amber-100 mb-4">
-                  <KeyIcon className="h-7 w-7 text-amber-600" />
+                <div className="mx-auto flex items-center justify-center h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-amber-100 mb-3 sm:mb-4">
+                  <KeyIcon className="h-6 w-6 sm:h-7 sm:w-7 text-amber-600" />
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                   {t('users.list.resetPassword')}
                 </h3>
 
-                <p className="text-sm text-gray-500 mb-2">
+                <p className="text-xs sm:text-sm text-gray-500 mb-2">
                   {t('users.list.confirmPasswordReset')}
                 </p>
 
                 {passwordResetModal.user && (
-                  <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                    <p className="text-sm font-medium text-gray-900">
+                  <div className="bg-gray-50 rounded-lg p-3 mb-3 sm:mb-4">
+                    <p className="text-sm font-medium text-gray-900 truncate">
                       {passwordResetModal.user.firstName} {passwordResetModal.user.lastName}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 truncate">
                       @{passwordResetModal.user.username}
                     </p>
                   </div>
                 )}
 
-                <p className="text-xs text-gray-400 mb-6">
+                <p className="text-xs text-gray-400 mb-4 sm:mb-6">
                   {t('profile.comp.security.passwordRecommendation', { defaultValue: 'Se generará una nueva contraseña temporal que deberás compartir con el usuario.' })}
                 </p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3">
                 <button
                   onClick={cancelPasswordReset}
                   className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
@@ -270,10 +270,10 @@ const UserList = ({ onEdit, onView, onDelete }) => {
       {/* Modal de éxito con la nueva contraseña */}
       {successModal.isOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
+          <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
             <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={() => setSuccessModal({ isOpen: false, password: '' })} />
 
-            <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 transform transition-all">
+            <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full p-4 sm:p-6 transform transition-all">
               <div className="text-center">
                 <div className="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-green-100 mb-4">
                   <CheckCircleIcon className="h-7 w-7 text-green-600" />

@@ -16,7 +16,9 @@ export const DEFAULT_VIEWPORT = {
   height: 768,
   isMobile: false,
   isTablet: false,
-  isDesktop: true
+  isDesktop: true,
+  isCompact: false,
+  isSmall: false
 };
 
 // Delay para debounce del resize event (ms)

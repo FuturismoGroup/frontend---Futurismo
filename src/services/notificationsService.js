@@ -46,16 +46,15 @@ return this.post('', notificationData);
    * @returns {Promise<Object>}
    */
   async markAsRead(id) {
-return this.put(`/${id}/read`);
+return this.patch(`/${id}/read`);
   }
 
   /**
    * Marcar todas las notificaciones como leídas
-   * @param {string} userId - ID del usuario
    * @returns {Promise<Object>}
    */
-  async markAllAsRead(userId) {
-return this.put(`/user/${userId}/read-all`);
+  async markAllAsRead() {
+return this.post('/mark-all-read');
   }
 
   /**
@@ -69,11 +68,10 @@ return this.delete(`/${id}`);
 
   /**
    * Limpiar todas las notificaciones del usuario
-   * @param {string} userId - ID del usuario
    * @returns {Promise<Object>}
    */
-  async clearAll(userId) {
-return this.delete(`/user/${userId}/clear-all`);
+  async clearAll() {
+return this.delete('/all');
   }
 
   /**

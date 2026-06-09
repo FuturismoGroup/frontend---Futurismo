@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { XMarkIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
 import { APP_NAME } from '../../constants/layoutConstants';
 
-const SidebarHeader = ({ isMobile, onClose }) => {
+const SidebarHeader = ({ isCompact, onClose }) => {
   const { t } = useTranslation();
 
   return (
@@ -14,15 +14,15 @@ const SidebarHeader = ({ isMobile, onClose }) => {
           <div className="flex-shrink-0">
             <GlobeAltIcon className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600" />
           </div>
-          <h1 className="ml-2 sm:ml-3 text-lg sm:text-xl font-bold text-gray-900 truncate">
+          <h1 className="ml-2 sm:ml-3 text-base sm:text-lg lg:text-xl font-bold text-gray-900 truncate">
             {APP_NAME}
           </h1>
         </div>
-        
-        {isMobile && (
+
+        {isCompact && (
           <button
             onClick={onClose}
-            className="flex-shrink-0 ml-2 p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation"
+            className="flex-shrink-0 ml-2 p-2 -mr-1 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label={t('common.closeMenu')}
           >
             <XMarkIcon className="w-6 h-6 text-gray-500" />
@@ -34,7 +34,7 @@ const SidebarHeader = ({ isMobile, onClose }) => {
 };
 
 SidebarHeader.propTypes = {
-  isMobile: PropTypes.bool.isRequired,
+  isCompact: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired
 };
 

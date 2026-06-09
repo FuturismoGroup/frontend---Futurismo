@@ -582,10 +582,10 @@ const GuideTourView = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
           <ArrowPathIcon className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
-          <p className="text-gray-600">Cargando tour...</p>
+          <p className="text-sm sm:text-base text-gray-600">Cargando tour...</p>
         </div>
       </div>
     );
@@ -593,11 +593,11 @@ const GuideTourView = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-[60vh] flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
           <ExclamationTriangleIcon className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Error</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Error</h2>
+          <p className="text-sm sm:text-base text-gray-600 mb-4 break-words">{error}</p>
           <button
             onClick={() => navigate('/guide/dashboard')}
             className="btn btn-primary"
@@ -612,25 +612,26 @@ const GuideTourView = () => {
   const isReadOnly = tourData?.tourInfo?.status === 'completed';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="w-full -m-3 sm:-m-4 lg:-m-6">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-2 py-3 sm:py-4 min-h-[3.5rem] sm:min-h-16 flex-wrap sm:flex-nowrap">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
               <button
                 onClick={() => navigate('/guide/dashboard')}
-                className="p-2 rounded-md hover:bg-gray-100"
+                className="p-2 -ml-2 rounded-md hover:bg-gray-100 flex-shrink-0 min-h-[40px] min-w-[40px] flex items-center justify-center"
+                aria-label="Volver"
               >
                 <ArrowLeftIcon className="w-5 h-5" />
               </button>
-              <div>
-                <h1 className="text-xl font-semibold">{tourData?.tourName || t('monitoring.guideView')}</h1>
-                <p className="text-sm text-gray-600">{tourData?.tourInfo?.agency?.business_name}</p>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-base sm:text-lg lg:text-xl font-semibold truncate">{tourData?.tourName || t('monitoring.guideView')}</h1>
+                <p className="text-xs sm:text-sm text-gray-600 truncate">{tourData?.tourInfo?.agency?.business_name}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 flex-wrap justify-end">
               {/* Indicador de GPS - oculto cuando el tour ya está completado */}
               {!isReadOnly && (
                 <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
@@ -640,8 +641,9 @@ const GuideTourView = () => {
                       ? 'bg-red-100 text-red-700'
                       : 'bg-gray-100 text-gray-600'
                 }`}>
-                  <MapPinIcon className={`w-4 h-4 ${gpsStatus === 'active' ? 'animate-pulse' : ''}`} />
-                  {gpsStatus === 'active' ? 'GPS Activo' : gpsStatus === 'error' ? 'GPS Error' : 'GPS Inactivo'}
+                  <MapPinIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${gpsStatus === 'active' ? 'animate-pulse' : ''}`} />
+                  <span className="hidden sm:inline">{gpsStatus === 'active' ? 'GPS Activo' : gpsStatus === 'error' ? 'GPS Error' : 'GPS Inactivo'}</span>
+                  <span className="sm:hidden">{gpsStatus === 'active' ? 'GPS' : gpsStatus === 'error' ? 'Err' : 'GPS'}</span>
                 </div>
               )}
 
@@ -654,20 +656,22 @@ const GuideTourView = () => {
               {!isReadOnly && (
                 <button
                   onClick={handleReportIncident}
-                  className="btn btn-outline flex items-center gap-2 text-yellow-600 border-yellow-600 hover:bg-yellow-50"
+                  className="btn btn-outline flex items-center gap-1.5 sm:gap-2 text-yellow-600 border-yellow-600 hover:bg-yellow-50 text-xs sm:text-sm px-2 sm:px-3"
                 >
                   <ExclamationTriangleIcon className="w-4 h-4" />
                   <span className="hidden sm:inline">Reportar Incidente</span>
+                  <span className="sm:hidden">Incidente</span>
                 </button>
               )}
 
               {!isReadOnly && (
                 <button
                   onClick={handleCompleteTour}
-                  className="btn btn-success flex items-center gap-2"
+                  className="btn btn-success flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3"
                 >
                   <CheckCircleIcon className="w-4 h-4" />
                   <span className="hidden sm:inline">Finalizar Tour</span>
+                  <span className="sm:hidden">Finalizar</span>
                 </button>
               )}
             </div>
@@ -675,7 +679,7 @@ const GuideTourView = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
         {/* Progreso general */}
         <div className="bg-white rounded-lg shadow p-4 mb-6">
           <div className="flex items-center justify-between mb-2">

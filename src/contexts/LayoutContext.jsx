@@ -37,9 +37,9 @@ export const LayoutProvider = ({ children }) => {
       : DEFAULT_VIEWPORT;
   });
   
-  // Sidebar abierto por defecto en desktop, cerrado en mobile
+  // Sidebar abierto por defecto en desktop (>= 1024px), cerrado en mobile/tablet
   const [sidebarOpen, setSidebarOpen] = useState(() => {
-    return typeof window !== 'undefined' && window.innerWidth >= 768;
+    return typeof window !== 'undefined' && window.innerWidth >= 1024;
   });
 
   // Memoizar funciones para evitar re-renders innecesarios
@@ -87,16 +87,16 @@ export const LayoutProvider = ({ children }) => {
     }
   }, [viewport.isMobile]);
 
-  // Prevenir scroll cuando sidebar está abierto en móvil
+  // Prevenir scroll cuando sidebar está abierto en móvil/tablet (overlay)
   useEffect(() => {
-    if (viewport.isMobile && sidebarOpen) {
+    if (viewport.isCompact && sidebarOpen) {
       toggleBodyScroll(true);
-      
+
       return () => {
         toggleBodyScroll(false);
       };
     }
-  }, [viewport.isMobile, sidebarOpen]);
+  }, [viewport.isCompact, sidebarOpen]);
 
   // Memoizar el valor del contexto para evitar re-renders
   const contextValue = useMemo(

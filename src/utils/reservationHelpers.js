@@ -5,7 +5,8 @@ const STATUS_MAP = {
   pending: 'pendiente',
   confirmed: 'confirmada',
   cancelled: 'cancelada',
-  completed: 'completada'
+  completed: 'completada',
+  in_progress: 'en_proceso'
 };
 
 const PAYMENT_MAP = {

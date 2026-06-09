@@ -28,6 +28,18 @@ const EMPTY_FORM = {
   description: ''
 };
 
+// Límites de longitud (deben coincidir con backend: system_payment_methods)
+const FIELD_MAX_LENGTHS = {
+  label: 100,
+  bank: 100,
+  accountNumber: 30,
+  cci: 25,
+  cardNumber: 20,
+  phoneNumber: 20,
+  holderName: 200,
+  expiryDate: 10
+};
+
 const AddPaymentMethodForm = ({ onAddPaymentMethod, loading }) => {
   const { t } = useTranslation();
   const [form, setForm] = useState({ ...EMPTY_FORM });
@@ -89,6 +101,7 @@ const AddPaymentMethodForm = ({ onAddPaymentMethod, loading }) => {
               placeholder={t('profile.comp.labelPlaceholder')}
               value={form.label}
               onChange={(e) => handleChange('label', e.target.value)}
+              maxLength={FIELD_MAX_LENGTHS.label}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -107,6 +120,7 @@ const AddPaymentMethodForm = ({ onAddPaymentMethod, loading }) => {
                   placeholder={t('profile.comp.bankPlaceholder')}
                   value={form.bank}
                   onChange={(e) => handleChange('bank', e.target.value)}
+                  maxLength={FIELD_MAX_LENGTHS.bank}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -119,9 +133,11 @@ const AddPaymentMethodForm = ({ onAddPaymentMethod, loading }) => {
                 </label>
                 <input
                   type="text"
+                  inputMode="numeric"
                   placeholder={t('profile.comp.accountNumberPlaceholder')}
                   value={form.accountNumber}
                   onChange={(e) => handleChange('accountNumber', e.target.value)}
+                  maxLength={FIELD_MAX_LENGTHS.accountNumber}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -134,9 +150,11 @@ const AddPaymentMethodForm = ({ onAddPaymentMethod, loading }) => {
                 </label>
                 <input
                   type="text"
+                  inputMode="numeric"
                   placeholder={t('profile.comp.cciPlaceholder')}
                   value={form.cci}
                   onChange={(e) => handleChange('cci', e.target.value)}
+                  maxLength={FIELD_MAX_LENGTHS.cci}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -149,9 +167,11 @@ const AddPaymentMethodForm = ({ onAddPaymentMethod, loading }) => {
                 </label>
                 <input
                   type="text"
+                  inputMode="numeric"
                   placeholder={t('profile.comp.cardNumberPlaceholder')}
                   value={form.cardNumber}
                   onChange={(e) => handleChange('cardNumber', e.target.value)}
+                  maxLength={FIELD_MAX_LENGTHS.cardNumber}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -164,9 +184,11 @@ const AddPaymentMethodForm = ({ onAddPaymentMethod, loading }) => {
                 </label>
                 <input
                   type="text"
+                  inputMode="tel"
                   placeholder="999 888 777"
                   value={form.phoneNumber}
                   onChange={(e) => handleChange('phoneNumber', e.target.value)}
+                  maxLength={FIELD_MAX_LENGTHS.phoneNumber}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -182,6 +204,7 @@ const AddPaymentMethodForm = ({ onAddPaymentMethod, loading }) => {
                   placeholder={t('profile.comp.holderPlaceholder')}
                   value={form.holderName}
                   onChange={(e) => handleChange('holderName', e.target.value)}
+                  maxLength={FIELD_MAX_LENGTHS.holderName}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -254,6 +277,7 @@ const AddPaymentMethodForm = ({ onAddPaymentMethod, loading }) => {
                   placeholder="MM/YYYY"
                   value={form.expiryDate}
                   onChange={(e) => handleChange('expiryDate', e.target.value)}
+                  maxLength={FIELD_MAX_LENGTHS.expiryDate}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>

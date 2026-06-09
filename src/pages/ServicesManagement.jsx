@@ -368,7 +368,7 @@ const ServicesManagement = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 w-full">
       {renderHeader()}
       {renderContent()}
       {renderModals()}
@@ -397,22 +397,22 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
   const getImageUrl = (imagePath) => resolveFileUrl(imagePath);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Información Básica */}
-      <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-5 flex items-center">
-          <div className="w-1 h-6 bg-blue-500 rounded mr-3"></div>
+      <div className="bg-gradient-to-br from-white to-gray-50 p-4 sm:p-6 rounded-xl border border-gray-200">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-5 flex items-center">
+          <div className="w-1 h-5 sm:h-6 bg-blue-500 rounded mr-2 sm:mr-3"></div>
           Información del Servicio
         </h3>
 
         {/* Header con imagen, nombre y precio */}
-        <div className="flex items-start gap-5 mb-5 pb-5 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-5 mb-4 sm:mb-5 pb-4 sm:pb-5 border-b border-gray-200">
           {/* Imagen */}
           {service.image ? (
             <img
               src={getImageUrl(service.image)}
               alt={service.name}
-              className="w-32 h-32 object-cover rounded-lg border border-gray-200 flex-shrink-0"
+              className="w-full h-48 sm:w-24 sm:h-24 lg:w-32 lg:h-32 object-cover rounded-lg border border-gray-200 flex-shrink-0"
               onError={(e) => {
                 e.target.onerror = null;
                 e.target.src = '';
@@ -422,43 +422,43 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
             />
           ) : null}
           {!service.image && (
-            <div className="w-32 h-32 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center flex-shrink-0">
-              <PhotoIcon className="w-10 h-10 text-gray-400" />
+            <div className="w-full h-32 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center flex-shrink-0">
+              <PhotoIcon className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
             </div>
           )}
 
           {/* Info */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg">
+          <div className="flex-1 min-w-0 w-full">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg">
                 {formatCategory(service.category)}
               </span>
               {service.active !== false && (
-                <span className="px-2.5 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-lg">
+                <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 text-xs font-medium text-green-700 bg-green-100 rounded-lg">
                   Activo
                 </span>
               )}
             </div>
-            <h4 className="text-xl font-semibold text-gray-900 mt-2">{service.name || 'Sin nombre'}</h4>
+            <h4 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mt-2 break-words">{service.name || 'Sin nombre'}</h4>
             {(service.meetingPoint || service.meeting_point) && (
-              <p className="flex items-center text-sm text-gray-500 mt-1">
-                <MapPinIcon className="w-4 h-4 mr-1.5" />
-                {service.meetingPoint || service.meeting_point}
+              <p className="flex items-start text-xs sm:text-sm text-gray-500 mt-1">
+                <MapPinIcon className="w-4 h-4 mr-1.5 flex-shrink-0 mt-0.5" />
+                <span className="break-words">{service.meetingPoint || service.meeting_point}</span>
               </p>
             )}
           </div>
 
           {/* Precio */}
-          <div className="text-right bg-gray-50 px-4 py-3 rounded-lg border border-gray-200 flex-shrink-0">
-            <p className="text-xs text-gray-500 mb-1">Precio por persona</p>
-            <p className="text-2xl font-bold text-gray-900">
+          <div className="text-center sm:text-right bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-gray-200 flex-shrink-0 w-full sm:w-auto">
+            <p className="text-xs text-gray-500 mb-0.5 sm:mb-1">Precio por persona</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
               S/. {parseFloat(service.price || 0).toFixed(2)}
             </p>
           </div>
         </div>
 
         {/* Grid de información */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div>
             <label className="block text-xs text-gray-500 mb-1">Duración</label>
             <p className="text-sm font-medium text-gray-900 flex items-center">

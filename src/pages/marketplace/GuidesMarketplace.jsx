@@ -126,23 +126,23 @@ const GuidesMarketplace = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            <SparklesIcon className="w-8 h-8 mr-3 text-blue-500" />
-            Marketplace de Guías
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+            <SparklesIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-blue-500 flex-shrink-0" />
+            <span className="truncate">Marketplace de Guías</span>
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-xs sm:text-sm lg:text-base text-gray-600 mt-1">
             Encuentra y contrata guías freelance especializados
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center self-end sm:self-auto gap-2 flex-shrink-0">
           <button
             onClick={() => setViewLayout('grid')}
-            className={`p-2 rounded-lg transition-colors ${viewLayout === 'grid'
+            className={`p-2 rounded-lg transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center ${viewLayout === 'grid'
               ? 'bg-blue-100 text-blue-600'
               : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
             title="Vista cuadrícula"
@@ -151,7 +151,7 @@ const GuidesMarketplace = () => {
           </button>
           <button
             onClick={() => setViewLayout('list')}
-            className={`p-2 rounded-lg transition-colors ${viewLayout === 'list'
+            className={`p-2 rounded-lg transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center ${viewLayout === 'list'
               ? 'bg-blue-100 text-blue-600'
               : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
             title="Vista lista"
@@ -162,73 +162,73 @@ const GuidesMarketplace = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <UserGroupIcon className="w-8 h-8 text-blue-500" />
-            <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Total Guías</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalGuides}</p>
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow-sm border">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <UserGroupIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-blue-500 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">Total Guías</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{stats.totalGuides}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <SparklesIcon className="w-8 h-8 text-green-500" />
-            <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Disponibles</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.availableGuides}</p>
+        <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow-sm border">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <SparklesIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-green-500 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">Disponibles</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{stats.availableGuides}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <StarIcon className="w-8 h-8 text-yellow-500" />
-            <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Rating Promedio</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.averageRating}</p>
+        <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow-sm border">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <StarIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-yellow-500 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">Rating Promedio</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{stats.averageRating}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div className="flex items-center">
-            <CurrencyDollarIcon className="w-8 h-8 text-purple-500" />
-            <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Total Reviews</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalReviews}</p>
+        <div className="bg-white p-3 sm:p-4 lg:p-6 rounded-lg shadow-sm border">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <CurrencyDollarIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-purple-500 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">Total Reviews</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{stats.totalReviews}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Search, Sort and Filters */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:gap-4">
+      <div className="bg-white rounded-lg shadow-sm border p-3 sm:p-4 lg:p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
           {/* Search */}
-          <div className="flex-1 max-w-md">
+          <div className="flex-1 lg:max-w-md">
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
               <input
                 type="text"
                 placeholder={t('marketplace.messages.searchPlaceholder')}
                 value={localSearchQuery}
                 onChange={handleSearchChange}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               />
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-shrink-0">
             {/* Sort dropdown */}
             <div className="relative">
               <ChevronUpDownIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
               <select
                 value={sortBy}
                 onChange={handleSortChange}
-                className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
+                className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer outline-none"
               >
                 {SORT_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -236,34 +236,36 @@ const GuidesMarketplace = () => {
               </select>
             </div>
 
-            {/* Filters toggle */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center space-x-2 px-4 py-2 border rounded-lg transition-colors ${
-                showFilters ? 'border-blue-500 bg-blue-50 text-blue-600' : 'border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              <FunnelIcon className="w-4 h-4" />
-              <span>Filtros</span>
-            </button>
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-3">
+              {/* Filters toggle */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 border rounded-lg transition-colors text-sm whitespace-nowrap ${
+                  showFilters ? 'border-blue-500 bg-blue-50 text-blue-600' : 'border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                <FunnelIcon className="w-4 h-4" />
+                <span>Filtros</span>
+              </button>
 
-            {/* Availability filter */}
-            <select
-              value={activeFilters.availability?.toString() || ''}
-              onChange={(e) => handleFilterChange('availability', e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-            >
-              <option value="">Todos los guías</option>
-              <option value="available">Solo disponibles</option>
-              <option value="busy">Ocupados</option>
-            </select>
+              {/* Availability filter */}
+              <select
+                value={activeFilters.availability?.toString() || ''}
+                onChange={(e) => handleFilterChange('availability', e.target.value)}
+                className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
+              >
+                <option value="">Todos los guías</option>
+                <option value="available">Solo disponibles</option>
+                <option value="busy">Ocupados</option>
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Expanded Filters */}
         {showFilters && (
           <div className="mt-4 pt-4 border-t border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Idiomas
@@ -359,20 +361,20 @@ const GuidesMarketplace = () => {
 
       {/* Results */}
       <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-lg font-medium text-gray-900">
+        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <h3 className="text-base sm:text-lg font-medium text-gray-900">
             Guías Disponibles ({filteredGuides.length})
           </h3>
-          <span className="text-sm text-gray-500">
+          <span className="text-xs sm:text-sm text-gray-500 truncate">
             Ordenado por: {SORT_OPTIONS.find(o => o.value === sortBy)?.label}
           </span>
         </div>
 
-        <div className="p-6">
+        <div className="p-3 sm:p-4 lg:p-6">
           {filteredGuides.length > 0 ? (
             viewLayout === 'grid' ? (
               /* ========== VISTA GRID ========== */
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredGuides.map((guide) => (
                   <GuideCard key={guide.id} guide={guide} t={t} onViewProfile={() => navigate(`/marketplace/guide/${guide.id}`)} />
                 ))}

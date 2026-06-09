@@ -86,6 +86,36 @@ export const parseLocalDate = (dateString) => {
 };
 
 /**
+ * Convierte cualquier entrada (Date, string YYYY-MM-DD, ISO con hora) en un
+ * Date "anclado al día calendario" en zona local. Evita el desfase clásico:
+ *   new Date("2026-06-19") → 2026-06-18 19:00 en UTC-5
+ * que hacía que la agenda mostrara los eventos al día anterior tras un
+ * refresh, una rehidratación de localStorage o al recibir el string del
+ * backend. Para entradas con hora (ISO completo) preserva la hora real.
+ *
+ * @param {Date|string|null|undefined} input
+ * @returns {Date|null}
+ */
+export const toLocalDate = (input) => {
+  if (!input) return null;
+
+  if (input instanceof Date) {
+    return isNaN(input.getTime()) ? null : input;
+  }
+
+  if (typeof input !== 'string') return null;
+
+  // YYYY-MM-DD puro: parsear como día local sin shift de timezone.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(input)) {
+    return parseLocalDate(input);
+  }
+
+  // ISO con hora: confiar en el parser nativo (ya respeta el offset).
+  const d = new Date(input);
+  return isNaN(d.getTime()) ? null : d;
+};
+
+/**
  * Compara dos fechas ignorando la hora
  * @param {string|Date} date1
  * @param {string|Date} date2
@@ -172,6 +202,7 @@ export default {
   formatDateSafe,
   toDateString,
   parseLocalDate,
+  toLocalDate,
   isSameDay,
   getTodayString,
   formatTimestampSafe,

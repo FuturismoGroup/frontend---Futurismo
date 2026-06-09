@@ -161,11 +161,11 @@ const useNotificationsStore = create((set, get) => ({
     }
   },
 
-  markAllAsRead: async (userId) => {
+  markAllAsRead: async () => {
     set({ isLoading: true, error: null });
-    
+
     try {
-      const result = await notificationsService.markAllAsRead(userId);
+      const result = await notificationsService.markAllAsRead();
       
       if (!result.success) {
         throw new Error(result.error || i18next.t('errors.unexpectedError'));
@@ -218,11 +218,11 @@ const useNotificationsStore = create((set, get) => ({
     }
   },
 
-  clearAll: async (userId) => {
+  clearAll: async () => {
     set({ isLoading: true, error: null });
-    
+
     try {
-      const result = await notificationsService.clearAll(userId);
+      const result = await notificationsService.clearAll();
       
       if (!result.success) {
         throw new Error(result.error || i18next.t('errors.unexpectedError'));

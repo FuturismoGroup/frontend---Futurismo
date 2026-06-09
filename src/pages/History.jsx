@@ -264,15 +264,15 @@ const History = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-sm p-6 text-center">
-          <div className="text-red-500 mb-4">
-            <DocumentTextIcon className="w-12 h-12 mx-auto" />
+      <div className="min-h-[60vh] flex items-center justify-center p-3 sm:p-4">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-sm p-4 sm:p-6 text-center">
+          <div className="text-red-500 mb-3 sm:mb-4">
+            <DocumentTextIcon className="w-10 h-10 sm:w-12 sm:h-12 mx-auto" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
             {t('history.error.title')}
           </h3>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-xs sm:text-sm text-gray-600 mb-4 break-words">
             {error}
           </p>
           <button
@@ -287,16 +287,16 @@ const History = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3 sm:mb-4">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900">
                 {t('history.title')}
               </h1>
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600">
                 {(user?.role === 'admin' || user?.role === 'administrator') && t('history.description.admin')}
                 {user?.role === 'agency' && t('history.description.agency')}
                 {user?.role === 'guide' && t('history.description.guide')}
@@ -307,44 +307,42 @@ const History = () => {
             <button
               onClick={exportHistory}
               disabled={loading || filteredServices.length === 0}
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 sm:px-4 py-2 sm:py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
             >
               <ArrowDownTrayIcon className="w-4 h-4" />
-              <span>Exportar a Excel</span>
+              <span>Exportar<span className="hidden sm:inline"> a Excel</span></span>
             </button>
           </div>
 
           {/* Estadísticas rápidas */}
-          <div className="flex justify-end">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg px-4 py-3 shadow-sm border border-gray-200">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
-                    {filteredServices.length}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {t('history.stats.filtered')}
-                  </div>
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
+            <div className="bg-white rounded-lg px-2 sm:px-4 py-2 sm:py-3 shadow-sm border border-gray-200">
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">
+                  {filteredServices.length}
+                </div>
+                <div className="text-xs text-gray-500 truncate">
+                  {t('history.stats.filtered')}
                 </div>
               </div>
-              <div className="bg-white rounded-lg px-4 py-3 shadow-sm border border-gray-200">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">
-                    {filteredServices.filter(s => s.status === 'completed').length}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {t('history.stats.completed')}
-                  </div>
+            </div>
+            <div className="bg-white rounded-lg px-2 sm:px-4 py-2 sm:py-3 shadow-sm border border-gray-200">
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">
+                  {filteredServices.filter(s => s.status === 'completed').length}
+                </div>
+                <div className="text-xs text-gray-500 truncate">
+                  {t('history.stats.completed')}
                 </div>
               </div>
-              <div className="bg-white rounded-lg px-4 py-3 shadow-sm border border-gray-200">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-600">
-                    {filteredServices.filter(s => s.status === 'pending').length}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {t('history.stats.pending')}
-                  </div>
+            </div>
+            <div className="bg-white rounded-lg px-2 sm:px-4 py-2 sm:py-3 shadow-sm border border-gray-200">
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold text-yellow-600">
+                  {filteredServices.filter(s => s.status === 'pending').length}
+                </div>
+                <div className="text-xs text-gray-500 truncate">
+                  {t('history.stats.pending')}
                 </div>
               </div>
             </div>

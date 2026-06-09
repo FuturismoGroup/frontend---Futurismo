@@ -9,10 +9,10 @@ const Chat = () => {
   const isFromAgenda = searchParams.get('guide');
 
   return (
-    <div className="flex flex-col" style={{ height: 'calc(100vh - 7rem)' }}>
-      <div className="flex-shrink-0 mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">{t('chat.pageTitle')}</h1>
-        <p className="text-gray-600 mt-2">
+    <div className="flex flex-col" style={{ height: 'calc(100dvh - 5rem)' }}>
+      <div className="flex-shrink-0 mb-3 sm:mb-4 lg:mb-6">
+        <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 truncate">{t('chat.pageTitle')}</h1>
+        <p className="text-xs sm:text-sm lg:text-base text-gray-600 mt-1 sm:mt-2 break-words">
           {isFromAgenda && guideName
             ? t('chat.coordinationWith', { name: decodeURIComponent(guideName) })
             : t('chat.subtitle')}

@@ -35,31 +35,31 @@ const AppHeader = () => {
   };
 
   return (
-    <div className="min-h-16 bg-white border-b border-gray-200 shadow-sm">
+    <div className="min-h-14 sm:min-h-16 bg-white border-b border-gray-200 shadow-sm">
       {/* Main header row */}
-      <div className="h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="h-14 sm:h-16 px-3 sm:px-4 md:px-6 lg:px-8 flex items-center justify-between gap-2">
         {/* Left section */}
-        <div className="flex items-center gap-3">
-          {/* Menu toggle button */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          {/* Menu toggle button - solo en <1024px */}
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 lg:hidden"
+            className="p-2 -ml-1 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 lg:hidden flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label={t('common.toggleMenu')}
           >
             <Bars3Icon className="w-6 h-6 text-gray-600" />
           </button>
 
-          {/* Logo and name - Only visible on mobile */}
-          <Link to="/dashboard" className="flex items-center gap-2.5 md:hidden">
-            <span className="text-2xl">🌎</span>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+          {/* Logo y nombre - visible en mobile y tablet (<1024px) */}
+          <Link to="/dashboard" className="flex items-center gap-2 lg:hidden min-w-0">
+            <span className="text-xl sm:text-2xl flex-shrink-0">🌎</span>
+            <span className="text-base sm:text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent truncate">
               Futurismo
             </span>
           </Link>
         </div>
 
         {/* Right section */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
           <div className="hidden sm:block">
             <LanguageToggle />
           </div>
