@@ -154,28 +154,28 @@ const QuickAddModal = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-4 sm:p-6 text-left align-middle shadow-xl transition-all">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <Dialog.Title as="h3" className="text-xl font-semibold text-gray-900">
-                    <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between gap-2 mb-4 sm:mb-6">
+                  <Dialog.Title as="h3" className="text-base sm:text-xl font-semibold text-gray-900 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 min-w-0">
                       {mode === 'occupied' ? (
                         <>
-                          <EyeSlashIcon className="h-5 w-5 text-gray-500" />
-                          <span>{t('calendar.markTimeOccupied')}</span>
+                          <EyeSlashIcon className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                          <span className="truncate">{t('calendar.markTimeOccupied')}</span>
                         </>
                       ) : (
                         <>
-                          <CalendarDaysIcon className="h-5 w-5 text-blue-500" />
-                          <span>{t('calendar.addEvent')}</span>
+                          <CalendarDaysIcon className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                          <span className="truncate">{t('calendar.addEvent')}</span>
                         </>
                       )}
                     </div>
                   </Dialog.Title>
-                  
+
                   <button
                     onClick={handleClose}
-                    className="text-gray-400 hover:text-gray-500 transition-colors"
+                    className="text-gray-400 hover:text-gray-500 transition-colors flex-shrink-0"
                     aria-label={t('common.close')}
                   >
                     <XMarkIcon className="h-6 w-6" />
@@ -194,7 +194,7 @@ const QuickAddModal = ({
                 </div>
 
                 {/* Actions */}
-                <div className="mt-6 flex justify-end gap-3">
+                <div className="mt-4 sm:mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3">
                   <button
                     onClick={handleClose}
                     disabled={isSubmitting}
@@ -205,16 +205,16 @@ const QuickAddModal = ({
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors disabled:opacity-50 ${
+                    className={`inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors disabled:opacity-50 ${
                       mode === 'occupied'
                         ? 'bg-gray-600 hover:bg-gray-700'
                         : 'bg-blue-600 hover:bg-blue-700'
                     }`}
                   >
                     <CheckIcon className="h-4 w-4" />
-                    {isSubmitting 
-                      ? t('common.saving') 
-                      : mode === 'occupied' 
+                    {isSubmitting
+                      ? t('common.saving')
+                      : mode === 'occupied'
                         ? t('calendar.markAsOccupied')
                         : t('calendar.createEvent')
                     }

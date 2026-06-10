@@ -681,18 +681,18 @@ const GuideTourView = () => {
 
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
         {/* Progreso general */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium text-gray-900">Progreso del Tour</h3>
-            <span className="text-sm font-semibold text-primary">{getProgressPercent()}% completado</span>
+        <div className="bg-white rounded-lg shadow p-3 sm:p-4 mb-4 sm:mb-6">
+          <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+            <h3 className="font-medium text-sm sm:text-base text-gray-900">Progreso del Tour</h3>
+            <span className="text-xs sm:text-sm font-semibold text-primary">{getProgressPercent()}% completado</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
+          <div className="w-full bg-gray-200 rounded-full h-2.5 sm:h-3">
             <div
-              className="bg-primary h-3 rounded-full transition-all duration-500"
+              className="bg-primary h-2.5 sm:h-3 rounded-full transition-all duration-500"
               style={{ width: `${getProgressPercent()}%` }}
             />
           </div>
-          <div className="flex justify-between mt-2 text-sm text-gray-600">
+          <div className="flex flex-wrap justify-between gap-1 mt-2 text-xs sm:text-sm text-gray-600">
             <span>{tourData?.stops?.filter(s => s.status === 'completed').length || 0} de {tourData?.stops?.length || 0} paradas</span>
             <span>Inicio: {formatTime(tourData?.startedAt)}</span>
           </div>
@@ -700,86 +700,90 @@ const GuideTourView = () => {
 
         {/* Lista de paradas */}
         <div className="bg-white rounded-lg shadow">
-          <div className="p-4 border-b">
-            <h3 className="font-semibold text-gray-900">Itinerario</h3>
+          <div className="p-3 sm:p-4 border-b">
+            <h3 className="font-semibold text-sm sm:text-base text-gray-900">Itinerario</h3>
           </div>
 
           {(!tourData?.stops || tourData.stops.length === 0) && (
-            <div className="p-6 text-center text-gray-500">
-              <MapPinIcon className="w-10 h-10 mx-auto mb-2 text-gray-300" />
-              <p className="font-medium text-gray-700">Este servicio no tiene paradas configuradas</p>
-              <p className="text-sm mt-1">Puedes registrar fotos del servicio en la sección de abajo.</p>
+            <div className="p-4 sm:p-6 text-center text-gray-500">
+              <MapPinIcon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 text-gray-300" />
+              <p className="font-medium text-sm sm:text-base text-gray-700">Este servicio no tiene paradas configuradas</p>
+              <p className="text-xs sm:text-sm mt-1">Puedes registrar fotos del servicio en la sección de abajo.</p>
             </div>
           )}
 
           <div className="divide-y">
             {tourData?.stops?.map((stop, index) => (
-              <div key={stop.id} className="p-4">
+              <div key={stop.id} className="p-3 sm:p-4">
                 {/* Header de la parada */}
                 <div
-                  className="flex items-center justify-between cursor-pointer"
+                  className="flex items-start justify-between gap-2 cursor-pointer"
                   onClick={() => setExpandedStop(expandedStop === stop.id ? null : stop.id)}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
                     {/* Número de parada con estado */}
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-white ${
+                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-white flex-shrink-0 ${
                       stop.status === 'completed' ? 'bg-green-500' :
                       stop.status === 'in_progress' ? 'bg-blue-500' :
                       'bg-gray-300'
                     }`}>
                       {stop.status === 'completed' ? (
-                        <CheckIcon className="w-5 h-5" />
+                        <CheckIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                       ) : (
-                        index + 1
+                        <span className="text-sm">{index + 1}</span>
                       )}
                     </div>
 
-                    <div>
-                      <h4 className="font-medium text-gray-900">{stop.name}</h4>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <ClockIcon className="w-4 h-4" />
-                        <span>{stop.duration} min</span>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-medium text-sm sm:text-base text-gray-900 break-words">{stop.name}</h4>
+                      <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 text-xs sm:text-sm text-gray-500 mt-0.5">
+                        <span className="flex items-center gap-1 flex-shrink-0">
+                          <ClockIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          {stop.duration} min
+                        </span>
                         {stop.arrivedAt && (
                           <>
-                            <span>•</span>
-                            <span>Llegada: {formatTime(stop.arrivedAt)}</span>
+                            <span className="hidden sm:inline">•</span>
+                            <span className="truncate">Llegada: {formatTime(stop.arrivedAt)}</span>
                           </>
                         )}
                         {stop.departedAt && (
                           <>
-                            <span>•</span>
-                            <span>Salida: {formatTime(stop.departedAt)}</span>
+                            <span className="hidden sm:inline">•</span>
+                            <span className="truncate">Salida: {formatTime(stop.departedAt)}</span>
                           </>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                     {/* Botones rápidos de foto/comentario - visibles siempre para paradas en curso */}
                     {(stop.status === 'in_progress' || stop.status === 'completed') && (
                       <>
                         <button
                           onClick={(e) => { e.stopPropagation(); openPhotoModal(stop); }}
-                          className="p-2 text-gray-500 hover:text-primary hover:bg-primary/10 rounded-full transition-colors"
+                          className="p-1.5 sm:p-2 text-gray-500 hover:text-primary hover:bg-primary/10 rounded-full transition-colors"
                           title="Subir foto"
+                          aria-label="Subir foto"
                         >
-                          <CameraIcon className="w-5 h-5" />
+                          <CameraIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                         {stop.status === 'in_progress' && (
                           <button
                             onClick={(e) => { e.stopPropagation(); openCommentModal(stop); }}
-                            className="p-2 text-gray-500 hover:text-primary hover:bg-primary/10 rounded-full transition-colors"
+                            className="p-1.5 sm:p-2 text-gray-500 hover:text-primary hover:bg-primary/10 rounded-full transition-colors"
                             title="Agregar nota"
+                            aria-label="Agregar nota"
                           >
-                            <ChatBubbleLeftIcon className="w-5 h-5" />
+                            <ChatBubbleLeftIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                           </button>
                         )}
                       </>
                     )}
 
-                    {/* Badge de estado */}
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    {/* Badge de estado: oculto en pantallas pequeñas (ya hay color en el círculo) */}
+                    <span className={`hidden sm:inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                       stop.status === 'completed' ? 'bg-green-100 text-green-800' :
                       stop.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
                       'bg-gray-100 text-gray-600'
@@ -799,8 +803,8 @@ const GuideTourView = () => {
 
                 {/* Contenido expandido */}
                 {expandedStop === stop.id && (
-                  <div className="mt-4 pl-13 border-l-2 border-gray-200 ml-5">
-                    <div className="pl-4">
+                  <div className="mt-3 sm:mt-4 border-l-2 border-gray-200 ml-4 sm:ml-5">
+                    <div className="pl-3 sm:pl-4">
                       {/* Descripción */}
                       {stop.description && (
                         <p className="text-gray-600 mb-4">{stop.description}</p>
@@ -894,39 +898,41 @@ const GuideTourView = () => {
             guía freelance pueda registrar evidencia fotográfica del servicio
             asignado igual que el guía de planta. */}
         {(!tourData?.stops || tourData.stops.length === 0) && (
-          <div className="mt-6 bg-white rounded-lg shadow">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">Fotos del Servicio</h3>
+          <div className="mt-4 sm:mt-6 bg-white rounded-lg shadow">
+            <div className="p-3 sm:p-4 border-b flex items-center justify-between gap-2 flex-wrap">
+              <h3 className="font-semibold text-sm sm:text-base text-gray-900">Fotos del Servicio</h3>
               {!isReadOnly && (
                 <button
                   onClick={() => openPhotoModal(null)}
-                  className="btn btn-primary flex items-center gap-2"
+                  className="btn btn-primary flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm px-2.5 sm:px-3"
                 >
                   <CameraIcon className="w-4 h-4" />
-                  Subir Foto
+                  <span className="hidden sm:inline">Subir Foto</span>
+                  <span className="sm:hidden">Subir</span>
                 </button>
               )}
             </div>
-            <div className="p-4">
+            <div className="p-3 sm:p-4">
               {stopPhotos.general?.length > 0 ? (
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2 sm:gap-3">
                   {stopPhotos.general.map(photo => (
                     <div key={photo.id} className="relative group">
                       <img
                         src={resolveFileUrl(photo.photoUrl)}
                         alt={photo.caption || 'Foto del servicio'}
-                        className="w-24 h-24 object-cover rounded-lg border"
+                        className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg border"
                       />
                       {!isReadOnly && (
                         <button
                           onClick={() => handleDeletePhoto('general', photo.id)}
                           className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          aria-label="Eliminar foto"
                         >
                           <XMarkIcon className="w-3 h-3" />
                         </button>
                       )}
                       {photo.caption && (
-                        <p className="text-xs text-gray-500 mt-1 truncate max-w-[96px]">
+                        <p className="text-xs text-gray-500 mt-1 truncate max-w-[80px] sm:max-w-[96px]">
                           {photo.caption}
                         </p>
                       )}
@@ -934,7 +940,7 @@ const GuideTourView = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 text-center py-4">
+                <p className="text-xs sm:text-sm text-gray-500 text-center py-4">
                   Aún no hay fotos del servicio. {!isReadOnly && 'Usa el botón "Subir Foto" para agregar evidencia del tour.'}
                 </p>
               )}
@@ -945,26 +951,26 @@ const GuideTourView = () => {
         {/* Acciones rápidas — Reportar/Finalizar solo aplican mientras el
             tour está en curso. Si ya está completado se ocultan para evitar
             contradicción con el badge "Tour completado" del encabezado. */}
-        <div className={`mt-6 grid grid-cols-1 gap-4 ${isReadOnly ? 'md:grid-cols-1' : 'md:grid-cols-3'}`}>
-          <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-2">📱 Contacto de Emergencia</h4>
-            <p className="text-sm text-gray-600 mb-1">
+        <div className={`mt-4 sm:mt-6 grid grid-cols-1 gap-3 sm:gap-4 ${isReadOnly ? 'md:grid-cols-1' : 'sm:grid-cols-2 md:grid-cols-3'}`}>
+          <div className="bg-white p-3 sm:p-4 rounded-lg shadow border border-gray-200">
+            <h4 className="font-medium text-sm sm:text-base text-gray-900 mb-2">📱 Contacto de Emergencia</h4>
+            <p className="text-xs sm:text-sm text-gray-600 mb-1 break-words">
               Agencia: {tourData?.tourInfo?.agency?.business_name}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-[11px] sm:text-xs text-gray-500">
               Contacta a la agencia por chat o mensaje
             </p>
           </div>
 
           {!isReadOnly && (
-            <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">⚠️ Reportar Problema</h4>
-              <p className="text-sm text-gray-600 mb-3">
+            <div className="bg-white p-3 sm:p-4 rounded-lg shadow border border-gray-200">
+              <h4 className="font-medium text-sm sm:text-base text-gray-900 mb-2">⚠️ Reportar Problema</h4>
+              <p className="text-xs sm:text-sm text-gray-600 mb-3">
                 Retrasos, cambios de plan, etc.
               </p>
               <button
                 onClick={handleReportIncident}
-                className="btn btn-outline w-full"
+                className="btn btn-outline w-full text-xs sm:text-sm"
               >
                 Reportar Incidente
               </button>
@@ -972,14 +978,14 @@ const GuideTourView = () => {
           )}
 
           {!isReadOnly && (
-            <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">✅ Finalizar Servicio</h4>
-              <p className="text-sm text-gray-600 mb-3">
+            <div className="bg-white p-3 sm:p-4 rounded-lg shadow border border-gray-200">
+              <h4 className="font-medium text-sm sm:text-base text-gray-900 mb-2">✅ Finalizar Servicio</h4>
+              <p className="text-xs sm:text-sm text-gray-600 mb-3">
                 Cuando termines todas las paradas
               </p>
               <button
                 onClick={handleCompleteTour}
-                className="btn btn-success w-full"
+                className="btn btn-success w-full text-xs sm:text-sm"
               >
                 Finalizar Tour
               </button>
@@ -1045,15 +1051,16 @@ const GuideTourView = () => {
             />
 
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium text-gray-900">
+              <div className="bg-white px-4 pt-4 pb-4 sm:p-6">
+                <div className="flex items-start justify-between gap-2 mb-4">
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 break-words min-w-0 flex-1">
                     {selectedStopForMedia ? `Subir Foto - ${selectedStopForMedia.name}` : 'Subir Foto del Servicio'}
                   </h3>
                   <button
                     onClick={() => !uploadingPhoto && setShowPhotoModal(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 flex-shrink-0"
                     disabled={uploadingPhoto}
+                    aria-label="Cerrar"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
@@ -1133,15 +1140,16 @@ const GuideTourView = () => {
             />
 
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium text-gray-900">
+              <div className="bg-white px-4 pt-4 pb-4 sm:p-6">
+                <div className="flex items-start justify-between gap-2 mb-4">
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 break-words min-w-0 flex-1">
                     Agregar Nota - {selectedStopForMedia?.name}
                   </h3>
                   <button
                     onClick={() => actionLoading !== 'comment' && setShowCommentModal(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 flex-shrink-0"
                     disabled={actionLoading === 'comment'}
+                    aria-label="Cerrar"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>

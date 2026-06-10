@@ -131,7 +131,7 @@ const History = () => {
 
   const exportHistory = () => {
     if (!filteredServices || filteredServices.length === 0) {
-      toast.error('No hay datos para exportar');
+      toast.error(t('history.noDataToExport'));
       return;
     }
 
@@ -238,9 +238,9 @@ const History = () => {
       const fileName = `Historial_Servicios_${userName}_${format(new Date(), 'yyyyMMdd')}.xlsx`;
 
       XLSX.writeFile(workbook, fileName);
-      toast.success('✅ Historial exportado correctamente');
+      toast.success(t('history.exportSuccess'));
     } catch (error) {
-      toast.error('Error al exportar el historial');
+      toast.error(t('history.exportError'));
     }
   };
 
@@ -310,7 +310,7 @@ const History = () => {
               className="px-3 sm:px-4 py-2 sm:py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
             >
               <ArrowDownTrayIcon className="w-4 h-4" />
-              <span>Exportar<span className="hidden sm:inline"> a Excel</span></span>
+              <span>{t('history.exportButton')}<span className="hidden sm:inline">{t('history.exportButtonSuffix')}</span></span>
             </button>
           </div>
 

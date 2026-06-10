@@ -35,7 +35,7 @@ const MonthDay = ({
       onMouseEnter={() => onDateHover(date, true)}
       onMouseLeave={() => onDateHover(date, false)}
       className={`
-        relative h-[120px] p-2 border-r border-b border-gray-200 cursor-pointer overflow-hidden
+        relative h-[64px] sm:h-[96px] lg:h-[120px] p-1 sm:p-2 border-r border-b border-gray-200 cursor-pointer overflow-hidden
         transition-all duration-200 hover:bg-gray-50 group
         ${!isCurrentMonth ? 'bg-gray-50 text-gray-400' : 'bg-white text-gray-900'}
         ${isSelected ? 'bg-blue-50 border-blue-300' : ''}
@@ -44,10 +44,10 @@ const MonthDay = ({
       `}
     >
       {/* Day number */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-1 sm:mb-2">
         <span className={`
-          text-sm font-medium
-          ${isCurrentDay ? 'bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs' : ''}
+          text-[11px] sm:text-sm font-medium
+          ${isCurrentDay ? 'bg-blue-500 text-white w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs' : ''}
           ${isSelected && !isCurrentDay ? 'text-blue-600 font-semibold' : ''}
         `}>
           {format(date, 'd')}
@@ -55,17 +55,17 @@ const MonthDay = ({
 
         {/* Availability indicator for admin */}
         {isAdmin && indicators.hasAvailability && (
-          <div className="w-2 h-2 bg-green-400 rounded-full" title={t('calendar.available')} />
+          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full" title={t('calendar.available')} />
         )}
       </div>
 
       {/* Event indicators - fixed height */}
-      <div className="h-[60px] space-y-1 overflow-hidden">
+      <div className="h-[28px] sm:h-[48px] lg:h-[60px] space-y-0.5 sm:space-y-1 overflow-hidden">
         {/* Personal events */}
         {indicators.personalEvents > 0 && (
           <div 
             onClick={(e) => onEventBadgeClick(date, 'personal', e)}
-            className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded truncate hover:bg-blue-200 cursor-pointer transition-colors block"
+            className="text-[10px] sm:text-xs bg-blue-100 text-blue-800 px-1 sm:px-2 py-0.5 sm:py-1 rounded truncate hover:bg-blue-200 cursor-pointer transition-colors block leading-tight"
             title={t('calendar.clickToViewPersonalEvents')}
           >
             {indicators.personalEvents === 1 ? t('calendar.onePersonalEvent') : t('calendar.personalEventCount', { count: indicators.personalEvents })}
@@ -76,7 +76,7 @@ const MonthDay = ({
         {indicators.companyTours > 0 && (
           <div 
             onClick={(e) => onEventBadgeClick(date, 'company_tour', e)}
-            className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded truncate hover:bg-green-200 cursor-pointer transition-colors block"
+            className="text-[10px] sm:text-xs bg-green-100 text-green-800 px-1 sm:px-2 py-0.5 sm:py-1 rounded truncate hover:bg-green-200 cursor-pointer transition-colors block leading-tight"
             title={t('calendar.clickToViewCompanyTours')}
           >
             {indicators.companyTours === 1 ? t('calendar.oneTour') : t('calendar.tourCount', { count: indicators.companyTours })}
@@ -87,7 +87,7 @@ const MonthDay = ({
         {indicators.occupiedSlots > 0 && (
           <div 
             onClick={(e) => onEventBadgeClick(date, 'occupied', e)}
-            className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded truncate hover:bg-gray-200 cursor-pointer transition-colors block"
+            className="text-[10px] sm:text-xs bg-gray-100 text-gray-600 px-1 sm:px-2 py-0.5 sm:py-1 rounded truncate hover:bg-gray-200 cursor-pointer transition-colors block leading-tight"
             title={t('calendar.clickToViewOccupiedTime')}
           >
             {t('calendar.occupied')}

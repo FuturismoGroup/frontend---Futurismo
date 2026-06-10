@@ -45,8 +45,8 @@ const ProtocolViewer = ({ protocol, onClose, onEdit, onDownload }) => {
     .filter(Boolean);
 
   return (
-    <div className="modal-overlay p-4">
-      <div className="modal-content max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-xl">
+    <div className="modal-overlay p-2 sm:p-4">
+      <div className="modal-content max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden shadow-xl modal-custom-mobile-fullscreen">
         <ProtocolHeader
           protocol={protocol}
           onClose={onClose}
@@ -57,8 +57,8 @@ const ProtocolViewer = ({ protocol, onClose, onEdit, onDownload }) => {
         />
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-140px)]">
-          <div className="p-6 space-y-6">
+        <div className="overflow-y-auto flex-1 max-h-[calc(95vh-180px)] sm:max-h-[calc(90vh-160px)]">
+          <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
             <ProtocolDescription
               protocol={protocol}
               importantReminders={importantReminders}
@@ -102,31 +102,31 @@ const ProtocolViewer = ({ protocol, onClose, onEdit, onDownload }) => {
             )}
 
             {/* Stats Summary */}
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-center">
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-lg sm:text-2xl font-bold text-gray-900">
                     {stats.steps}
                   </div>
-                  <div className="text-sm text-gray-600">{t('emergency.protocol.steps')}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">{t('emergency.protocol.steps')}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-lg sm:text-2xl font-bold text-gray-900">
                     {stats.contacts}
                   </div>
-                  <div className="text-sm text-gray-600">{t('emergency.protocol.contacts')}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">{t('emergency.protocol.contacts')}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-lg sm:text-2xl font-bold text-gray-900">
                     {stats.materials}
                   </div>
-                  <div className="text-sm text-gray-600">{t('emergency.protocol.materials')}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">{t('emergency.protocol.materials')}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-lg sm:text-2xl font-bold text-gray-900 break-words">
                     {t(`emergency.priority.${stats.priority}`).toUpperCase()}
                   </div>
-                  <div className="text-sm text-gray-600">{t('emergency.protocol.priority')}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">{t('emergency.protocol.priority')}</div>
                 </div>
               </div>
             </div>
@@ -134,25 +134,25 @@ const ProtocolViewer = ({ protocol, onClose, onEdit, onDownload }) => {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <ClockIcon className="w-4 h-4" />
-            <span>{t('emergency.protocol.lastUpdated', { date: protocol?.updatedAt ? new Date(protocol.updatedAt).toLocaleDateString() : (protocol?.lastUpdated || '-') })}</span>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2 p-3 sm:p-4 lg:p-6 border-t border-gray-200 bg-gray-50">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 min-w-0">
+            <ClockIcon className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate">{t('emergency.protocol.lastUpdated', { date: protocol?.updatedAt ? new Date(protocol.updatedAt).toLocaleDateString() : (protocol?.lastUpdated || '-') })}</span>
           </div>
-          
-          <div className="flex items-center space-x-3">
+
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               {t('common.close')}
             </button>
             <button
               onClick={onDownload}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-xs sm:text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
             >
-              <ArrowDownTrayIcon className="w-4 h-4" />
-              <span>{t('emergency.protocol.downloadPDF')}</span>
+              <ArrowDownTrayIcon className="w-4 h-4 flex-shrink-0" />
+              <span className="truncate">{t('emergency.protocol.downloadPDF')}</span>
             </button>
           </div>
         </div>

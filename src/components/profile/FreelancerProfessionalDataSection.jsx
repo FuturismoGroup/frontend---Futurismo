@@ -216,13 +216,13 @@ const FreelancerProfessionalDataSection = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <BriefcaseIcon className="h-5 w-5 text-gray-400 mr-2" />
-            <h3 className="text-lg font-medium text-gray-900">{t('profile.comp.professionalInfo')}</h3>
+      <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center min-w-0 flex-1">
+            <BriefcaseIcon className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0" />
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 truncate">{t('profile.comp.professionalInfo')}</h3>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
@@ -278,7 +278,7 @@ const FreelancerProfessionalDataSection = () => {
       </div>
 
       {!isCollapsed && (
-        <div className="p-6 space-y-6">
+        <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
           {localLoading && !currentGuide ? (
             <div className="flex justify-center items-center py-8">
               <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -458,9 +458,9 @@ const FreelancerProfessionalDataSection = () => {
             ) : (
               <div className="space-y-1">
                 {formData.certifications.map((cert, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                    <span className="text-gray-900">{cert}</span>
+                  <div key={index} className="flex items-start space-x-2">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-900 break-words min-w-0">{cert}</span>
                   </div>
                 ))}
               </div>
@@ -502,9 +502,9 @@ const FreelancerProfessionalDataSection = () => {
             ) : (
               <div className="space-y-1">
                 {formData.workZones.length > 0 ? formData.workZones.map((zone, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <MapPinIcon className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-900">{typeof zone === 'string' ? zone : (zone?.name || '')}</span>
+                  <div key={index} className="flex items-start space-x-2">
+                    <MapPinIcon className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
+                    <span className="text-gray-900 break-words min-w-0">{typeof zone === 'string' ? zone : (zone?.name || '')}</span>
                   </div>
                 )) : (
                   <p className="text-gray-400 italic text-sm">{t('profile.comp.noWorkZones')}</p>
@@ -548,9 +548,9 @@ const FreelancerProfessionalDataSection = () => {
             ) : (
               <div className="space-y-1">
                 {formData.museums.length > 0 ? formData.museums.map((museum, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <BuildingLibraryIcon className="w-4 h-4 text-orange-400" />
-                    <span className="text-gray-900">{typeof museum === 'string' ? museum : (museum?.name || '')}</span>
+                  <div key={index} className="flex items-start space-x-2">
+                    <BuildingLibraryIcon className="w-4 h-4 text-orange-400 mt-1 flex-shrink-0" />
+                    <span className="text-gray-900 break-words min-w-0">{typeof museum === 'string' ? museum : (museum?.name || '')}</span>
                   </div>
                 )) : (
                   <p className="text-gray-400 italic text-sm">{t('profile.comp.noMuseumExperience')}</p>

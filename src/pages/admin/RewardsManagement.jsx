@@ -126,7 +126,7 @@ const RewardsManagement = () => {
       }
     }
     if (pointsConfig.pointsPerSol <= 0) {
-      toast.error('Puntos por sol debe ser mayor a 0');
+      toast.error(t('rewards.admin.validation.pointsPerSolPositive'));
       return;
     }
 
@@ -192,7 +192,7 @@ const RewardsManagement = () => {
     const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'El nombre es requerido';
+      newErrors.name = t('rewards.admin.validation.nameRequired');
     }
 
     if (!formData.description.trim()) {
@@ -200,7 +200,7 @@ const RewardsManagement = () => {
     }
 
     if (!formData.points || formData.points < 100) {
-      newErrors.points = 'Los puntos deben ser al menos 100';
+      newErrors.points = t('rewards.admin.validation.pointsMin100');
     }
 
     if (!formData.category) {
@@ -208,7 +208,7 @@ const RewardsManagement = () => {
     }
 
     if (!formData.stock || formData.stock < 1) {
-      newErrors.stock = 'El stock debe ser al menos 1';
+      newErrors.stock = t('rewards.admin.validation.stockMin1');
     }
 
     setErrors(newErrors);
@@ -252,15 +252,15 @@ const RewardsManagement = () => {
 
       if (editingReward) {
         await updateReward(editingReward.id, rewardData);
-        toast.success('Premio actualizado exitosamente');
+        toast.success(t('rewards.admin.messages.updateSuccess'));
       } else {
         await createReward(rewardData);
-        toast.success('Premio creado exitosamente');
+        toast.success(t('rewards.admin.messages.createSuccess'));
       }
 
       resetForm();
     } catch (error) {
-      toast.error(error.message || 'Error al procesar la solicitud');
+      toast.error(error.message || t('rewards.admin.messages.processError'));
     }
   };
 
@@ -310,9 +310,9 @@ const RewardsManagement = () => {
     if (window.confirm(`¿Está seguro de eliminar el premio "${reward.name}"?`)) {
       try {
         await deleteReward(reward.id);
-        toast.success('Premio eliminado exitosamente');
+        toast.success(t('rewards.admin.messages.deleteSuccess'));
       } catch (error) {
-        toast.error('Error al eliminar el premio');
+        toast.error(t('rewards.admin.messages.deleteError'));
       }
     }
   };
@@ -334,13 +334,13 @@ const RewardsManagement = () => {
     e.preventDefault();
     
     if (!pointsData.points || !pointsData.reason.trim()) {
-      toast.error('Completa todos los campos');
+      toast.error(t('rewards.admin.assignPoints.completeFields'));
       return;
     }
 
     const points = parseInt(pointsData.points);
     if (points <= 0) {
-      toast.error('Los puntos deben ser mayores a 0');
+      toast.error(t('rewards.admin.assignPoints.pointsGreaterThanZero'));
       return;
     }
 
@@ -351,7 +351,7 @@ const RewardsManagement = () => {
       setSelectedAgency(null);
       setPointsData({ points: '', reason: '' });
     } catch (error) {
-      toast.error('Error al asignar puntos');
+      toast.error(t('rewards.admin.assignPoints.assignError'));
     }
   };
 
@@ -359,10 +359,10 @@ const RewardsManagement = () => {
   const handleUpdateRedemption = async (id, status, notes = '') => {
     try {
       await updateRedemptionStatus(id, status, notes);
-      toast.success('Estado del canje actualizado');
+      toast.success(t('rewards.admin.assignPoints.statusUpdated'));
       setShowDetails(false);
     } catch (error) {
-      toast.error('Error al actualizar el estado');
+      toast.error(t('rewards.admin.assignPoints.updateStatusError'));
     }
   };
 
@@ -386,8 +386,8 @@ const RewardsManagement = () => {
             <div className="flex items-center">
               <GiftIcon className="h-8 w-8 text-purple-600 mr-3" />
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Sistema de Premios</h1>
-                <p className="text-gray-600">Gestiona premios y canjes del sistema de puntos</p>
+                <h1 className="text-3xl font-bold text-gray-900">{t('rewards.admin.title')}</h1>
+                <p className="text-gray-600">{t('rewards.admin.subtitle')}</p>
               </div>
             </div>
             {activeTab === 'rewards' && (
@@ -396,7 +396,7 @@ const RewardsManagement = () => {
                 className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center"
               >
                 <PlusIcon className="h-5 w-5 mr-2" />
-                Nuevo Premio
+                {t('rewards.admin.newReward')}
               </button>
             )}
           </div>
@@ -414,7 +414,7 @@ const RewardsManagement = () => {
               }`}
             >
               <GiftIcon className="h-5 w-5 inline mr-2" />
-              Premios ({rewards.length})
+              {t('rewards.admin.tabs.rewards')} ({rewards.length})
             </button>
             <button
               onClick={() => setActiveTab('agencies')}
@@ -425,7 +425,7 @@ const RewardsManagement = () => {
               }`}
             >
               <StarIcon className="h-5 w-5 inline mr-2" />
-              Agencias ({agencies.length})
+              {t('rewards.admin.tabs.agencies')} ({agencies.length})
             </button>
             <button
               onClick={() => setActiveTab('redemptions')}
@@ -436,7 +436,7 @@ const RewardsManagement = () => {
               }`}
             >
               <CheckCircleIcon className="h-5 w-5 inline mr-2" />
-              Canjes ({redemptions.length})
+              {t('rewards.admin.tabs.redemptions')} ({redemptions.length})
             </button>
             <button
               onClick={() => setActiveTab('categories')}
@@ -447,7 +447,7 @@ const RewardsManagement = () => {
               }`}
             >
               <SwatchIcon className="h-5 w-5 inline mr-2" />
-              Categorías ({categories.length})
+              {t('rewards.admin.tabs.categories')} ({categories.length})
             </button>
             <button
               onClick={() => setActiveTab('config')}
@@ -458,7 +458,7 @@ const RewardsManagement = () => {
               }`}
             >
               <Cog6ToothIcon className="h-5 w-5 inline mr-2" />
-              Configuración
+              {t('rewards.admin.tabs.config')}
             </button>
           </nav>
         </div>
@@ -470,25 +470,25 @@ const RewardsManagement = () => {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Premio</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Categoría</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Puntos</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Stock</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Estado</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.reward')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.category')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.points')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.stock')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.status')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {loading ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
-                        Cargando premios...
+                        {t('rewards.admin.loadingRewards')}
                       </td>
                     </tr>
                   ) : rewards.length === 0 ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
-                        No hay premios registrados
+                        {t('rewards.admin.noRewards')}
                       </td>
                     </tr>
                   ) : (
@@ -517,7 +517,7 @@ const RewardsManagement = () => {
                               {reward.categoryName}
                             </span>
                           ) : (
-                            <span className="text-sm text-gray-400">Sin categoría</span>
+                            <span className="text-sm text-gray-400">{t('rewards.admin.noCategory')}</span>
                           )}
                         </td>
                         <td className="px-6 py-4 text-center">
@@ -535,7 +535,7 @@ const RewardsManagement = () => {
                         </td>
                         <td className="px-6 py-4 text-center">
                           <span className={`badge ${reward.active ? 'badge-green' : 'badge-red'}`}>
-                            {reward.active ? 'Activo' : 'Inactivo'}
+                            {reward.active ? t('rewards.admin.active') : t('rewards.admin.inactive')}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-center">
@@ -543,21 +543,21 @@ const RewardsManagement = () => {
                             <button
                               onClick={() => handleViewDetails(reward, 'reward')}
                               className="text-blue-600 hover:text-blue-800"
-                              title="Ver detalles"
+                              title={t('rewards.admin.viewDetails')}
                             >
                               <EyeIcon className="h-5 w-5" />
                             </button>
                             <button
                               onClick={() => handleEdit(reward)}
                               className="text-yellow-600 hover:text-yellow-800"
-                              title="Editar"
+                              title={t('rewards.admin.editTitle')}
                             >
                               <PencilIcon className="h-5 w-5" />
                             </button>
                             <button
                               onClick={() => handleDelete(reward)}
                               className="text-red-600 hover:text-red-800"
-                              title="Eliminar"
+                              title={t('rewards.admin.deleteTitle')}
                             >
                               <TrashIcon className="h-5 w-5" />
                             </button>

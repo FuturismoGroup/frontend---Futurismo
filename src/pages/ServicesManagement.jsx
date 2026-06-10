@@ -78,7 +78,7 @@ const ServicesManagement = () => {
         await deleteTour(serviceToDelete.id);
         setShowDeleteModal(false);
         setServiceToDelete(null);
-        toast.success('Servicio eliminado correctamente');
+        toast.success(t('services.deleteSuccess'));
         // Recargar la lista de tours
         await loadTours();
         // Si estamos en la vista de detalles, volver a la lista
@@ -106,7 +106,7 @@ const ServicesManagement = () => {
           });
           setShowConflictModal(true);
         } else {
-          toast.error(errorMessage || 'Error al eliminar el servicio');
+          toast.error(errorMessage || t('services.deleteError'));
         }
 
         setServiceToDelete(null);
@@ -130,7 +130,7 @@ const ServicesManagement = () => {
       setSelectedService(null);
     } catch (error) {
       console.error('Error al actualizar lista de servicios:', error);
-      toast.error('Error al actualizar la lista de servicios');
+      toast.error(t('services.refreshError'));
     } finally {
       setIsLoading(false);
     }
@@ -143,54 +143,55 @@ const ServicesManagement = () => {
 
   const renderHeader = () => {
     const titles = {
-      list: t('services.management') || 'Gestión de Servicios',
-      create: t('services.newService') || 'Nuevo Servicio',
-      edit: t('services.editService') || 'Editar Servicio',
-      view: t('services.serviceDetails') || 'Detalles del Servicio',
-      config: 'Configuración de Tipos de Servicio'
+      list: t('services.management'),
+      create: t('services.newService'),
+      edit: t('services.editService'),
+      view: t('services.serviceDetails'),
+      config: t('services.configureTypesTitle')
     };
 
     return (
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
+        <div className="flex items-start gap-2 sm:gap-4 min-w-0 flex-1">
           {currentView !== 'list' && (
             <button
               onClick={() => setCurrentView('list')}
-              className="mr-4 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+              aria-label="Volver"
             >
               <ArrowLeftIcon className="h-5 w-5" />
             </button>
           )}
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 break-words">
               {titles[currentView]}
             </h1>
-            <p className="mt-1 text-sm text-gray-600">
-              {currentView === 'list' && 'Registra y gestiona todos los servicios turísticos'}
-              {currentView === 'create' && 'Registra una nueva solicitud de servicio'}
-              {currentView === 'edit' && `Editando: ${selectedService?.code || selectedService?.name}`}
-              {currentView === 'view' && selectedService?.code ? `Código: ${selectedService.code}` : 'Detalles del Servicio'}
-              {currentView === 'config' && 'Configura los tipos de servicio disponibles'}
+            <p className="mt-1 text-xs sm:text-sm text-gray-600 break-words">
+              {currentView === 'list' && t('services.descriptions.list')}
+              {currentView === 'create' && t('services.descriptions.create')}
+              {currentView === 'edit' && t('services.descriptions.edit', { name: selectedService?.code || selectedService?.name })}
+              {currentView === 'view' && (selectedService?.code ? t('services.descriptions.viewWithCode', { code: selectedService.code }) : t('services.descriptions.view'))}
+              {currentView === 'config' && t('services.descriptions.config')}
             </p>
           </div>
         </div>
 
         {/* Botones de acción - solo visible en vista de lista y para admin */}
         {currentView === 'list' && (user?.role === 'admin' || user?.role === 'administrator') && (
-          <div className="flex gap-3">
+          <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3 flex-shrink-0">
             <button
               onClick={() => setCurrentView('config')}
-              className="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+              className="inline-flex items-center justify-center px-3 sm:px-4 py-2 bg-gray-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors whitespace-nowrap"
             >
-              <Cog6ToothIcon className="h-5 w-5 mr-2" />
-              Configurar Tipos
+              <Cog6ToothIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 flex-shrink-0" />
+              <span className="truncate">{t('services.configureTypes')}</span>
             </button>
             <button
               onClick={handleCreateService}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              className="inline-flex items-center justify-center px-3 sm:px-4 py-2 bg-blue-600 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors whitespace-nowrap"
             >
-              <PlusIcon className="h-5 w-5 mr-2" />
-              {t('services.newService') || 'Nuevo Servicio'}
+              <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 flex-shrink-0" />
+              <span className="truncate">{t('services.newService')}</span>
             </button>
           </div>
         )}
@@ -231,22 +232,23 @@ const ServicesManagement = () => {
 
         {/* Modal de detalles */}
         {currentView === 'view' && selectedService && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] flex flex-col">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-                <h2 className="text-2xl font-bold text-gray-900">Detalles del Servicio</h2>
+              <div className="flex items-center justify-between gap-2 px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+                <h2 className="text-base sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">Detalles del Servicio</h2>
                 <button
                   type="button"
                   onClick={handleFormCancel}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition-colors"
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition-colors flex-shrink-0"
+                  aria-label="Cerrar"
                 >
-                  <XMarkIcon className="w-6 h-6" />
+                  <XMarkIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
               </div>
 
               {/* Contenido scrolleable */}
-              <div className="flex-1 overflow-y-auto px-6 py-6">
+              <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-6">
                 <ServiceDetails
                   service={selectedService}
                   onEdit={() => handleEditService(selectedService)}

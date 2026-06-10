@@ -117,7 +117,7 @@ const DayView = ({ onTimeSlotClick, onDateClick, onEventClick, onEventEdit }) =>
         onDragEnter={handleDragEnter}
       >
         <div className="h-full overflow-y-auto">
-          <div className="grid grid-cols-[80px,1fr]">
+          <div className="grid grid-cols-[60px,1fr] sm:grid-cols-[80px,1fr]">
             {/* Time labels column */}
             <div className="sticky left-0 bg-white z-10 border-r border-gray-200">
               {hours.map(hour => {

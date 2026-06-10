@@ -146,27 +146,27 @@ const RewardsStore = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header con puntos de la agencia */}
-        <div className="mb-8">
-          <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-6 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold mb-2">Tienda de Premios</h1>
-                <p className="text-purple-100">
+        <div className="mb-4 sm:mb-8">
+          <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-4 sm:p-6 text-white">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">Tienda de Premios</h1>
+                <p className="text-xs sm:text-base text-purple-100">
                   Canjea tus puntos por increíbles premios y experiencias
                 </p>
               </div>
-              <div className="text-center">
-                <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-                  <div className="flex items-center justify-center mb-2">
-                    <StarIconSolid className="h-6 w-6 text-yellow-300 mr-2" />
-                    <span className="text-2xl font-bold">
+              <div className="text-center flex-shrink-0">
+                <div className="bg-white bg-opacity-20 rounded-lg p-3 sm:p-4 backdrop-blur-sm">
+                  <div className="flex items-center justify-center mb-1 sm:mb-2">
+                    <StarIconSolid className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-300 mr-2" />
+                    <span className="text-lg sm:text-2xl font-bold">
                       {currentAgency.availablePoints.toLocaleString()}
                     </span>
                   </div>
-                  <p className="text-sm text-purple-100">Puntos disponibles</p>
+                  <p className="text-xs sm:text-sm text-purple-100">Puntos disponibles</p>
                 </div>
               </div>
             </div>
@@ -174,57 +174,57 @@ const RewardsStore = () => {
         </div>
 
         {/* Estadísticas rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg p-6 shadow">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-8">
+          <div className="bg-white rounded-lg p-3 sm:p-6 shadow">
             <div className="flex items-center">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <StarIconSolid className="h-6 w-6 text-purple-600" />
+              <div className="p-2 sm:p-3 bg-purple-100 rounded-lg flex-shrink-0">
+                <StarIconSolid className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Puntos Totales</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="ml-2 sm:ml-4 min-w-0">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Puntos Totales</p>
+                <p className="text-base sm:text-2xl font-bold text-gray-900 truncate">
                   {currentAgency.totalPoints.toLocaleString()}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg p-6 shadow">
+          <div className="bg-white rounded-lg p-3 sm:p-6 shadow">
             <div className="flex items-center">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <CheckCircleIcon className="h-6 w-6 text-green-600" />
+              <div className="p-2 sm:p-3 bg-green-100 rounded-lg flex-shrink-0">
+                <CheckCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Canjes Exitosos</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="ml-2 sm:ml-4 min-w-0">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Canjes Exitosos</p>
+                <p className="text-base sm:text-2xl font-bold text-gray-900">
                   {myRedemptions.filter(r => r.status === 'delivered').length}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg p-6 shadow">
+          <div className="bg-white rounded-lg p-3 sm:p-6 shadow">
             <div className="flex items-center">
-              <div className="p-3 bg-yellow-100 rounded-lg">
-                <ClockIcon className="h-6 w-6 text-yellow-600" />
+              <div className="p-2 sm:p-3 bg-yellow-100 rounded-lg flex-shrink-0">
+                <ClockIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Pendientes</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="ml-2 sm:ml-4 min-w-0">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pendientes</p>
+                <p className="text-base sm:text-2xl font-bold text-gray-900">
                   {myRedemptions.filter(r => r.status === 'pending').length}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg p-6 shadow">
+          <div className="bg-white rounded-lg p-3 sm:p-6 shadow">
             <div className="flex items-center">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <GiftIcon className="h-6 w-6 text-blue-600" />
+              <div className="p-2 sm:p-3 bg-blue-100 rounded-lg flex-shrink-0">
+                <GiftIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Premios Disponibles</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="ml-2 sm:ml-4 min-w-0">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Premios Disponibles</p>
+                <p className="text-base sm:text-2xl font-bold text-gray-900">
                   {filteredAndSortedRewards.length}
                 </p>
               </div>
@@ -233,28 +233,28 @@ const RewardsStore = () => {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6">
-          <nav className="flex space-x-8">
+        <div className="mb-4 sm:mb-6">
+          <nav className="flex gap-4 sm:gap-8 overflow-x-auto">
             <button
               onClick={() => setActiveTab('store')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              className={`py-2 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
                 activeTab === 'store'
                   ? 'border-purple-500 text-purple-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              <GiftIcon className="h-5 w-5 inline mr-2" />
+              <GiftIcon className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1 sm:mr-2" />
               Tienda ({filteredAndSortedRewards.length})
             </button>
             <button
               onClick={() => setActiveTab('my_redemptions')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              className={`py-2 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
                 activeTab === 'my_redemptions'
                   ? 'border-purple-500 text-purple-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              <ShoppingCartIcon className="h-5 w-5 inline mr-2" />
+              <ShoppingCartIcon className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1 sm:mr-2" />
               Mis Canjes ({myRedemptions.length})
             </button>
           </nav>
@@ -263,19 +263,19 @@ const RewardsStore = () => {
         {activeTab === 'store' && (
           <>
             {/* Filtros */}
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center space-x-4">
+            <div className="bg-white rounded-lg shadow p-3 sm:p-6 mb-4 sm:mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 flex-1">
                   <div className="flex items-center">
-                    <FunnelIcon className="h-5 w-5 text-gray-400 mr-2" />
-                    <span className="text-sm font-medium text-gray-700">Filtros:</span>
+                    <FunnelIcon className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm font-medium text-gray-700">Filtros:</span>
                   </div>
-                  
+
                   {/* ELM-424: Select de categorias - Usa API real /api/rewards/categories */}
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                    className="flex-1 sm:flex-none border border-gray-300 rounded-lg px-3 py-2 text-sm"
                   >
                     <option value="">Todas las categorías</option>
                     {/* Prioriza categorias desde BD, fallback a constantes */}
@@ -288,11 +288,11 @@ const RewardsStore = () => {
                         ))
                     }
                   </select>
-                  
+
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                    className="flex-1 sm:flex-none border border-gray-300 rounded-lg px-3 py-2 text-sm"
                   >
                     <option value="points_asc">Menos puntos primero</option>
                     <option value="points_desc">Más puntos primero</option>
@@ -300,15 +300,15 @@ const RewardsStore = () => {
                     <option value="stock_desc">Mayor stock</option>
                   </select>
                 </div>
-                
-                <div className="text-sm text-gray-500">
+
+                <div className="text-xs sm:text-sm text-gray-500 flex-shrink-0">
                   {filteredAndSortedRewards.length} premio(s) disponible(s)
                 </div>
               </div>
             </div>
 
             {/* Grid de premios */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
               {loading ? (
                 // Skeletons de carga
                 Array.from({ length: 8 }).map((_, i) => (

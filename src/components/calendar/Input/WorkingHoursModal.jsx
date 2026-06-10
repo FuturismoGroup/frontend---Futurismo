@@ -67,17 +67,17 @@ const WorkingHoursModal = ({ isOpen, onClose }) => {
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all">
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                  <Dialog.Title as="h3" className="text-lg font-semibold leading-6 text-gray-900">
-                    <div className="flex items-center space-x-2">
-                      <Cog6ToothIcon className="w-5 h-5 text-purple-500" />
-                      <span>{t('calendar.configureWorkingHours')}</span>
+                <div className="flex items-center justify-between gap-2 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+                  <Dialog.Title as="h3" className="text-base sm:text-lg font-semibold leading-6 text-gray-900 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Cog6ToothIcon className="w-5 h-5 text-purple-500 flex-shrink-0" />
+                      <span className="truncate">{t('calendar.configureWorkingHours')}</span>
                     </div>
                   </Dialog.Title>
-                  
+
                   <button
                     onClick={handleClose}
-                    className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    className="p-1 rounded-full hover:bg-gray-100 transition-colors flex-shrink-0"
                     aria-label={t('common.close')}
                   >
                     <XMarkIcon className="w-5 h-5 text-gray-500" />
@@ -85,7 +85,7 @@ const WorkingHoursModal = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Content */}
-                <div className="px-6 py-4 max-h-96 overflow-y-auto">
+                <div className="px-4 sm:px-6 py-3 sm:py-4 max-h-[60vh] sm:max-h-96 overflow-y-auto">
                   <p className="text-sm text-gray-600 mb-4">
                     {t('calendar.workingHoursDescription')}
                   </p>
@@ -155,7 +155,7 @@ const WorkingHoursModal = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3">
                   <button
                     type="button"
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"

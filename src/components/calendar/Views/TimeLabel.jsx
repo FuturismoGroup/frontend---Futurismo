@@ -7,11 +7,11 @@ const TimeLabel = ({ hour, isCurrentHour }) => {
   date.setHours(hour, 0, 0, 0);
   
   return (
-    <div className="h-[60px] pr-4 text-right flex items-start pt-1">
-      <span 
-        className={`text-sm ${
-          isCurrentHour 
-            ? 'font-semibold text-blue-600' 
+    <div className="h-[60px] pr-2 sm:pr-4 text-right flex items-start pt-1">
+      <span
+        className={`text-[10px] sm:text-sm ${
+          isCurrentHour
+            ? 'font-semibold text-blue-600'
             : 'text-gray-500'
         }`}
       >

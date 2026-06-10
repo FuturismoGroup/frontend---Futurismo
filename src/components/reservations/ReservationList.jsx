@@ -492,7 +492,7 @@ const ReservationList = () => {
                       </div>
 
                       {/* Action buttons */}
-                      <div className="flex items-center gap-1 pt-2 border-t border-gray-100">
+                      <div className="flex flex-wrap items-center gap-1 pt-2 border-t border-gray-100">
                         <button
                           onClick={() => handleViewDetail(reservation)}
                           className="flex items-center gap-1 px-2 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded-md transition-colors"

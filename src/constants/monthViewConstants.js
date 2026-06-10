@@ -36,8 +36,13 @@ export const EVENT_TYPES = {
 };
 
 // Calendar configuration
+// WEEK_START_DAY debe ser 1 (lunes) para alinearse con:
+//   - calendar.monthView.weekDays (LUN, MAR, MIÉ, JUE, VIE, SÁB, DOM)
+//   - WeekView, MiniCalendar, ReservationCalendar (todos weekStartsOn: 1)
+// Si vuelve a 0 (domingo), la cabecera y la grilla se descuadran 1 columna
+// y los días se ven desfasados un día (p. ej. martes aparece bajo "MIÉ").
 export const CALENDAR_CONFIG = {
-  WEEK_START_DAY: 0, // 0 = Sunday, 1 = Monday
+  WEEK_START_DAY: 1,
   DATE_FORMAT: 'yyyy-MM-dd',
   DISPLAY_FORMAT: 'dd/MM/yyyy',
   MONTH_FORMAT: 'MMMM yyyy',

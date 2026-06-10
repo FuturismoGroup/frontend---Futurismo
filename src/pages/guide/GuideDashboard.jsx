@@ -412,54 +412,54 @@ const GuideDashboard = () => {
                             : 'border-l-blue-500'
                     }`}
                   >
-                    <div className="p-4 sm:p-6">
-                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <div className="p-3 sm:p-4 lg:p-6">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                         {/* Informacion del tour */}
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-start gap-3">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h3 className="text-lg font-semibold text-gray-900">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-wrap items-center gap-2 mb-1">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900 break-words min-w-0">
                                   {tour.name}
                                 </h3>
                                 {isTodayTour && tour.status !== 'in_progress' && tour.status !== 'completed' && (
-                                  <span className="px-2 py-0.5 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
+                                  <span className="px-2 py-0.5 text-[10px] sm:text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
                                     {t('guideDashboard.today')}
                                   </span>
                                 )}
                               </div>
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge.bg} ${statusBadge.text}`}>
+                              <span className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-medium ${statusBadge.bg} ${statusBadge.text}`}>
                                 {statusBadge.label}
                               </span>
                             </div>
                           </div>
 
-                          <div className="mt-3 grid grid-cols-2 gap-3 text-sm text-gray-600">
-                            <div className="flex items-center gap-2">
-                              <CalendarDaysIcon className="w-4 h-4 text-gray-400" />
-                              <span className="capitalize">{tour.date}</span>
+                          <div className="mt-3 grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <CalendarDaysIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              <span className="capitalize truncate">{tour.date}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <ClockIcon className="w-4 h-4 text-gray-400" />
-                              <span>{tour.time || t('guideDashboard.noTime')}</span>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <ClockIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              <span className="truncate">{tour.time || t('guideDashboard.noTime')}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <MapPinIcon className="w-4 h-4 text-gray-400" />
+                            <div className="flex items-center gap-2 min-w-0">
+                              <MapPinIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
                               <span className="truncate">{tour.location}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <UserGroupIcon className="w-4 h-4 text-gray-400" />
-                              <span>{tour.tourists} {t('guideDashboard.tourists')}</span>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <UserGroupIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              <span className="truncate">{tour.tourists} {t('guideDashboard.tourists')}</span>
                             </div>
                           </div>
 
-                          <p className="mt-2 text-sm text-gray-500">
+                          <p className="mt-2 text-xs sm:text-sm text-gray-500 truncate">
                             {t('guideDashboard.agency')}: {tour.agency}
                           </p>
                         </div>
 
                         {/* Acciones */}
-                        <div className="flex flex-row sm:flex-col gap-2">
+                        <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto flex-wrap">
                           {(tour.status === 'pending' || tour.status === 'confirmed') && tour.source !== 'service_request' && (
                             <button
                               onClick={() => handleStartTour(tour)}

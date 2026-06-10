@@ -191,20 +191,21 @@ const AccountStatusSection = () => {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3 flex-1">
-            <div className="p-2 bg-blue-100 rounded-lg">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 lg:p-6">
+        <div className="flex items-center justify-between gap-2 mb-4 sm:mb-6">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
               <ShieldCheckIcon className="w-5 h-5 text-blue-600" />
             </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-900">{t('profile.comp.accountStatus')}</h3>
-              <p className="text-sm text-gray-500">{t('profile.comp.accountStatusSubtitle')}</p>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">{t('profile.comp.accountStatus')}</h3>
+              <p className="text-xs sm:text-sm text-gray-500 truncate">{t('profile.comp.accountStatusSubtitle')}</p>
             </div>
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-2 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
               title={isCollapsed ? t('common.expand') : t('common.collapse')}
+              aria-label={isCollapsed ? t('common.expand') : t('common.collapse')}
             >
               {isCollapsed ? (
                 <ChevronDownIcon className="w-5 h-5" />

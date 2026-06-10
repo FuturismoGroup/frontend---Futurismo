@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   ClockIcon,
   CheckCircleIcon,
@@ -24,6 +25,7 @@ import { formatDateSafe } from '../../utils/dateUtils';
 import { resolveFileUrl } from '../../utils/fileUrl';
 
 const ServiceRequestDetail = () => {
+  const { t } = useTranslation();
   const { requestId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuthStore();
@@ -40,7 +42,7 @@ const ServiceRequestDetail = () => {
 
   const statusConfig = {
     pending: {
-      label: 'Pendiente',
+      label: t('marketplace.agencyDashboard.status.pending'),
       icon: ClockIcon,
       gradient: 'from-amber-400 to-orange-500',
       bg: 'bg-amber-50',
@@ -50,7 +52,7 @@ const ServiceRequestDetail = () => {
       ringColor: 'ring-amber-400'
     },
     accepted: {
-      label: 'Aceptado',
+      label: t('marketplace.agencyDashboard.status.accepted'),
       icon: CheckCircleIcon,
       gradient: 'from-emerald-400 to-teal-500',
       bg: 'bg-emerald-50',
@@ -60,7 +62,7 @@ const ServiceRequestDetail = () => {
       ringColor: 'ring-emerald-400'
     },
     rejected: {
-      label: 'Rechazado',
+      label: t('marketplace.agencyDashboard.status.rejected'),
       icon: XCircleIcon,
       gradient: 'from-rose-400 to-red-500',
       bg: 'bg-rose-50',
@@ -70,7 +72,7 @@ const ServiceRequestDetail = () => {
       ringColor: 'ring-rose-400'
     },
     completed: {
-      label: 'Completado',
+      label: t('marketplace.agencyDashboard.status.completed'),
       icon: CheckCircleIcon,
       gradient: 'from-violet-500 to-purple-600',
       bg: 'bg-violet-50',
@@ -80,7 +82,7 @@ const ServiceRequestDetail = () => {
       ringColor: 'ring-violet-400'
     },
     cancelled: {
-      label: 'Cancelado',
+      label: t('marketplace.agencyDashboard.status.cancelled'),
       icon: ExclamationCircleIcon,
       gradient: 'from-slate-400 to-gray-500',
       bg: 'bg-slate-50',
@@ -193,42 +195,42 @@ const ServiceRequestDetail = () => {
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full translate-y-1/2 -translate-x-1/4" />
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
+        <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 relative z-10">
           {/* Volver */}
           <button
             onClick={() => navigate(isGuide ? '/marketplace/guide-dashboard' : '/marketplace/requests')}
-            className="inline-flex items-center gap-1.5 text-white/80 hover:text-white mb-4 text-sm font-medium transition-colors"
+            className="inline-flex items-center gap-1.5 text-white/80 hover:text-white mb-3 sm:mb-4 text-xs sm:text-sm font-medium transition-colors"
           >
             <ArrowLeftIcon className="h-4 w-4" />
             Volver al panel
           </button>
 
-          <div className="flex items-start justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
+          <div className="flex items-start justify-between flex-wrap gap-3 sm:gap-4">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-2xl lg:text-3xl font-display font-bold text-white tracking-tight break-words">
                 Solicitud de Servicio
               </h1>
-              <p className="text-purple-200 mt-1 text-sm">
+              <p className="text-purple-200 mt-1 text-xs sm:text-sm">
                 Servicio freelance de marketplace
               </p>
               {/* Status badge */}
-              <div className="mt-4 flex items-center gap-3">
-                <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-white/20 text-white backdrop-blur-sm border border-white/20`}>
-                  <StatusIcon className="h-4 w-4" />
+              <div className="mt-3 sm:mt-4 flex items-center flex-wrap gap-2 sm:gap-3">
+                <span className={`inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-white/20 text-white backdrop-blur-sm border border-white/20`}>
+                  <StatusIcon className="h-4 w-4 flex-shrink-0" />
                   {status.label}
                 </span>
-                <span className="text-white/70 text-xs font-mono">
+                <span className="text-white/70 text-[10px] sm:text-xs font-mono">
                   #{requestId?.slice(0, 8)}
                 </span>
               </div>
             </div>
 
             {/* Botones de acción en header */}
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap w-full sm:w-auto">
               {isAgency && request.status === 'pending' && (
                 <button
                   onClick={handleCancel}
-                  className="px-5 py-2.5 text-sm font-medium text-white bg-white/15 border border-white/25 rounded-xl hover:bg-white/25 backdrop-blur-sm transition-all"
+                  className="flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-white bg-white/15 border border-white/25 rounded-xl hover:bg-white/25 backdrop-blur-sm transition-all whitespace-nowrap"
                 >
                   Cancelar solicitud
                 </button>
@@ -236,7 +238,7 @@ const ServiceRequestDetail = () => {
               {isAgency && request.status === 'accepted' && (
                 <button
                   onClick={handleComplete}
-                  className="px-5 py-2.5 text-sm font-medium text-purple-700 bg-white rounded-xl hover:bg-purple-50 shadow-lg transition-all"
+                  className="flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-purple-700 bg-white rounded-xl hover:bg-purple-50 shadow-lg transition-all whitespace-nowrap"
                 >
                   Marcar completado
                 </button>
@@ -244,9 +246,9 @@ const ServiceRequestDetail = () => {
               {isAgency && request.status === 'completed' && !request.hasReview && (
                 <button
                   onClick={() => navigate(`/marketplace/review/${request.id}`)}
-                  className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl hover:shadow-lg hover:shadow-amber-500/25 transition-all flex items-center gap-2"
+                  className="flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-white bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl hover:shadow-lg hover:shadow-amber-500/25 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
                 >
-                  <StarIcon className="h-4 w-4" />
+                  <StarIcon className="h-4 w-4 flex-shrink-0" />
                   Calificar servicio
                 </button>
               )}
@@ -254,15 +256,15 @@ const ServiceRequestDetail = () => {
                 <>
                   <button
                     onClick={handleReject}
-                    className="px-5 py-2.5 text-sm font-medium text-white bg-white/15 border border-white/25 rounded-xl hover:bg-red-500/30 backdrop-blur-sm transition-all"
+                    className="flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-white bg-white/15 border border-white/25 rounded-xl hover:bg-red-500/30 backdrop-blur-sm transition-all whitespace-nowrap"
                   >
                     Rechazar
                   </button>
                   <button
                     onClick={handleAccept}
-                    className="px-5 py-2.5 text-sm font-medium text-emerald-700 bg-white rounded-xl hover:bg-emerald-50 shadow-lg transition-all flex items-center gap-2"
+                    className="flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-emerald-700 bg-white rounded-xl hover:bg-emerald-50 shadow-lg transition-all flex items-center justify-center gap-2 whitespace-nowrap"
                   >
-                    <CheckCircleIcon className="h-4 w-4" />
+                    <CheckCircleIcon className="h-4 w-4 flex-shrink-0" />
                     Aceptar
                   </button>
                 </>
@@ -272,46 +274,46 @@ const ServiceRequestDetail = () => {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Columna principal */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
 
             {/* Info Cards - Grid de datos */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-4 border border-violet-100">
-                <div className="w-10 h-10 bg-violet-500 rounded-xl flex items-center justify-center mb-3 shadow-sm shadow-violet-200">
-                  <CalendarIcon className="h-5 w-5 text-white" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
+              <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-3 sm:p-4 border border-violet-100">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-violet-500 rounded-xl flex items-center justify-center mb-2 sm:mb-3 shadow-sm shadow-violet-200">
+                  <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                 </div>
-                <p className="text-xs text-gray-500 font-medium">Fecha</p>
-                <p className="text-sm font-semibold text-gray-900 mt-0.5">{formatDate(request.serviceDate)}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 font-medium">Fecha</p>
+                <p className="text-xs sm:text-sm font-semibold text-gray-900 mt-0.5 truncate">{formatDate(request.serviceDate)}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-cyan-50 to-sky-50 rounded-2xl p-4 border border-cyan-100">
-                <div className="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center mb-3 shadow-sm shadow-cyan-200">
-                  <ClockIcon className="h-5 w-5 text-white" />
+              <div className="bg-gradient-to-br from-cyan-50 to-sky-50 rounded-2xl p-3 sm:p-4 border border-cyan-100">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-cyan-500 rounded-xl flex items-center justify-center mb-2 sm:mb-3 shadow-sm shadow-cyan-200">
+                  <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                 </div>
-                <p className="text-xs text-gray-500 font-medium">Hora / Duracion</p>
-                <p className="text-sm font-semibold text-gray-900 mt-0.5">
+                <p className="text-[10px] sm:text-xs text-gray-500 font-medium">Hora / Duracion</p>
+                <p className="text-xs sm:text-sm font-semibold text-gray-900 mt-0.5 truncate">
                   {request.startTime ? formatTime(request.startTime) : '-'}
                   {request.durationHours ? ` (${request.durationHours}h)` : ''}
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-4 border border-emerald-100">
-                <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center mb-3 shadow-sm shadow-emerald-200">
-                  <MapPinIcon className="h-5 w-5 text-white" />
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-3 sm:p-4 border border-emerald-100">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-500 rounded-xl flex items-center justify-center mb-2 sm:mb-3 shadow-sm shadow-emerald-200">
+                  <MapPinIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                 </div>
-                <p className="text-xs text-gray-500 font-medium">Ubicacion</p>
-                <p className="text-sm font-semibold text-gray-900 mt-0.5 truncate">{request.location || 'No especificada'}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 font-medium">Ubicacion</p>
+                <p className="text-xs sm:text-sm font-semibold text-gray-900 mt-0.5 truncate">{request.location || 'No especificada'}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-100">
-                <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center mb-3 shadow-sm shadow-amber-200">
-                  <UserGroupIcon className="h-5 w-5 text-white" />
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-3 sm:p-4 border border-amber-100">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-amber-500 rounded-xl flex items-center justify-center mb-2 sm:mb-3 shadow-sm shadow-amber-200">
+                  <UserGroupIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                 </div>
-                <p className="text-xs text-gray-500 font-medium">Grupo</p>
-                <p className="text-sm font-semibold text-gray-900 mt-0.5">{request.groupSize || '-'} personas</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 font-medium">Grupo</p>
+                <p className="text-xs sm:text-sm font-semibold text-gray-900 mt-0.5">{request.groupSize || '-'} personas</p>
               </div>
             </div>
 

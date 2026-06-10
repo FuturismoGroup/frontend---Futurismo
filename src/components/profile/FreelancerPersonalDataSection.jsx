@@ -186,13 +186,13 @@ const FreelancerPersonalDataSection = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <UserIcon className="h-5 w-5 text-gray-400 mr-2" />
-            <h3 className="text-lg font-medium text-gray-900">{t('profile.comp.personalData')}</h3>
+      <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center min-w-0 flex-1">
+            <UserIcon className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0" />
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 truncate">{t('profile.comp.personalData')}</h3>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
@@ -247,7 +247,7 @@ const FreelancerPersonalDataSection = () => {
       </div>
 
       {!isCollapsed && (
-        <div className="p-6">
+        <div className="p-3 sm:p-4 lg:p-6">
           {localLoading && !currentGuide ? (
             <div className="flex justify-center items-center py-8">
               <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -261,7 +261,7 @@ const FreelancerPersonalDataSection = () => {
               {t('profile.comp.noProfileData')}
             </div>
           ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Foto de perfil */}
             <div className="lg:col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -269,7 +269,7 @@ const FreelancerPersonalDataSection = () => {
               </label>
               <div className="flex flex-col items-center">
                 <div className="relative">
-                  <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg">
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg">
                     {formData.profilePhoto ? (
                       <img
                         src={resolveFileUrl(formData.profilePhoto)}

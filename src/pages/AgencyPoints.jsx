@@ -118,33 +118,33 @@ const AgencyPoints = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-3 sm:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            <StarIcon className="w-8 h-8 mr-3 text-yellow-500" />
-            {t('agencyPoints.title')}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-lg sm:text-2xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+            <StarIcon className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500 flex-shrink-0" />
+            <span className="truncate">{t('agencyPoints.title')}</span>
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-xs sm:text-base text-gray-600 mt-1">
             {t('agencyPoints.subtitle')}
           </p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="grid grid-cols-2 sm:flex items-stretch sm:items-center gap-2 sm:gap-3 flex-shrink-0">
           <Link
             to="/agency/rewards"
-            className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center space-x-2"
+            className="px-3 sm:px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm whitespace-nowrap"
           >
-            <ShoppingBagIcon className="w-4 h-4" />
-            <span>{t('agencyPoints.rewardsStore')}</span>
+            <ShoppingBagIcon className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate">{t('agencyPoints.rewardsStore')}</span>
           </Link>
 
           <button
             onClick={exportHistory}
-            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center space-x-2"
+            className="px-3 sm:px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm whitespace-nowrap"
           >
-            <ArrowDownTrayIcon className="w-4 h-4" />
+            <ArrowDownTrayIcon className="w-4 h-4 flex-shrink-0" />
             <span>{t('agencyPoints.export')}</span>
           </button>
         </div>
@@ -152,19 +152,19 @@ const AgencyPoints = () => {
 
       {/* Call to Action para Tienda de Premios */}
       {pointsBalance.balance > 0 && (
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg p-6 mb-6 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-xl font-semibold mb-2">{t('agencyPoints.ctaTitle', { points: pointsBalance.balance.toLocaleString() })}</h3>
-              <p className="text-purple-100">
+        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6 text-white">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base sm:text-xl font-semibold mb-1 sm:mb-2 break-words">{t('agencyPoints.ctaTitle', { points: pointsBalance.balance.toLocaleString() })}</h3>
+              <p className="text-xs sm:text-base text-purple-100">
                 {t('agencyPoints.ctaSubtitle')}
               </p>
             </div>
             <Link
               to="/agency/rewards"
-              className="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-purple-50 transition-colors flex items-center space-x-2"
+              className="bg-white text-purple-600 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-purple-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
             >
-              <ShoppingBagIcon className="w-5 h-5" />
+              <ShoppingBagIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>{t('agencyPoints.goToStore')}</span>
             </Link>
           </div>
@@ -172,14 +172,14 @@ const AgencyPoints = () => {
       )}
 
       {/* Información sobre puntos automáticos */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <div className="flex items-start space-x-3">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+        <div className="flex items-start gap-2 sm:gap-3">
           <div className="flex-shrink-0">
-            <TrophyIcon className="w-6 h-6 text-blue-600" />
+            <TrophyIcon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
           </div>
-          <div>
-            <h3 className="text-sm font-medium text-blue-800">{t('agencyPoints.autoTitle')}</h3>
-            <p className="text-sm text-blue-700 mt-1">
+          <div className="min-w-0">
+            <h3 className="text-xs sm:text-sm font-medium text-blue-800">{t('agencyPoints.autoTitle')}</h3>
+            <p className="text-xs sm:text-sm text-blue-700 mt-1">
               {t('agencyPoints.autoText')}
             </p>
           </div>
@@ -187,45 +187,45 @@ const AgencyPoints = () => {
       </div>
 
       {/* Resumen de puntos */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <StarIcon className="w-6 h-6 text-yellow-600" />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-4 sm:mb-6">
+        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-200">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <StarIcon className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
             </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">
+            <div className="min-w-0">
+              <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
                 {pointsBalance.balance.toLocaleString()}
               </p>
-              <p className="text-sm text-gray-600">{t('agencyPoints.currentBalance')}</p>
+              <p className="text-xs sm:text-sm text-gray-600 truncate">{t('agencyPoints.currentBalance')}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <ArrowTrendingUpIcon className="w-6 h-6 text-green-600" />
+        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-200">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <ArrowTrendingUpIcon className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
             </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">
+            <div className="min-w-0">
+              <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
                 {pointsBalance.totalEarned.toLocaleString()}
               </p>
-              <p className="text-sm text-gray-600">{t('agencyPoints.totalEarned')}</p>
+              <p className="text-xs sm:text-sm text-gray-600 truncate">{t('agencyPoints.totalEarned')}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-              <GiftIcon className="w-6 h-6 text-red-600" />
+        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-sm border border-gray-200">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <GiftIcon className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
             </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">
+            <div className="min-w-0">
+              <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
                 {pointsBalance.totalRedeemed.toLocaleString()}
               </p>
-              <p className="text-sm text-gray-600">{t('agencyPoints.totalRedeemed')}</p>
+              <p className="text-xs sm:text-sm text-gray-600 truncate">{t('agencyPoints.totalRedeemed')}</p>
             </div>
           </div>
         </div>
@@ -233,19 +233,19 @@ const AgencyPoints = () => {
 
       {/* Historial de transacciones */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-              <ClockIcon className="w-5 h-5 mr-2 text-blue-500" />
-              {t('agencyPoints.transactionHistory')}
+        <div className="p-3 sm:p-6 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center">
+              <ClockIcon className="w-5 h-5 mr-2 text-blue-500 flex-shrink-0" />
+              <span className="truncate">{t('agencyPoints.transactionHistory')}</span>
             </h3>
 
-            <div className="flex items-center space-x-3">
-              <FunnelIcon className="w-4 h-4 text-gray-500" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <FunnelIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2"
+                className="flex-1 sm:flex-none border border-gray-300 rounded-lg px-3 py-2 text-sm"
               >
                 <option value="all">{t('agencyPoints.allTransactions')}</option>
                 <option value="earned">{t('agencyPoints.earnedFilter')}</option>
@@ -255,7 +255,7 @@ const AgencyPoints = () => {
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="p-3 sm:p-6">
           {isLoading ? (
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
@@ -275,33 +275,33 @@ const AgencyPoints = () => {
               {filteredHistory.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start gap-2 sm:gap-4 min-w-0 flex-1">
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                         transaction.type === 'earned' ? 'bg-green-100' : 'bg-red-100'
                       }`}>
                         {getTransactionIcon(transaction.type)}
                       </div>
 
-                      <div>
-                        <h4 className="font-semibold text-gray-900">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-semibold text-sm sm:text-base text-gray-900 break-words">
                           {transaction.serviceDetails?.serviceName || transaction.reason}
                         </h4>
-                        <div className="flex items-center space-x-3 text-sm text-gray-600">
-                          <div className="flex items-center space-x-1">
-                            <CalendarIcon className="w-4 h-4" />
-                            <span>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs sm:text-sm text-gray-600">
+                          <div className="flex items-center gap-1">
+                            <CalendarIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                            <span className="truncate">
                               {transaction.serviceDetails?.date
                                 ? format(new Date(transaction.serviceDetails.date), 'd \'de\' MMMM \'de\' yyyy', { locale: es })
                                 : format(new Date(transaction.createdAt), 'd \'de\' MMMM \'de\' yyyy', { locale: es })
                               }
                             </span>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <UserIcon className="w-4 h-4" />
-                            <span>
+                          <div className="flex items-center gap-1 min-w-0">
+                            <UserIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                            <span className="truncate">
                               {transaction.serviceDetails?.clientName || (transaction.processedBy === 'manual' ? t('agencyPoints.manualSource') : t('agencyPoints.systemSource'))}
                             </span>
                           </div>
@@ -309,11 +309,11 @@ const AgencyPoints = () => {
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <p className={`text-lg font-bold ${getTransactionColor(transaction.type)}`}>
+                    <div className="text-right flex-shrink-0">
+                      <p className={`text-base sm:text-lg font-bold ${getTransactionColor(transaction.type)}`}>
                         {transaction.type === 'earned' ? '+' : '-'}{transaction.points}
                       </p>
-                      <p className="text-sm text-gray-600">{t('agencyPoints.pointsLabel')}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">{t('agencyPoints.pointsLabel')}</p>
                     </div>
                   </div>
 

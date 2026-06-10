@@ -542,10 +542,10 @@ const ReservationManagement = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Gestión de Reservas
+                {t('adminReservations.mgmt.title')}
               </h1>
               <p className="text-gray-600">
-                Administración completa de reservas
+                {t('adminReservations.mgmt.subtitle')}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -554,7 +554,7 @@ const ReservationManagement = () => {
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
               >
                 <PlusIcon className="w-4 h-4" />
-                Nueva Reserva
+                {t('adminReservations.mgmt.newReservation')}
               </button>
             </div>
           </div>
@@ -564,14 +564,14 @@ const ReservationManagement = () => {
         <div className="bg-white rounded-lg shadow-md p-4 mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Filter className="w-4 h-4 text-gray-500" />
-            <h3 className="text-base font-semibold text-gray-800">Filtros</h3>
+            <h3 className="text-base font-semibold text-gray-800">{t('adminReservations.mgmt.filters')}</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
             {/* Período de fecha */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">
-                Período
+                {t('adminReservations.mgmt.period')}
               </label>
               <select
                 value={filters.dateFilterType}
@@ -591,7 +591,7 @@ const ReservationManagement = () => {
               <>
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Fecha desde
+                    {t('adminReservations.mgmt.dateFrom')}
                   </label>
                   <input
                     type="date"
@@ -603,7 +603,7 @@ const ReservationManagement = () => {
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Fecha hasta
+                    {t('adminReservations.mgmt.dateTo')}
                   </label>
                   <input
                     type="date"
@@ -619,7 +619,7 @@ const ReservationManagement = () => {
             {filters.dateFilterType === 'year' && (
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Año
+                  {t('adminReservations.mgmt.year')}
                 </label>
                 <select
                   value={filters.year}
@@ -636,14 +636,14 @@ const ReservationManagement = () => {
             {/* Destino */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">
-                Destino
+                {t('adminReservations.mgmt.destination')}
               </label>
               <select
                 value={filters.destination}
                 onChange={(e) => handleFilterChange('destination', e.target.value)}
                 className="w-full px-2 py-1.5 text-sm border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="all">Todos los destinos</option>
+                <option value="all">{t('adminReservations.mgmt.allDestinations')}</option>
                 {destinations.map((dest, idx) => (
                   <option key={`dest-${idx}-${dest}`} value={dest}>{dest}</option>
                 ))}
@@ -653,14 +653,14 @@ const ReservationManagement = () => {
             {/* Guía */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">
-                Guía
+                {t('adminReservations.mgmt.guide')}
               </label>
               <select
                 value={filters.guide}
                 onChange={(e) => handleFilterChange('guide', e.target.value)}
                 className="w-full px-2 py-1.5 text-sm border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="all">Todos los guías</option>
+                <option value="all">{t('adminReservations.mgmt.allGuides')}</option>
                 {guidesOptions.map((guide, idx) => (
                   <option key={`guide-${idx}-${guide}`} value={guide}>{guide}</option>
                 ))}
@@ -672,14 +672,14 @@ const ReservationManagement = () => {
             {/* Tipo de tour */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">
-                Tipo de tour
+                {t('adminReservations.mgmt.tourType')}
               </label>
               <select
                 value={filters.tourType}
                 onChange={(e) => handleFilterChange('tourType', e.target.value)}
                 className="w-full px-2 py-1.5 text-sm border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="all">Todos los tipos</option>
+                <option value="all">{t('adminReservations.mgmt.allTypes')}</option>
                 {tourTypes.map((type, idx) => (
                   <option key={`type-${idx}-${type}`} value={type}>
                     {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -691,7 +691,7 @@ const ReservationManagement = () => {
             {/* Estado */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">
-                Estado
+                {t('adminReservations.mgmt.status')}
               </label>
               <select
                 value={filters.status}
@@ -700,12 +700,12 @@ const ReservationManagement = () => {
               >
                 {statusOptions.map(status => (
                   <option key={status} value={status}>
-                    {status === 'all' ? 'Todos los estados' :
-                     status === 'completed' ? 'Completados' :
-                     status === 'confirmed' ? 'Confirmados' :
-                     status === 'pending' ? 'Pendientes' :
-                     status === 'in_progress' ? 'En Progreso' :
-                     status === 'cancelled' ? 'Cancelados' : status}
+                    {status === 'all' ? t('adminReservations.mgmt.allStatuses') :
+                     status === 'completed' ? t('adminReservations.mgmt.filterLabels.completed') :
+                     status === 'confirmed' ? t('adminReservations.mgmt.filterLabels.confirmed') :
+                     status === 'pending' ? t('adminReservations.mgmt.filterLabels.pending') :
+                     status === 'in_progress' ? t('adminReservations.mgmt.filterLabels.in_progress') :
+                     status === 'cancelled' ? t('adminReservations.mgmt.filterLabels.cancelled') : status}
                   </option>
                 ))}
               </select>
@@ -714,13 +714,13 @@ const ReservationManagement = () => {
             {/* Búsqueda */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">
-                Buscar
+                {t('adminReservations.mgmt.search')}
               </label>
               <div className="relative">
                 <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Agencia, email, ID..."
+                  placeholder={t('adminReservations.mgmt.searchPlaceholder')}
                   value={filters.searchTerm}
                   onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
                   className="w-full pl-9 pr-3 py-1.5 text-sm border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -733,7 +733,7 @@ const ReservationManagement = () => {
           <div className="border-t pt-3">
             <div className="flex items-center gap-2 mb-2">
               <Users className="w-3.5 h-3.5 text-blue-600" />
-              <h4 className="text-xs font-semibold text-gray-800">Filtros por Cantidad de Turistas</h4>
+              <h4 className="text-xs font-semibold text-gray-800">{t('adminReservations.mgmt.touristCountFilter')}</h4>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -844,23 +844,23 @@ const ReservationManagement = () => {
         {/* Estadísticas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <StatCard
-            title="Total Reservas"
+            title={t('adminReservations.mgmt.stats.totalReservations')}
             value={stats.totalReservations}
-            subtitle="Reservas filtradas"
+            subtitle={t('adminReservations.mgmt.stats.filteredReservations')}
             icon={Calendar}
             color="blue"
           />
           <StatCard
-            title="Ingresos Totales"
+            title={t('adminReservations.mgmt.stats.totalRevenue')}
             value={formatCurrency(stats.totalRevenue)}
-            subtitle="Valor acumulado"
+            subtitle={t('adminReservations.mgmt.stats.filteredReservations')}
             icon={DollarSign}
             color="purple"
           />
           <StatCard
-            title="Promedio Grupo"
+            title={t('adminReservations.mgmt.stats.averageGroup')}
             value={stats.avgGroupSize}
-            subtitle="Turistas por reserva"
+            subtitle={t('adminReservations.mgmt.stats.touristsPerReservation')}
             icon={BarChart3}
             color="orange"
           />
@@ -870,10 +870,10 @@ const ReservationManagement = () => {
         {/* Acciones */}
         <div className="flex justify-between items-center mb-6">
           <div className="text-sm text-gray-600">
-            Mostrando {filteredReservations.length} de {enrichedReservations.length} reservas
+            {t('adminReservations.mgmt.showingFiltered', { filtered: filteredReservations.length, total: enrichedReservations.length })}
             {(filters.touristQuantityType === 'range' && (filters.minTourists || filters.maxTourists)) && (
               <span className="ml-2 text-blue-600 font-medium">
-                • Filtrado por: {filters.minTourists || 1}-{filters.maxTourists || '999+'} turistas
+                • {t('adminReservations.mgmt.filterRange', { min: filters.minTourists || 1, max: filters.maxTourists || '999+' })}
               </span>
             )}
             {(filters.touristQuantityType === 'category' && filters.touristCategory !== 'all') && (
@@ -887,7 +887,7 @@ const ReservationManagement = () => {
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
           >
             <Download className="w-4 h-4" />
-            Exportar Excel
+            {t('adminReservations.mgmt.exportExcel')}
           </button>
         </div>
 
@@ -899,28 +899,28 @@ const ReservationManagement = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Agencia
+                    {t('adminReservations.mgmt.table.agency')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tour
+                    {t('adminReservations.mgmt.table.tour')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha
+                    {t('adminReservations.mgmt.table.date')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Guía
+                    {t('adminReservations.mgmt.table.guide')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Turistas
+                    {t('adminReservations.mgmt.table.tourists')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total
+                    {t('adminReservations.mgmt.table.total')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
+                    {t('adminReservations.mgmt.table.status')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
+                    {t('adminReservations.mgmt.table.actions')}
                   </th>
                 </tr>
               </thead>
@@ -930,14 +930,14 @@ const ReservationManagement = () => {
                     <td colSpan="8" className="px-4 py-12 text-center">
                       <div className="flex items-center justify-center">
                         <RefreshCw className="w-5 h-5 animate-spin mr-2" />
-                        Cargando reservas...
+                        {t('adminReservations.mgmt.loading')}
                       </div>
                     </td>
                   </tr>
                 ) : filteredReservations.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="px-4 py-12 text-center text-gray-500">
-                      No se encontraron reservas con los filtros aplicados
+                      {t('adminReservations.mgmt.noMatchingReservations')}
                     </td>
                   </tr>
                 ) : (

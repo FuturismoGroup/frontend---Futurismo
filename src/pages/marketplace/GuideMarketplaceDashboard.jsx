@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import {
   CheckCircleIcon,
   CurrencyDollarIcon,
@@ -33,52 +35,56 @@ const STATUS_CONFIG = {
     text: 'text-yellow-800',
     border: 'border-yellow-300',
     dot: 'bg-yellow-400',
-    label: 'Pendiente'
+    labelKey: 'marketplace.guideDashboard.status.pending'
   },
   accepted: {
     bg: 'bg-green-100',
     text: 'text-green-800',
     border: 'border-green-300',
     dot: 'bg-green-400',
-    label: 'Aceptada'
+    labelKey: 'marketplace.guideDashboard.status.accepted'
   },
   rejected: {
     bg: 'bg-red-100',
     text: 'text-red-800',
     border: 'border-red-300',
     dot: 'bg-red-400',
-    label: 'Rechazada'
+    labelKey: 'marketplace.guideDashboard.status.rejected'
   },
   completed: {
     bg: 'bg-blue-100',
     text: 'text-blue-800',
     border: 'border-blue-300',
     dot: 'bg-blue-400',
-    label: 'Completada'
+    labelKey: 'marketplace.guideDashboard.status.completed'
   },
   cancelled: {
     bg: 'bg-gray-100',
     text: 'text-gray-800',
     border: 'border-gray-300',
     dot: 'bg-gray-400',
-    label: 'Cancelada'
+    labelKey: 'marketplace.guideDashboard.status.cancelled'
   }
 };
 
-const getStatusConfig = (status) => STATUS_CONFIG[status] || STATUS_CONFIG.pending;
+const getStatusConfig = (status) => {
+  const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.pending;
+  return { ...cfg, label: i18next.t(cfg.labelKey) };
+};
 
 /**
  * Format the service date exactly as it was registered, without timezone shifts.
  * Backend returns @db.Date as "YYYY-MM-DD"; we keep that calendar day intact.
  */
 const formatLocalDate = (dateString) => {
-  if (!dateString) return 'Fecha no definida';
+  const fallback = i18next.t('marketplace.guideDashboard.fallbackDate');
+  if (!dateString) return fallback;
   return formatDateSafe(dateString, {
     weekday: 'short',
     year: 'numeric',
     month: 'short',
     day: 'numeric'
-  }) || 'Fecha no definida';
+  }) || fallback;
 };
 
 /* ========================================================================
@@ -89,6 +95,7 @@ const formatLocalDate = (dateString) => {
  * Modal for confirming acceptance of a service request.
  */
 const AcceptModal = ({ request, onConfirm, onCancel, isSubmitting }) => {
+  const { t } = useTranslation();
   if (!request) return null;
 
   return (
@@ -104,18 +111,18 @@ const AcceptModal = ({ request, onConfirm, onCancel, isSubmitting }) => {
             </div>
             <div>
               <h3 className="text-lg font-display font-semibold text-white">
-                Confirmar aceptacion
+                {t('marketplace.guideDashboard.confirmAccept')}
               </h3>
-              <p className="text-emerald-100 text-xs mt-0.5">Servicio freelance</p>
+              <p className="text-emerald-100 text-xs mt-0.5">{t('marketplace.guideDashboard.freelanceService')}</p>
             </div>
           </div>
         </div>
 
         <div className="p-6">
           <p className="text-sm text-gray-600 mb-4">
-            Vas a aceptar la solicitud de servicio de{' '}
+            {t('marketplace.guideDashboard.acceptIntro')}{' '}
             <span className="font-semibold text-gray-900">
-              {request.agency?.businessName || 'la agencia'}
+              {request.agency?.businessName || t('marketplace.guideDashboard.theAgency')}
             </span>
           </p>
 
@@ -123,19 +130,19 @@ const AcceptModal = ({ request, onConfirm, onCancel, isSubmitting }) => {
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-500 flex items-center gap-1.5">
                 <CalendarIcon className="h-4 w-4 text-emerald-400" />
-                Fecha
+                {t('marketplace.guideDashboard.date')}
               </span>
               <span className="font-semibold text-gray-800">{formatLocalDate(request.serviceDate)}</span>
             </div>
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-500 flex items-center gap-1.5">
                 <UserGroupIcon className="h-4 w-4 text-emerald-400" />
-                Personas
+                {t('marketplace.guideDashboard.people')}
               </span>
               <span className="font-semibold text-gray-800">{request.groupSize || '-'}</span>
             </div>
             <div className="border-t border-emerald-100 pt-2 flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-600">Precio ofertado</span>
+              <span className="text-sm font-medium text-gray-600">{t('marketplace.guideDashboard.offeredPrice')}</span>
               <span className="text-lg font-bold text-emerald-700 font-mono">
                 S/. {(request.totalPrice || 0).toLocaleString()}
               </span>
@@ -148,7 +155,7 @@ const AcceptModal = ({ request, onConfirm, onCancel, isSubmitting }) => {
               disabled={isSubmitting}
               className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50"
             >
-              Cancelar
+              {t('marketplace.guideDashboard.cancel')}
             </button>
             <button
               onClick={onConfirm}
@@ -156,7 +163,7 @@ const AcceptModal = ({ request, onConfirm, onCancel, isSubmitting }) => {
               className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl hover:shadow-lg hover:shadow-emerald-500/25 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isSubmitting && <LoadingSpinner size="sm" />}
-              Aceptar solicitud
+              {t('marketplace.guideDashboard.acceptRequest')}
             </button>
           </div>
         </div>
@@ -169,6 +176,7 @@ const AcceptModal = ({ request, onConfirm, onCancel, isSubmitting }) => {
  * Modal for rejecting a service request, with optional reason.
  */
 const RejectModal = ({ request, onConfirm, onCancel, isSubmitting, rejectMessage, setRejectMessage }) => {
+  const { t } = useTranslation();
   if (!request) return null;
 
   return (
@@ -184,18 +192,18 @@ const RejectModal = ({ request, onConfirm, onCancel, isSubmitting, rejectMessage
             </div>
             <div>
               <h3 className="text-lg font-display font-semibold text-white">
-                Rechazar solicitud
+                {t('marketplace.guideDashboard.rejectRequest')}
               </h3>
-              <p className="text-rose-100 text-xs mt-0.5">Esta accion no se puede deshacer</p>
+              <p className="text-rose-100 text-xs mt-0.5">{t('marketplace.guideDashboard.irreversibleAction')}</p>
             </div>
           </div>
         </div>
 
         <div className="p-6">
           <p className="text-sm text-gray-600 mb-4">
-            Vas a rechazar la solicitud de{' '}
+            {t('marketplace.guideDashboard.rejectIntro')}{' '}
             <span className="font-semibold text-gray-900">
-              {request.agency?.businessName || 'la agencia'}
+              {request.agency?.businessName || t('marketplace.guideDashboard.theAgency')}
             </span>.
           </p>
 
@@ -219,7 +227,7 @@ const RejectModal = ({ request, onConfirm, onCancel, isSubmitting, rejectMessage
               disabled={isSubmitting}
               className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50"
             >
-              Cancelar
+              {t('marketplace.guideDashboard.cancel')}
             </button>
             <button
               onClick={onConfirm}
@@ -227,7 +235,7 @@ const RejectModal = ({ request, onConfirm, onCancel, isSubmitting, rejectMessage
               className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-rose-500 to-red-600 rounded-xl hover:shadow-lg hover:shadow-rose-500/25 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isSubmitting && <LoadingSpinner size="sm" />}
-              Rechazar solicitud
+              {t('marketplace.guideDashboard.rejectRequest')}
             </button>
           </div>
         </div>
@@ -254,26 +262,26 @@ const ServiceRequestCard = ({ request, onAccept, onReject, onViewDetail }) => {
         'from-gray-300 to-slate-400'
       }`} />
 
-      <div className="p-5">
+      <div className="p-3 sm:p-5">
         {/* Header: agency + status */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center flex-shrink-0">
-              <UserIcon className="h-5 w-5 text-violet-600" />
+        <div className="flex items-start justify-between mb-3 sm:mb-4 gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center flex-shrink-0">
+              <UserIcon className="h-4 w-4 sm:h-5 sm:w-5 text-violet-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-display font-semibold text-gray-900 truncate text-sm">
+              <h3 className="font-display font-semibold text-gray-900 truncate text-xs sm:text-sm">
                 {request.agency?.businessName || 'Agencia'}
               </h3>
               {request.agency?.contactName && (
-                <p className="text-xs text-gray-400 truncate">
+                <p className="text-[10px] sm:text-xs text-gray-400 truncate">
                   {request.agency.contactName}
                 </p>
               )}
             </div>
           </div>
-          <span className={`ml-3 flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${statusCfg.bg} ${statusCfg.text} border ${statusCfg.border}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot}`} />
+          <span className={`flex-shrink-0 inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[10px] sm:text-xs font-semibold ${statusCfg.bg} ${statusCfg.text} border ${statusCfg.border}`}>
+            <span className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${statusCfg.dot}`} />
             {statusCfg.label}
           </span>
         </div>
@@ -321,22 +329,22 @@ const ServiceRequestCard = ({ request, onAccept, onReject, onViewDetail }) => {
 
         {/* Action buttons */}
         {isPending ? (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => onViewDetail(request.id)}
-              className="px-3 py-2.5 text-xs font-medium text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+              className="px-3 py-2.5 text-xs font-medium text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors flex-shrink-0"
             >
               Detalle
             </button>
             <button
               onClick={() => onReject(request)}
-              className="flex-1 px-3 py-2.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl hover:bg-rose-100 transition-colors"
+              className="flex-1 min-w-[100px] px-3 py-2.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl hover:bg-rose-100 transition-colors"
             >
               Rechazar
             </button>
             <button
               onClick={() => onAccept(request)}
-              className="flex-1 px-3 py-2.5 text-xs font-semibold text-white bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl hover:shadow-lg hover:shadow-violet-500/25 transition-all"
+              className="flex-1 min-w-[100px] px-3 py-2.5 text-xs font-semibold text-white bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl hover:shadow-lg hover:shadow-violet-500/25 transition-all"
             >
               Aceptar
             </button>
@@ -597,10 +605,10 @@ const GuideMarketplaceDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center flex-shrink-0">
                 {guideInfo.avatar ? (
                   <img
                     src={resolveFileUrl(guideInfo.avatar)}
@@ -608,71 +616,72 @@ const GuideMarketplaceDashboard = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <UserIcon className="w-8 h-8 text-gray-400" />
+                  <UserIcon className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
                 )}
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                  Panel de Guia Freelance
+              <div className="min-w-0 flex-1">
+                <h1 className="text-base sm:text-2xl font-bold text-gray-900 flex items-center gap-2 truncate">
+                  <span className="truncate">Panel de Guia Freelance</span>
                   {guideInfo.verified && (
-                    <CheckBadgeIcon className="h-6 w-6 text-cyan-500" />
+                    <CheckBadgeIcon className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-500 flex-shrink-0" />
                   )}
                 </h1>
-                <p className="text-gray-600">Bienvenido, {guideInfo.fullName}</p>
+                <p className="text-xs sm:text-base text-gray-600 truncate">Bienvenido, {guideInfo.fullName}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <button className="p-2 text-gray-400 hover:text-gray-600">
-                <BellIcon className="h-6 w-6" />
+            <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
+              <button className="p-2 text-gray-400 hover:text-gray-600" aria-label="Notificaciones">
+                <BellIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
               <button
                 onClick={() => navigate('/profile')}
                 className="p-2 text-gray-400 hover:text-gray-600"
+                aria-label="Configuración"
               >
-                <CogIcon className="h-6 w-6" />
+                <CogIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
         {/* Stats grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-gray-500">Ingresos del mes</p>
-              <CurrencyDollarIcon className="h-5 w-5 text-gray-400" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
+            <div className="flex items-center justify-between mb-1 sm:mb-2 gap-2">
+              <p className="text-xs sm:text-sm text-gray-500 truncate">Ingresos del mes</p>
+              <CurrencyDollarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-base sm:text-2xl font-bold text-gray-900 truncate">
               S/. {localMonthlyIncome.toLocaleString()}
             </p>
-            <p className="text-sm text-gray-500 mt-2">Solo servicios completados</p>
+            <p className="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2 truncate">Solo servicios completados</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-gray-500">Tours completados</p>
-              <CheckCircleIcon className="h-5 w-5 text-gray-400" />
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
+            <div className="flex items-center justify-between mb-1 sm:mb-2 gap-2">
+              <p className="text-xs sm:text-sm text-gray-500 truncate">Tours completados</p>
+              <CheckCircleIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{localToursCompleted}</p>
-            <p className="text-sm text-gray-500 mt-2">Este mes</p>
+            <p className="text-base sm:text-2xl font-bold text-gray-900">{localToursCompleted}</p>
+            <p className="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2">Este mes</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-gray-500">Calificacion</p>
-              <StarIcon className="h-5 w-5 text-gray-400" />
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
+            <div className="flex items-center justify-between mb-1 sm:mb-2 gap-2">
+              <p className="text-xs sm:text-sm text-gray-500 truncate">Calificacion</p>
+              <StarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
             </div>
-            <div className="flex items-center gap-2">
-              <p className="text-2xl font-bold text-gray-900">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+              <p className="text-base sm:text-2xl font-bold text-gray-900">
                 {guideInfo.rating > 0 ? guideInfo.rating.toFixed(1) : '-'}
               </p>
               <div className="flex">
                 {[...Array(5)].map((_, i) => (
                   <StarIcon
                     key={i}
-                    className={`h-4 w-4 ${
+                    className={`h-3 w-3 sm:h-4 sm:w-4 ${
                       i < Math.round(guideInfo.rating)
                         ? 'text-yellow-400 fill-current'
                         : 'text-gray-300'
@@ -683,13 +692,13 @@ const GuideMarketplaceDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-gray-500">Tours esta semana</p>
-              <CalendarIcon className="h-5 w-5 text-gray-400" />
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
+            <div className="flex items-center justify-between mb-1 sm:mb-2 gap-2">
+              <p className="text-xs sm:text-sm text-gray-500 truncate">Tours esta semana</p>
+              <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{localToursThisWeek}</p>
-            <p className="text-sm text-gray-500 mt-2">Confirmados</p>
+            <p className="text-base sm:text-2xl font-bold text-gray-900">{localToursThisWeek}</p>
+            <p className="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2">Confirmados</p>
           </div>
         </div>
 
@@ -728,7 +737,7 @@ const GuideMarketplaceDashboard = () => {
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors ${
+                    className={`flex-1 py-3 sm:py-4 px-1 text-center border-b-2 font-medium text-xs sm:text-sm transition-colors ${
                       isActive
                         ? `border-${accentColor}-500 text-${accentColor}-600`
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -741,10 +750,10 @@ const GuideMarketplaceDashboard = () => {
                         : {}
                     }
                   >
-                    {tab.label}
+                    <span className="break-words">{tab.label}</span>
                     {tab.count > 0 && (
                       <span
-                        className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+                        className={`ml-1 sm:ml-2 px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs ${
                           isActive && tab.isPurple
                             ? 'bg-purple-100 text-purple-700'
                             : isActive
@@ -761,7 +770,7 @@ const GuideMarketplaceDashboard = () => {
             </nav>
           </div>
 
-          <div className="p-6">
+          <div className="p-3 sm:p-4 lg:p-6">
             {activeTab === 'requests' && (
               <ServiceRequestsTab
                 requests={pendingRequests}

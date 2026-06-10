@@ -29,6 +29,10 @@ const Monitoring = () => {
   const [capturedPhotos, setCapturedPhotos] = useState({});
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [focusServiceId, setFocusServiceId] = useState(null);
+  // Ubicación real del guía obtenida por navigator.geolocation. Si el navegador
+  // no soporta GPS o el guía no concede permiso, queda en null y el mapa no
+  // pinta marcadores con coordenadas inventadas.
+  const [guideRealLocation, setGuideRealLocation] = useState(null);
 
   // Para guías, solo mostrar sus propios tours
   const isGuide = user?.role === 'guide';
@@ -73,10 +77,10 @@ const Monitoring = () => {
             // Formatear tiempos
             startTime: tour.startTime
               ? new Date(tour.startTime).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-              : 'No especificado',
+              : t('monitoring.page.notSpecified'),
             estimatedEndTime: tour.estimatedEndTime
               ? new Date(tour.estimatedEndTime).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-              : 'No especificado'
+              : t('monitoring.page.notSpecified')
           };
         });
 
@@ -170,6 +174,60 @@ const Monitoring = () => {
     getStats
   } = useGuideTours();
 
+  // Geolocalización en tiempo real para la vista del propio guía.
+  // Antes el mapa del guía usaba coordenadas fijas de Lima (limaLocations) y
+  // por eso el marcador aparecía en una calle cualquiera y nunca se movía.
+  // Ahora el navegador entrega la posición real y la mantenemos sincronizada
+  // con watchPosition mientras la pestaña está abierta.
+  useEffect(() => {
+    if (!isGuide) {
+      setGuideRealLocation(null);
+      return undefined;
+    }
+    if (!navigator.geolocation) {
+      console.warn('[Monitoring] Geolocation no disponible en este navegador');
+      return undefined;
+    }
+
+    const geoOptions = {
+      enableHighAccuracy: true,
+      timeout: 15_000,
+      maximumAge: 5_000
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setGuideRealLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        });
+      },
+      (error) => {
+        console.warn('[Monitoring] Error obteniendo posición inicial del guía:', error?.message);
+      },
+      geoOptions
+    );
+
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        setGuideRealLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        });
+      },
+      (error) => {
+        console.warn('[Monitoring] Error en watchPosition del guía:', error?.message);
+      },
+      geoOptions
+    );
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, [isGuide]);
+
   // Obtener estadísticas del guía
   const guideStats = getStats();
 
@@ -181,28 +239,18 @@ const Monitoring = () => {
   const ACTIVE_GUIDE_TOUR_STATUSES = ['in_progress'];
   const COMPLETED_STATUSES = ['completed'];
 
-  // Función auxiliar para transformar tours del guía al formato del mapa
+  // Función auxiliar para transformar tours del guía al formato del mapa.
+  // Usa la ubicación real obtenida por GPS del navegador (guideRealLocation).
+  // Si todavía no hay GPS (permiso denegado, navegador sin soporte o esperando
+  // primer fix), currentLocation queda en null y el mapa NO pinta un marcador
+  // con coordenadas inventadas — se mostrará el indicador "Esperando GPS".
   const transformGuideToursForMap = (tours) => {
     if (!Array.isArray(tours) || tours.length === 0) return [];
 
-    // Coordenadas de algunos puntos de Lima para distribuir los tours
-    const limaLocations = [
-      { lat: -12.0464, lng: -77.0428, name: 'Plaza San Martín' },
-      { lat: -12.0432, lng: -77.0282, name: 'Centro Histórico' },
-      { lat: -12.1182, lng: -77.0377, name: 'Miraflores' },
-      { lat: -12.1467, lng: -77.0217, name: 'Barranco' },
-      { lat: -12.0700, lng: -77.0500, name: 'San Isidro' },
-      { lat: -12.0897, lng: -77.0438, name: 'Lince' },
-      { lat: -12.0608, lng: -77.0372, name: 'Cercado de Lima' },
-      { lat: -12.1026, lng: -77.0265, name: 'San Borja' }
-    ];
-
     const activeOnly = tours.filter(tour => ACTIVE_GUIDE_TOUR_STATUSES.includes(tour.status));
+    const hasGps = !!(guideRealLocation?.lat && guideRealLocation?.lng);
 
-    return activeOnly.map((tour, index) => {
-      // Asignar ubicación basada en el meeting_point o distribuir en Lima
-      const location = limaLocations[index % limaLocations.length];
-
+    return activeOnly.map((tour) => {
       // Backend no soporta estado "pausado"; cualquier tour que pase el filtro está enrutado.
       const mapStatus = 'enroute';
       const isCompleted = COMPLETED_STATUSES.includes(tour.status);
@@ -210,17 +258,20 @@ const Monitoring = () => {
       return {
         id: tour.id,
         tourName: tour.name,
-        guideName: user?.name || 'Carlos Mendoza',
+        guideName: user?.name || t('monitoring.noGuide'),
         tourists: tour.tourists || 0,
         startTime: tour.time || '09:00',
         status: mapStatus,
-        currentLocation: {
-          lat: location.lat,
-          lng: location.lng,
-          name: tour.location || location.name
-        },
+        currentLocation: hasGps
+          ? {
+              lat: guideRealLocation.lat,
+              lng: guideRealLocation.lng,
+              name: tour.location || t('monitoring.inTransit')
+            }
+          : null,
+        hasGps,
         progress: isCompleted ? 100 : 50,
-        estimatedEndTime: isCompleted ? 'Completado' : 'En curso',
+        estimatedEndTime: isCompleted ? t('monitoring.page.completedStatus') : t('monitoring.page.inProgressStatus'),
         // Datos adicionales del tour original
         date: tour.date,
         agency: tour.agency
@@ -232,27 +283,27 @@ const Monitoring = () => {
   const handleStartTour = async (tourId) => {
     try {
       await updateTourStatus(tourId, 'iniciado');
-      toast.success('Tour iniciado correctamente');
+      toast.success(t('monitoring.page.tourStartedSuccess'));
     } catch (error) {
-      toast.error('Error al iniciar el tour');
+      toast.error(t('monitoring.page.tourStartError'));
     }
   };
 
   const handlePauseTour = async (tourId) => {
     try {
       await updateTourStatus(tourId, 'pausado');
-      toast.success('Tour pausado');
+      toast.success(t('monitoring.page.tourPausedSuccess'));
     } catch (error) {
-      toast.error('Error al pausar el tour');
+      toast.error(t('monitoring.page.tourPauseError'));
     }
   };
 
   const handleCompleteTour = async (tourId) => {
     try {
       await updateTourStatus(tourId, 'completado');
-      toast.success('Tour completado exitosamente');
+      toast.success(t('monitoring.page.tourCompletedSuccess'));
     } catch (error) {
-      toast.error('Error al completar el tour');
+      toast.error(t('monitoring.page.tourCompleteError'));
     }
   };
 
@@ -332,7 +383,7 @@ const Monitoring = () => {
             }
           }));
           
-          toast.success('Foto capturada correctamente');
+          toast.success(t('monitoring.page.photoTakenSuccess'));
           
           // Detener stream
           stream.getTracks().forEach(track => track.stop());
@@ -420,7 +471,7 @@ const Monitoring = () => {
                 <div className="flex items-center space-x-1 sm:space-x-2">
                   <Icon className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5" />
                   <span className="hidden sm:inline">{view.label}</span>
-                  <span className="text-xs sm:hidden">{view.key === 'map' ? 'Mapa' : 'Tours'}</span>
+                  <span className="text-xs sm:hidden">{view.key === 'map' ? t('monitoring.page.tabMap') : t('monitoring.page.tabTours')}</span>
                 </div>
               </button>
             );
@@ -439,7 +490,7 @@ const Monitoring = () => {
                 <div className="p-3 border-b border-gray-200 bg-white sticky top-0 z-10">
                   <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                     <PlayIcon className="w-4 h-4 text-green-500" />
-                    Servicios en curso
+                    {t('monitoring.page.servicesInProgress')}
                     <span className="ml-auto text-xs font-normal bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
                       {activeServices.length}
                     </span>
@@ -452,7 +503,7 @@ const Monitoring = () => {
                 ) : !Array.isArray(activeServices) || activeServices.length === 0 ? (
                   <div className="p-6 text-center text-gray-400">
                     <MapPinIcon className="w-10 h-10 mx-auto mb-2" />
-                    <p className="text-sm">No hay tours activos</p>
+                    <p className="text-sm">{t('monitoring.page.noActiveTours')}</p>
                   </div>
                 ) : (
                   <div className="divide-y divide-gray-200">
@@ -466,16 +517,16 @@ const Monitoring = () => {
                       >
                         {/* Header: nombre + estado */}
                         <div className="flex items-start justify-between gap-2 mb-1.5">
-                          <h4 className="text-sm font-semibold text-gray-900 leading-tight">{service.tourName || 'Tour sin nombre'}</h4>
+                          <h4 className="text-sm font-semibold text-gray-900 leading-tight">{service.tourName || t('monitoring.page.fallbackTourName')}</h4>
                           <span className={`flex-shrink-0 px-2 py-0.5 text-[10px] font-medium rounded-full ${
                             service.status === 'enroute' ? 'bg-green-100 text-green-800' :
                             service.status === 'stopped' ? 'bg-yellow-100 text-yellow-800' :
                             service.status === 'delayed' ? 'bg-red-100 text-red-800' :
                             'bg-blue-100 text-blue-800'
                           }`}>
-                            {service.status === 'enroute' ? 'En ruta' :
-                             service.status === 'stopped' ? 'Detenido' :
-                             service.status === 'delayed' ? 'Retrasado' : 'Activo'}
+                            {service.status === 'enroute' ? t('monitoring.page.statusEnRoute') :
+                             service.status === 'stopped' ? t('monitoring.page.statusStopped') :
+                             service.status === 'delayed' ? t('monitoring.page.statusDelayed') : t('monitoring.page.statusActive')}
                           </span>
                         </div>
 
@@ -519,7 +570,7 @@ const Monitoring = () => {
                         <div className="flex items-center gap-1 text-[10px] mb-2">
                           <span className={`w-1.5 h-1.5 rounded-full ${service.hasGps ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></span>
                           <span className={service.hasGps ? 'text-green-700' : 'text-gray-500 italic'}>
-                            {service.hasGps ? 'GPS conectado' : 'Esperando GPS del guía…'}
+                            {service.hasGps ? t('monitoring.page.gpsConnected') : t('monitoring.page.waitingGps')}
                           </span>
                         </div>
 
@@ -527,7 +578,7 @@ const Monitoring = () => {
                         {service.progress !== undefined && (
                           <div className="mb-2">
                             <div className="flex items-center justify-between text-[10px] text-gray-400 mb-0.5">
-                              <span>Progreso</span>
+                              <span>{t('monitoring.tour.progress')}</span>
                               <span className="font-semibold">{Math.round(service.progress || 0)}%</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-1.5">
@@ -548,7 +599,7 @@ const Monitoring = () => {
                           onClick={(e) => { e.stopPropagation(); handleOpenTourDetails(service); }}
                           className="w-full px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
                         >
-                          Ver detalles
+                          {t('monitoring.page.viewDetails')}
                         </button>
                       </div>
                     ))}
@@ -812,10 +863,10 @@ const Monitoring = () => {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium text-gray-900">
-                    Tours Activos
+                    {t('monitoring.page.activeTours')}
                   </h3>
                   <div className="text-sm text-gray-500">
-                    {servicesLoading ? 'Cargando...' : `${Array.isArray(activeServices) ? activeServices.length : 0} servicios activos`}
+                    {servicesLoading ? t('monitoring.page.loadingShort') : t('monitoring.page.activeServicesCount', { count: Array.isArray(activeServices) ? activeServices.length : 0 })}
                   </div>
                 </div>
 
@@ -826,8 +877,8 @@ const Monitoring = () => {
                 ) : !Array.isArray(activeServices) || activeServices.length === 0 ? (
                   <div className="flex flex-col items-center justify-center p-12 text-gray-400 border-2 border-gray-300 border-dashed rounded-lg">
                     <UserGroupIcon className="w-16 h-16 mb-4" />
-                    <p className="text-lg font-medium">No hay tours activos en este momento</p>
-                    <p className="mt-1 text-sm">Los tours activos aparecerán aquí cuando los guías inicien sus servicios</p>
+                    <p className="text-lg font-medium">{t('monitoring.page.noActiveToursNow')}</p>
+                    <p className="mt-1 text-sm">{t('monitoring.page.toursAppearHere')}</p>
                   </div>
                 ) : (
                   /* Lista de tours activos del sistema */
@@ -836,10 +887,10 @@ const Monitoring = () => {
                       <div key={service.id || `service-${index}`} className="p-5 transition-all bg-white border-2 border-gray-200 shadow-sm rounded-xl hover:shadow-lg hover:border-blue-300">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex-1">
-                            <h4 className="mb-1 text-base font-semibold text-gray-900">{service.tourName || 'Tour sin nombre'}</h4>
+                            <h4 className="mb-1 text-base font-semibold text-gray-900">{service.tourName || t('monitoring.page.fallbackTourName')}</h4>
                             <p className="flex items-center gap-1 text-sm text-gray-600">
                               <UserGroupIcon className="w-4 h-4" />
-                              Guía: {service.guideName || 'No asignado'}
+                              {t('monitoring.comp.guideLabel')}: {service.guideName || t('monitoring.page.noGuideAssigned')}
                             </p>
                           </div>
                           <span className={`px-3 py-1 text-xs font-medium rounded-full ${
@@ -851,20 +902,20 @@ const Monitoring = () => {
                               ? 'bg-red-100 text-red-800'
                               : 'bg-blue-100 text-blue-800'
                           }`}>
-                            {service.status === 'enroute' ? 'En ruta' :
-                             service.status === 'stopped' ? 'Detenido' :
-                             service.status === 'delayed' ? 'Retrasado' : 'Activo'}
+                            {service.status === 'enroute' ? t('monitoring.page.statusEnRoute') :
+                             service.status === 'stopped' ? t('monitoring.page.statusStopped') :
+                             service.status === 'delayed' ? t('monitoring.page.statusDelayed') : t('monitoring.page.statusActive')}
                           </span>
                         </div>
 
                         <div className="space-y-2.5 text-sm text-gray-600 mb-4">
                           <div className="flex items-center gap-2">
                             <ClockIcon className="flex-shrink-0 w-4 h-4 text-gray-400" />
-                            <span>Hora de inicio: {service.startTime || 'N/A'}</span>
+                            <span>{t('monitoring.page.startTimeLabel')}: {service.startTime || 'N/A'}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <UserGroupIcon className="flex-shrink-0 w-4 h-4 text-gray-400" />
-                            <span>{service.passengers || service.tourists || 0} turistas</span>
+                            <span>{service.passengers || service.tourists || 0} {t('monitoring.tourists').toLowerCase()}</span>
                           </div>
                           {/* Parada actual */}
                           <div className="flex items-center gap-2">
@@ -878,7 +929,7 @@ const Monitoring = () => {
                             <div className="flex items-center gap-2">
                               <CheckIcon className="flex-shrink-0 w-4 h-4 text-green-500" />
                               <span className="text-green-700 font-medium">
-                                {service.completedStops || 0}/{service.totalStops} paradas completadas
+                                {t('monitoring.page.stopsCompleted', { done: service.completedStops || 0, total: service.totalStops })}
                               </span>
                             </div>
                           )}
@@ -887,7 +938,7 @@ const Monitoring = () => {
                             <div className="flex items-center gap-2">
                               <PhotoIcon className="flex-shrink-0 w-4 h-4 text-purple-500" />
                               <span className="text-purple-700">
-                                {service.photosCount} foto{service.photosCount > 1 ? 's' : ''} registrada{service.photosCount > 1 ? 's' : ''}
+                                {t('monitoring.page.photosRegistered', { count: service.photosCount })}
                               </span>
                             </div>
                           )}
@@ -896,8 +947,8 @@ const Monitoring = () => {
                         {service.progress !== undefined && (
                           <div className="mb-4">
                             <div className="flex items-center justify-between mb-2 text-xs text-gray-500">
-                              <span className="font-medium">Progreso del tour</span>
-                              <span className="font-semibold">{Math.round(service.progress || 0)}% completado</span>
+                              <span className="font-medium">{t('monitoring.page.tourProgress')}</span>
+                              <span className="font-semibold">{t('monitoring.page.percentCompleted', { percent: Math.round(service.progress || 0) })}</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                               <div
@@ -916,9 +967,9 @@ const Monitoring = () => {
                           <div className="p-3 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50">
                             <div className="flex items-center justify-between">
                               <div>
-                                <h5 className="mb-1 text-xs font-semibold text-blue-900">Estado del servicio</h5>
+                                <h5 className="mb-1 text-xs font-semibold text-blue-900">{t('monitoring.page.serviceStatus')}</h5>
                                 <p className="text-xs text-blue-700">
-                                  {service.estimatedEndTime || 'Calculando...'}
+                                  {service.estimatedEndTime || t('monitoring.page.calculating')}
                                 </p>
                               </div>
                               <div className={`w-3 h-3 rounded-full ${
@@ -935,7 +986,7 @@ const Monitoring = () => {
                           onClick={() => handleOpenTourDetails(service)}
                           className="w-full px-4 py-2 mt-4 text-sm font-medium text-white transition-colors bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg"
                         >
-                          Ver detalles
+                          {t('monitoring.page.viewDetails')}
                         </button>
                       </div>
                     ))}

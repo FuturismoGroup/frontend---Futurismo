@@ -329,62 +329,49 @@ const ReservationWizard = ({ onClose, onComplete }) => {
     }
   }, [currentStep, agencyBillingData, formData, setValue]);
 
-  // Determinar el agencyId a usar para cargar métodos de pago
-  const effectiveAgencyId = isAdmin ? watch('agencyId') : user?.agencyId;
-
-  // Cargar métodos de pago desde la API de la agencia
+  // Cargar métodos de pago del sistema (Futurismo Tours).
+  // La agencia paga la reserva a Futurismo, así que los métodos válidos son
+  // los registrados por el administrador en su perfil, no los de la agencia.
   useEffect(() => {
     const loadPaymentMethods = async () => {
-      if (!effectiveAgencyId) {
-        // Sin agencia seleccionada: fallback genérico
-        setPaymentMethods([
-          { id: 'cash', name: 'Efectivo' },
-          { id: 'bank_transfer', name: 'Transferencia Bancaria' },
-          { id: 'yape', name: 'Yape' }
-        ]);
-        setLoadingPaymentMethods(false);
-        return;
-      }
+      const fallback = [
+        { id: 'cash', name: 'Efectivo' },
+        { id: 'bank_transfer', name: 'Transferencia Bancaria' },
+        { id: 'yape', name: 'Yape' }
+      ];
 
       try {
         setLoadingPaymentMethods(true);
-        const response = await api.get(`/agencies/${effectiveAgencyId}/payment-methods`);
+        const response = await api.get('/system/payment-methods');
 
-        if (response.data.success && response.data.data && response.data.data.length > 0) {
-          // Mapear métodos de la agencia: solo activos
+        if (response.data.success && Array.isArray(response.data.data) && response.data.data.length > 0) {
           const activeMethods = response.data.data
             .filter(m => m.isActive !== false)
-            .map(m => ({
-              id: m.id,
-              name: m.label || `${m.type}${m.bank ? ' - ' + m.bank : ''}${m.phoneNumber ? ' - ' + m.phoneNumber : ''}`
-            }));
-          setPaymentMethods(activeMethods.length > 0 ? activeMethods : [
-            { id: 'cash', name: 'Efectivo' },
-            { id: 'bank_transfer', name: 'Transferencia Bancaria' },
-            { id: 'yape', name: 'Yape' }
-          ]);
+            .map(m => {
+              const parts = [];
+              if (m.bank) parts.push(m.bank);
+              if (m.phoneNumber) parts.push(m.phoneNumber);
+              if (m.accountNumber) parts.push(`Cta. ${m.accountNumber}`);
+              const detail = parts.length > 0 ? ` - ${parts.join(' / ')}` : '';
+              return {
+                id: m.id,
+                name: m.label || `${m.type}${detail}`
+              };
+            });
+          setPaymentMethods(activeMethods.length > 0 ? activeMethods : fallback);
         } else {
-          // Agencia sin métodos configurados: fallback genérico
-          setPaymentMethods([
-            { id: 'cash', name: 'Efectivo' },
-            { id: 'bank_transfer', name: 'Transferencia Bancaria' },
-            { id: 'yape', name: 'Yape' }
-          ]);
+          setPaymentMethods(fallback);
         }
       } catch (error) {
-        console.error('Error loading agency payment methods:', error);
-        setPaymentMethods([
-          { id: 'cash', name: 'Efectivo' },
-          { id: 'bank_transfer', name: 'Transferencia Bancaria' },
-          { id: 'yape', name: 'Yape' }
-        ]);
+        console.error('Error loading system payment methods:', error);
+        setPaymentMethods(fallback);
       } finally {
         setLoadingPaymentMethods(false);
       }
     };
 
     loadPaymentMethods();
-  }, [effectiveAgencyId]);
+  }, []);
 
   // Filtrar tours según el tipo de servicio seleccionado
   const filteredTours = selectedServiceType
@@ -511,31 +498,31 @@ const ReservationWizard = ({ onClose, onComplete }) => {
   return (
     <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full h-full flex flex-col">
       {/* Progress indicator */}
-      <div className="flex-shrink-0 bg-gradient-to-r from-blue-50 to-indigo-50 px-8 py-6 border-b border-gray-200">
-        <div className="flex items-center justify-center">
+      <div className="flex-shrink-0 bg-gradient-to-r from-blue-50 to-indigo-50 px-3 sm:px-8 py-4 sm:py-6 border-b border-gray-200">
+        <div className="flex items-center justify-center overflow-x-auto">
           {steps.map((step, index) => (
-            <div key={step.number} className="flex items-center">
+            <div key={step.number} className="flex items-center flex-shrink-0">
               <div className="flex flex-col items-center">
                 <div className={`
-                  w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 border-2
+                  w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-300 border-2
                   ${currentStep >= step.number
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-lg scale-110'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-lg sm:scale-110'
                     : 'bg-white text-gray-400 border-gray-300'}
                 `}>
                   {currentStep > step.number ? (
-                    <CheckIcon className="w-5 h-5" />
+                    <CheckIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                   ) : (
                     step.number
                   )}
                 </div>
-                <span className={`mt-2 text-xs font-semibold text-center whitespace-nowrap ${
+                <span className={`mt-1 sm:mt-2 text-[10px] sm:text-xs font-semibold text-center whitespace-nowrap ${
                   currentStep >= step.number ? 'text-blue-700' : 'text-gray-500'
                 }`}>
                   {step.title}
                 </span>
               </div>
               {index < steps.length - 1 && (
-                <div className={`w-20 h-1 mx-4 rounded-full transition-all duration-300 ${
+                <div className={`w-8 sm:w-20 h-0.5 sm:h-1 mx-2 sm:mx-4 rounded-full transition-all duration-300 ${
                   currentStep > step.number ? 'bg-blue-600' : 'bg-gray-300'
                 }`} />
               )}
@@ -546,7 +533,7 @@ const ReservationWizard = ({ onClose, onComplete }) => {
 
       {/* Form content */}
       <form onSubmit={handleSubmit(handleNext)} className="flex-1 min-h-0 flex flex-col">
-        <div className="flex-1 min-h-0 overflow-y-auto px-8 py-6">
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 sm:px-8 py-4 sm:py-6">
         {/* Step 1: Service Selection */}
         {currentStep === 1 && (
           <div className="space-y-5">
@@ -915,11 +902,11 @@ const ReservationWizard = ({ onClose, onComplete }) => {
 
         </div>
         {/* Navigation buttons */}
-        <div className="flex-shrink-0 bg-gray-50 px-8 py-5 border-t border-gray-200 flex justify-between items-center">
+        <div className="flex-shrink-0 bg-gray-50 px-3 sm:px-8 py-3 sm:py-5 border-t border-gray-200 flex justify-between items-center gap-2">
           <button
             type="button"
             onClick={handleBack}
-            className="flex items-center gap-2 px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-white hover:border-gray-400 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed font-semibold shadow-sm bg-white"
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-white hover:border-gray-400 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed font-semibold shadow-sm bg-white text-xs sm:text-sm"
             disabled={currentStep === 1}
           >
             <ChevronLeftIcon className="w-4 h-4" />
@@ -928,20 +915,20 @@ const ReservationWizard = ({ onClose, onComplete }) => {
 
           <button
             type="submit"
-            className="flex items-center gap-2 px-8 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-md"
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-8 py-2 sm:py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-md text-xs sm:text-sm"
             disabled={isSubmitting || (currentStep === 1 && isFulldayTour && !canBookDirectReservation)}
           >
             {currentStep === 3 ? (
               <>
-                {isSubmitting ? t('reservations.comp.processing') : t('reservations.comp.confirmReservation')}
-                <CheckIcon className="w-4 h-4" />
+                <span className="truncate">{isSubmitting ? t('reservations.comp.processing') : t('reservations.comp.confirmReservation')}</span>
+                <CheckIcon className="w-4 h-4 flex-shrink-0" />
               </>
             ) : (
               <>
-                {(currentStep === 1 && isFulldayTour && !canBookDirectReservation)
+                <span className="truncate">{(currentStep === 1 && isFulldayTour && !canBookDirectReservation)
                   ? t('reservations.comp.consultWhatsApp')
-                  : t('common.confirm')}
-                <ChevronRightIcon className="w-4 h-4" />
+                  : t('common.confirm')}</span>
+                <ChevronRightIcon className="w-4 h-4 flex-shrink-0" />
               </>
             )}
           </button>

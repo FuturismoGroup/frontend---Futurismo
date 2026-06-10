@@ -87,33 +87,33 @@ const AgencyMarketplaceDashboard = () => {
 
   const handleCancel = async (requestId, e) => {
     e.stopPropagation();
-    if (!window.confirm('¿Cancelar esta solicitud?')) return;
+    if (!window.confirm(t('marketplace.agencyDashboard.confirmCancel'))) return;
     try {
       await cancelServiceRequest(requestId);
-      toast.success('Solicitud cancelada');
+      toast.success(t('marketplace.agencyDashboard.requestCancelled'));
     } catch (err) {
-      toast.error(err.message || 'Error al cancelar');
+      toast.error(err.message || t('marketplace.agencyDashboard.cancelError'));
     }
   };
 
   const handleComplete = async (requestId, e) => {
     e.stopPropagation();
-    if (!window.confirm('¿Marcar este servicio como completado?')) return;
+    if (!window.confirm(t('marketplace.agencyDashboard.confirmComplete'))) return;
     try {
       await completeService(requestId, {});
-      toast.success('Servicio marcado como completado');
+      toast.success(t('marketplace.agencyDashboard.completedSuccess'));
     } catch (err) {
-      toast.error(err.message || 'Error al completar');
+      toast.error(err.message || t('marketplace.agencyDashboard.completeError'));
     }
   };
 
   const getStatusBadge = (status) => {
     const config = {
-      pending: { label: 'Pendiente', icon: ClockIcon, className: 'bg-yellow-100 text-yellow-800' },
-      accepted: { label: 'Aceptado', icon: CheckCircleIcon, className: 'bg-green-100 text-green-800' },
-      rejected: { label: 'Rechazado', icon: XCircleIcon, className: 'bg-red-100 text-red-800' },
-      completed: { label: 'Completado', icon: StarIcon, className: 'bg-blue-100 text-blue-800' },
-      cancelled: { label: 'Cancelado', icon: XCircleIcon, className: 'bg-gray-100 text-gray-800' }
+      pending: { label: t('marketplace.agencyDashboard.status.pending'), icon: ClockIcon, className: 'bg-yellow-100 text-yellow-800' },
+      accepted: { label: t('marketplace.agencyDashboard.status.accepted'), icon: CheckCircleIcon, className: 'bg-green-100 text-green-800' },
+      rejected: { label: t('marketplace.agencyDashboard.status.rejected'), icon: XCircleIcon, className: 'bg-red-100 text-red-800' },
+      completed: { label: t('marketplace.agencyDashboard.status.completed'), icon: StarIcon, className: 'bg-blue-100 text-blue-800' },
+      cancelled: { label: t('marketplace.agencyDashboard.status.cancelled'), icon: XCircleIcon, className: 'bg-gray-100 text-gray-800' }
     };
     const c = config[status] || config.pending;
     const Icon = c.icon;
@@ -146,45 +146,45 @@ const AgencyMarketplaceDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Mis Solicitudes</h1>
-              <p className="text-gray-600 mt-1">Gestiona tus solicitudes de servicio</p>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{t('marketplace.agencyDashboard.title')}</h1>
+              <p className="text-xs sm:text-base text-gray-600 mt-1">{t('marketplace.agencyDashboard.subtitle')}</p>
             </div>
             <button
               onClick={() => navigate('/marketplace')}
-              className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+              className="inline-flex items-center justify-center px-3 sm:px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm sm:text-base whitespace-nowrap flex-shrink-0"
             >
-              <PlusIcon className="h-5 w-5 mr-2" />
-              Buscar guías
+              <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              {t('marketplace.agencyDashboard.searchGuides')}
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
         {/* Estadísticas */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <p className="text-sm text-gray-500">Total</p>
-            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('marketplace.agencyDashboard.stats.total')}</p>
+            <p className="text-base sm:text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <p className="text-sm text-gray-500">Pendientes</p>
-            <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('marketplace.agencyDashboard.stats.pending')}</p>
+            <p className="text-base sm:text-2xl font-bold text-yellow-600">{stats.pending}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <p className="text-sm text-gray-500">Aceptadas</p>
-            <p className="text-2xl font-bold text-green-600">{stats.accepted}</p>
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('marketplace.agencyDashboard.stats.accepted')}</p>
+            <p className="text-base sm:text-2xl font-bold text-green-600">{stats.accepted}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <p className="text-sm text-gray-500">Completadas</p>
-            <p className="text-2xl font-bold text-blue-600">{stats.completed}</p>
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('marketplace.agencyDashboard.stats.completed')}</p>
+            <p className="text-base sm:text-2xl font-bold text-blue-600">{stats.completed}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <p className="text-sm text-gray-500">Total gastado</p>
-            <p className="text-2xl font-bold text-gray-900">S/ {stats.totalSpent.toFixed(2)}</p>
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 col-span-2 sm:col-span-1">
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('marketplace.agencyDashboard.stats.totalSpent')}</p>
+            <p className="text-base sm:text-2xl font-bold text-gray-900 truncate">S/ {stats.totalSpent.toFixed(2)}</p>
           </div>
         </div>
 
@@ -212,11 +212,11 @@ const AgencyMarketplaceDashboard = () => {
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
-                  {filter === 'all' ? 'Todas' :
-                   filter === 'pending' ? 'Pendientes' :
-                   filter === 'accepted' ? 'Aceptadas' :
-                   filter === 'completed' ? 'Completadas' :
-                   filter === 'rejected' ? 'Rechazadas' : 'Canceladas'}
+                  {filter === 'all' ? t('marketplace.agencyDashboard.filters.all') :
+                   filter === 'pending' ? t('marketplace.agencyDashboard.filters.pending') :
+                   filter === 'accepted' ? t('marketplace.agencyDashboard.filters.accepted') :
+                   filter === 'completed' ? t('marketplace.agencyDashboard.filters.completed') :
+                   filter === 'rejected' ? t('marketplace.agencyDashboard.filters.rejected') : t('marketplace.agencyDashboard.filters.cancelled')}
                 </button>
               ))}
             </div>
@@ -227,7 +227,7 @@ const AgencyMarketplaceDashboard = () => {
         {filteredRequests.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
             <DocumentTextIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No se encontraron solicitudes</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('marketplace.agencyDashboard.noRequestsFound')}</h3>
             <p className="text-gray-500 mb-4">
               {searchQuery || activeFilter !== 'all'
                 ? t('marketplace.messages.adjustFilters')
@@ -238,7 +238,7 @@ const AgencyMarketplaceDashboard = () => {
                 onClick={() => navigate('/marketplace')}
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
               >
-                Explorar guías
+                {t('marketplace.agencyDashboard.exploreGuides')}
               </button>
             )}
           </div>
@@ -247,85 +247,87 @@ const AgencyMarketplaceDashboard = () => {
             {filteredRequests.map((request) => (
               <div
                 key={request.id}
-                className="bg-white rounded-lg shadow-sm hover:shadow-md transition cursor-pointer p-5"
+                className="bg-white rounded-lg shadow-sm hover:shadow-md transition cursor-pointer p-3 sm:p-5"
                 onClick={() => navigate(`/marketplace/requests/${request.id}`)}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                       {request.guide?.profilePhoto ? (
                         <img src={resolveFileUrl(request.guide.profilePhoto)} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <UserGroupIcon className="h-5 w-5 text-purple-600" />
+                        <UserGroupIcon className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
                       )}
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{request.guide?.name || 'Guía'}</h3>
-                      <p className="text-sm text-gray-500">Servicio Freelance</p>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-sm sm:text-base text-gray-900 truncate">{request.guide?.name || t('marketplace.agencyDashboard.fallbackGuide')}</h3>
+                      <p className="text-xs sm:text-sm text-gray-500 truncate">{t('marketplace.agencyDashboard.freelanceService')}</p>
                     </div>
                   </div>
-                  {getStatusBadge(request.status)}
+                  <div className="flex-shrink-0">
+                    {getStatusBadge(request.status)}
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                  <span className="flex items-center gap-1">
-                    <CalendarIcon className="h-4 w-4" />
-                    {formatDate(request.serviceDate)}
+                <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-1 text-xs sm:text-sm text-gray-500 mb-3">
+                  <span className="flex items-center gap-1 min-w-0">
+                    <CalendarIcon className="h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">{formatDate(request.serviceDate)}</span>
                   </span>
                   {request.startTime && (
                     <span className="flex items-center gap-1">
-                      <ClockIcon className="h-4 w-4" />
+                      <ClockIcon className="h-4 w-4 flex-shrink-0" />
                       {new Date(request.startTime).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   )}
                   {request.groupSize && (
                     <span className="flex items-center gap-1">
-                      <UserGroupIcon className="h-4 w-4" />
-                      {request.groupSize} personas
+                      <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
+                      {request.groupSize} {t('marketplace.agencyDashboard.people')}
                     </span>
                   )}
                   {request.location && (
-                    <span className="flex items-center gap-1">
-                      <MapPinIcon className="h-4 w-4" />
-                      {request.location}
+                    <span className="flex items-center gap-1 min-w-0">
+                      <MapPinIcon className="h-4 w-4 flex-shrink-0" />
+                      <span className="truncate">{request.location}</span>
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-500">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="text-xs sm:text-sm text-gray-500 break-words">
                     {request.pricePerPerson && request.groupSize && (
-                      <span className="text-gray-400">Ref: S/ {request.pricePerPerson.toFixed(2)}/persona x {request.groupSize} | </span>
+                      <span className="text-gray-400">{t('marketplace.agencyDashboard.refPrice', { price: request.pricePerPerson.toFixed(2), count: request.groupSize })} </span>
                     )}
-                    <span className="text-xs text-gray-500">Oferta: </span>
-                    <span className="text-lg font-semibold text-purple-700">
+                    <span className="text-xs text-gray-500">{t('marketplace.agencyDashboard.offer')} </span>
+                    <span className="text-base sm:text-lg font-semibold text-purple-700 whitespace-nowrap">
                       S/ {(request.totalPrice || 0).toFixed(2)}
                     </span>
                   </div>
 
-                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
                     {request.status === 'pending' && (
                       <button
                         onClick={(e) => handleCancel(request.id, e)}
-                        className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded-lg transition"
+                        className="px-3 py-1.5 text-xs sm:text-sm text-red-600 hover:bg-red-50 rounded-lg transition whitespace-nowrap"
                       >
-                        Cancelar
+                        {t('marketplace.agencyDashboard.cancelRequest')}
                       </button>
                     )}
                     {request.status === 'accepted' && (
                       <button
                         onClick={(e) => handleComplete(request.id, e)}
-                        className="px-3 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition"
+                        className="px-3 py-1.5 text-xs sm:text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition whitespace-nowrap"
                       >
-                        Marcar completado
+                        {t('marketplace.agencyDashboard.markCompleted')}
                       </button>
                     )}
                     {request.status === 'completed' && !request.hasReview && (
                       <button
                         onClick={(e) => { e.stopPropagation(); navigate(`/marketplace/review/${request.id}`); }}
-                        className="px-3 py-1 text-sm text-purple-600 hover:bg-purple-50 rounded-lg transition font-medium"
+                        className="px-3 py-1.5 text-xs sm:text-sm text-purple-600 hover:bg-purple-50 rounded-lg transition font-medium whitespace-nowrap"
                       >
-                        Calificar
+                        {t('marketplace.agencyDashboard.rate')}
                       </button>
                     )}
                   </div>

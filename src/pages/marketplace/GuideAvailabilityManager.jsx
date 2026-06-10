@@ -126,9 +126,9 @@ const GuideAvailabilityManager = () => {
     try {
       await toggleGuideOnline(guideId, newValue);
       setOnline(newValue);
-      toast.success(newValue ? 'Ahora eres visible en el marketplace' : 'Ya no eres visible en el marketplace');
+      toast.success(newValue ? t('marketplace.availability.nowVisible') : t('marketplace.availability.noLongerVisible'));
     } catch (err) {
-      toast.error(err.message || 'Error al cambiar disponibilidad');
+      toast.error(err.message || t('errors.unexpectedError'));
     } finally {
       setToggling(false);
     }
@@ -146,9 +146,9 @@ const GuideAvailabilityManager = () => {
     setSavingSchedule(true);
     try {
       await actions.setWorkingHours(guideId, schedule);
-      toast.success('Horario guardado correctamente');
+      toast.success(t('marketplace.availability.scheduleSaved'));
     } catch (err) {
-      toast.error(err.message || 'Error al guardar horario');
+      toast.error(err.message || t('errors.unexpectedError'));
     } finally {
       setSavingSchedule(false);
     }
@@ -269,7 +269,7 @@ const GuideAvailabilityManager = () => {
     const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const isLoading = actionInProgress === dateStr;
 
-    const base = 'relative p-2 h-12 text-center rounded-lg text-sm font-medium transition-all duration-150 select-none';
+    const base = 'relative p-1 sm:p-2 h-10 sm:h-12 text-center rounded-lg text-xs sm:text-sm font-medium transition-all duration-150 select-none flex items-center justify-center';
 
     if (isLoading) return `${base} bg-gray-200 text-gray-400 animate-pulse cursor-wait`;
 
@@ -294,27 +294,27 @@ const GuideAvailabilityManager = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-6">
+    <div className="max-w-3xl mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Mi Disponibilidad</h1>
-        <p className="text-gray-500 mt-1">
-          Gestiona tu visibilidad, horario semanal y bloqueos de días
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('marketplace.availability.title')}</h1>
+        <p className="text-sm sm:text-base text-gray-500 mt-1">
+          {t('marketplace.availability.subtitle')}
         </p>
       </div>
 
       {/* === SECCIÓN 1: Toggle Visibilidad === */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${online ? 'bg-green-100' : 'bg-gray-100'}`}>
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className={`p-2 rounded-lg flex-shrink-0 ${online ? 'bg-green-100' : 'bg-gray-100'}`}>
               <SignalIcon className={`h-5 w-5 ${online ? 'text-green-600' : 'text-gray-400'}`} />
             </div>
-            <div>
-              <p className="font-semibold text-gray-900">Visibilidad en marketplace</p>
-              <span className={`inline-flex items-center gap-1.5 text-sm font-medium ${online ? 'text-green-700' : 'text-gray-500'}`}>
+            <div className="min-w-0">
+              <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">{t('marketplace.availability.marketplaceVisibility')}</p>
+              <span className={`inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium ${online ? 'text-green-700' : 'text-gray-500'}`}>
                 <span className={`w-2 h-2 rounded-full ${online ? 'bg-green-500' : 'bg-gray-400'}`} />
-                {online ? 'Visible para agencias' : 'No visible'}
+                {online ? t('marketplace.availability.visibleForAgencies') : t('marketplace.availability.notVisible')}
               </span>
             </div>
           </div>
@@ -334,21 +334,24 @@ const GuideAvailabilityManager = () => {
       </div>
 
       {/* === SECCIÓN 2: Horario Semanal === */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <ClockIcon className="h-5 w-5 text-gray-400" />
-          <h2 className="text-lg font-semibold text-gray-900">Horario semanal</h2>
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="flex items-center gap-2 mb-3 sm:mb-4">
+          <ClockIcon className="h-5 w-5 text-gray-400 flex-shrink-0" />
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900">{t('marketplace.availability.weeklySchedule')}</h2>
         </div>
 
         {!scheduleLoaded ? (
-          <div className="text-center py-6 text-gray-400">Cargando horario...</div>
+          <div className="text-center py-6 text-gray-400">{t('marketplace.availability.loadingSchedule')}</div>
         ) : (
           <>
-            <div className="space-y-2">
+            <div className="space-y-3 sm:space-y-2">
               {DAY_CONFIGS.map(({ key, i18nKey }) => (
-                <div key={key} className="flex items-center gap-3 py-1.5">
-                  {/* Checkbox */}
-                  <label className="flex items-center gap-2 w-28 cursor-pointer select-none">
+                <div
+                  key={key}
+                  className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 py-1.5 border-b border-gray-50 sm:border-b-0 last:border-b-0 pb-2 sm:pb-1.5"
+                >
+                  {/* Checkbox + nombre del día */}
+                  <label className="flex items-center gap-2 sm:w-28 cursor-pointer select-none flex-shrink-0">
                     <input
                       type="checkbox"
                       checked={schedule[key].enabled}
@@ -360,25 +363,25 @@ const GuideAvailabilityManager = () => {
                     </span>
                   </label>
 
-                  {/* Inputs de hora */}
+                  {/* Inputs de hora - se ajustan en móvil */}
                   {schedule[key].enabled ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto min-w-0">
                       <input
                         type="time"
                         value={schedule[key].start}
                         onChange={(e) => handleScheduleChange(key, 'start', e.target.value)}
-                        className="block w-28 rounded-md border-gray-300 text-sm shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                        className="block flex-1 sm:flex-none sm:w-28 min-w-0 rounded-md border-gray-300 text-sm shadow-sm focus:border-purple-500 focus:ring-purple-500 px-2 py-1.5"
                       />
-                      <span className="text-gray-400 text-sm">a</span>
+                      <span className="text-gray-400 text-sm flex-shrink-0">a</span>
                       <input
                         type="time"
                         value={schedule[key].end}
                         onChange={(e) => handleScheduleChange(key, 'end', e.target.value)}
-                        className="block w-28 rounded-md border-gray-300 text-sm shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                        className="block flex-1 sm:flex-none sm:w-28 min-w-0 rounded-md border-gray-300 text-sm shadow-sm focus:border-purple-500 focus:ring-purple-500 px-2 py-1.5"
                       />
                     </div>
                   ) : (
-                    <span className="text-sm text-gray-400 italic">No laborable</span>
+                    <span className="text-sm text-gray-400 italic sm:ml-0">{t('marketplace.availability.notWorking')}</span>
                   )}
                 </div>
               ))}
@@ -388,9 +391,9 @@ const GuideAvailabilityManager = () => {
               <button
                 onClick={handleSaveSchedule}
                 disabled={savingSchedule}
-                className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+                className="w-full sm:w-auto px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
               >
-                {savingSchedule ? 'Guardando...' : 'Guardar horario'}
+                {savingSchedule ? t('marketplace.availability.saving') : t('marketplace.availability.saveSchedule')}
               </button>
             </div>
           </>
@@ -398,10 +401,10 @@ const GuideAvailabilityManager = () => {
       </div>
 
       {/* === SECCIÓN 3: Calendario de Bloqueos === */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <CalendarDaysIcon className="h-5 w-5 text-gray-400" />
-          <h2 className="text-lg font-semibold text-gray-900">Calendario de bloqueos</h2>
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="flex items-center gap-2 mb-3 sm:mb-4">
+          <CalendarDaysIcon className="h-5 w-5 text-gray-400 flex-shrink-0" />
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900">{t('marketplace.availability.blockedCalendar')}</h2>
         </div>
 
         {/* Navegación de mes */}
@@ -450,27 +453,27 @@ const GuideAvailabilityManager = () => {
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs">
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded bg-green-100 ring-1 ring-green-200" />
-              <span className="text-gray-600">Disponible</span>
+              <span className="text-gray-600">{t('marketplace.availability.available')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded bg-gray-100" />
-              <span className="text-gray-600">No laborable</span>
+              <span className="text-gray-600">{t('marketplace.availability.notWorking')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded bg-red-100 ring-1 ring-red-200" />
-              <span className="text-gray-600">Bloqueado</span>
+              <span className="text-gray-600">{t('marketplace.availability.blocked')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded bg-purple-100 ring-1 ring-purple-200" />
-              <span className="text-gray-600">Servicio marketplace</span>
+              <span className="text-gray-600">{t('marketplace.availability.marketplaceService')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded bg-blue-100 ring-1 ring-blue-200" />
-              <span className="text-gray-600">Tour asignado</span>
+              <span className="text-gray-600">{t('marketplace.availability.assignedTour')}</span>
             </div>
           </div>
           <p className="text-xs text-gray-400 text-center mt-2">
-            Haz clic en un día verde para bloquearlo o en uno rojo para desbloquearlo
+            {t('marketplace.availability.calendarHint')}
           </p>
         </div>
       </div>

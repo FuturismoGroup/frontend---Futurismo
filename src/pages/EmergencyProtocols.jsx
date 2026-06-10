@@ -373,24 +373,24 @@ const EmergencyProtocols = () => {
                 key={protocol.id}
                 className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="p-6">
+                <div className="p-3 sm:p-4 lg:p-6">
                   {/* Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-3">
+                  <div className="flex items-start justify-between mb-3 sm:mb-4">
+                    <div className="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
                       <div
-                        className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-xl sm:text-2xl flex-shrink-0"
                         style={{ backgroundColor: (category.color || '#6B7280') + '20' }}
                       >
                         {getIconDisplay(category.icon)}
                       </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 line-clamp-2">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm sm:text-base font-semibold text-gray-900 line-clamp-2 break-words">
                           {protocol.title}
                         </h3>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <span className="text-sm text-gray-600">{category.name}</span>
+                        <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                          <span className="text-xs sm:text-sm text-gray-600 truncate">{category.name}</span>
                           <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full border ${getPriorityColor(severityLevel)}`}
+                            className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium rounded-full border ${getPriorityColor(severityLevel)}`}
                           >
                             {priorityLabel}
                           </span>
@@ -400,39 +400,40 @@ const EmergencyProtocols = () => {
                   </div>
 
                   {/* Descripcion */}
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 line-clamp-3 break-words">
                     {protocol.description || 'Sin descripcion'}
                   </p>
 
                   {/* Informacion adicional */}
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                    <span>Actualizado: {lastUpdated ? new Date(lastUpdated).toLocaleDateString() : 'N/A'}</span>
-                    <div className="flex items-center space-x-3">
+                  <div className="flex items-center justify-between gap-2 text-[10px] sm:text-xs text-gray-500 mb-3 sm:mb-4 flex-wrap">
+                    <span className="truncate">Actualizado: {lastUpdated ? new Date(lastUpdated).toLocaleDateString() : 'N/A'}</span>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                       <span className="flex items-center">
-                        <CheckCircleIcon className="w-3 h-3 mr-1" />
+                        <CheckCircleIcon className="w-3 h-3 mr-1 flex-shrink-0" />
                         {stepsCount} pasos
                       </span>
                     </div>
                   </div>
 
                   {/* Acciones */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
                     <button
                       onClick={() => setSelectedProtocol(protocol)}
-                      className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2"
+                      className="flex-1 px-2 sm:px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
                     >
-                      <EyeIcon className="w-4 h-4" />
+                      <EyeIcon className="w-4 h-4 flex-shrink-0" />
                       <span>Ver</span>
                     </button>
-                    
+
                     <button
                       onClick={() => handleDownloadProtocol(protocol)}
-                      className="px-3 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                      className="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors flex-shrink-0"
                       title="Descargar PDF"
+                      aria-label="Descargar PDF"
                     >
                       <ArrowDownTrayIcon className="w-4 h-4" />
                     </button>
-                    
+
                     {user?.role === 'admin' && (
                       <>
                         <button
@@ -440,20 +441,22 @@ const EmergencyProtocols = () => {
                             setSelectedProtocol(protocol);
                             setIsEditing(true);
                           }}
-                          className="px-3 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+                          className="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors flex-shrink-0"
                           title="Editar"
+                          aria-label="Editar"
                         >
                           <PencilIcon className="w-4 h-4" />
                         </button>
-                        
+
                         <button
                           onClick={() => {
                             if (confirm('¿Estás seguro de eliminar este protocolo?')) {
                               deleteProtocol(protocol.id);
                             }
                           }}
-                          className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex-shrink-0"
                           title="Eliminar"
+                          aria-label="Eliminar"
                         >
                           <TrashIcon className="w-4 h-4" />
                         </button>

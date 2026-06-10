@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../stores/authStore';
 import useMarketplaceStore from '../../stores/marketplaceStore';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const GuideServicePricing = () => {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const { currentGuide, isLoading, fetchGuideProfile, updateGuideRate } = useMarketplaceStore();
 
@@ -35,16 +37,16 @@ const GuideServicePricing = () => {
 
     const parsed = parseFloat(pricePerPerson);
     if (!pricePerPerson || isNaN(parsed) || parsed <= 0) {
-      toast.error('Ingresa un precio valido mayor a 0');
+      toast.error(t('marketplace.pricing.invalidPrice'));
       return;
     }
 
     setSaving(true);
     try {
       await updateGuideRate(guideId, parsed);
-      toast.success('Tarifa actualizada correctamente');
+      toast.success(t('marketplace.pricing.rateUpdated'));
     } catch (err) {
-      toast.error(err.message || 'Error al guardar la tarifa');
+      toast.error(err.message || t('errors.unexpectedError'));
     } finally {
       setSaving(false);
     }
@@ -58,34 +60,33 @@ const GuideServicePricing = () => {
   const hasNoRate = !currentRate || currentRate <= 0;
 
   return (
-    <div className="max-w-xl mx-auto p-6">
+    <div className="max-w-xl mx-auto p-3 sm:p-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Mi Tarifa</h1>
-        <p className="text-gray-500 mt-1">
-          Configura tu tarifa por persona para el marketplace
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('marketplace.pricing.title')}</h1>
+        <p className="text-sm sm:text-base text-gray-500 mt-1">
+          {t('marketplace.pricing.subtitle')}
         </p>
       </div>
 
       {/* Aviso si no tiene tarifa */}
       {hasNoRate && loaded && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-          <p className="text-sm text-amber-800">
-            No tienes una tarifa configurada. Debes establecer tu precio por persona para
-            aparecer en el marketplace y recibir solicitudes de agencias.
+        <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-amber-50 border border-amber-200 rounded-lg">
+          <p className="text-xs sm:text-sm text-amber-800">
+            {t('marketplace.pricing.noRateConfigured')}
           </p>
         </div>
       )}
 
       {/* Formulario */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
         <form onSubmit={handleSave} className="space-y-5">
           <div>
             <label
               htmlFor="pricePerPerson"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Precio por persona (S/)
+              {t('marketplace.pricing.pricePerPersonLabel')}
             </label>
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -109,7 +110,7 @@ const GuideServicePricing = () => {
             disabled={saving}
             className="w-full px-4 py-2.5 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 disabled:opacity-50 transition"
           >
-            {saving ? 'Guardando...' : 'Guardar tarifa'}
+            {saving ? t('marketplace.pricing.saving') : t('marketplace.pricing.saveRate')}
           </button>
         </form>
       </div>

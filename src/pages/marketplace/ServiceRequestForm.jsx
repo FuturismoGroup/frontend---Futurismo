@@ -297,33 +297,33 @@ const ServiceRequestForm = () => {
   const guideLanguages = guide.languages || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
+      <div className="max-w-3xl mx-auto px-3 sm:px-6 lg:px-8">
 
         {/* Header con info del guia y tarifa */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Solicitar Servicio</h1>
+        <div className="bg-white rounded-xl shadow-sm p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6">
+          <h1 className="text-lg sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Solicitar Servicio</h1>
 
-          <div className="flex items-center gap-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
+          <div className="flex items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-purple-50 rounded-lg border border-purple-100">
             <img
               src={resolveFileUrl(guidePhoto)}
               alt={guideName}
-              className="w-14 h-14 rounded-full object-cover border-2 border-purple-200"
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-purple-200 flex-shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-900 truncate">{guideName}</h3>
-              <div className="flex items-center gap-3 text-sm text-gray-600 mt-0.5">
-                <span className="flex items-center gap-1">
+              <h3 className="font-semibold text-sm sm:text-base text-gray-900 truncate">{guideName}</h3>
+              <div className="flex items-center gap-3 text-xs sm:text-sm text-gray-600 mt-0.5">
+                <span className="flex items-center gap-1 truncate">
                   {guideRating} ({guideReviewCount} resenas)
                 </span>
               </div>
             </div>
             {hasPricing && (
               <div className="text-right shrink-0">
-                <span className="text-2xl font-bold text-purple-700">
+                <span className="text-base sm:text-2xl font-bold text-purple-700 whitespace-nowrap">
                   S/ {pricePerPerson.toFixed(2)}
                 </span>
-                <p className="text-xs text-gray-500">por persona</p>
+                <p className="text-[10px] sm:text-xs text-gray-500">por persona</p>
               </div>
             )}
           </div>
@@ -357,7 +357,7 @@ const ServiceRequestForm = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
             {/* Seccion 1: Cantidad de personas y precio */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="bg-white rounded-xl shadow-sm p-3 sm:p-4 lg:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <UserGroupIcon className="h-5 w-5 text-purple-600" />
                 Cantidad de personas
@@ -428,7 +428,7 @@ const ServiceRequestForm = () => {
             </div>
 
             {/* Seccion 2: Fecha, hora y ubicacion */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="bg-white rounded-xl shadow-sm p-3 sm:p-4 lg:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <CalendarIcon className="h-5 w-5 text-purple-600" />
                 Fecha y lugar
@@ -510,7 +510,7 @@ const ServiceRequestForm = () => {
             </div>
 
             {/* Seccion 3: Idiomas */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="bg-white rounded-xl shadow-sm p-3 sm:p-4 lg:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Idiomas requeridos</h2>
 
               {guideLanguages.length > 0 ? (
@@ -543,7 +543,7 @@ const ServiceRequestForm = () => {
             </div>
 
             {/* Seccion 4: Mensaje y requerimientos */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="bg-white rounded-xl shadow-sm p-3 sm:p-4 lg:p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Información adicional</h2>
 
               <div className="space-y-4">
@@ -582,41 +582,41 @@ const ServiceRequestForm = () => {
             </div>
 
             {/* Resumen final antes de enviar */}
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-5">
+            <div className="bg-purple-50 border border-purple-200 rounded-xl p-3 sm:p-5">
               <div className="flex items-center gap-2 mb-2">
-                <CurrencyDollarIcon className="h-5 w-5 text-purple-600" />
-                <h3 className="font-semibold text-purple-900">Resumen de la oferta</h3>
+                <CurrencyDollarIcon className="h-5 w-5 text-purple-600 flex-shrink-0" />
+                <h3 className="font-semibold text-sm sm:text-base text-purple-900">Resumen de la oferta</h3>
               </div>
-              <div className="text-sm text-purple-800 space-y-1">
-                <div className="flex items-center justify-between">
+              <div className="text-xs sm:text-sm text-purple-800 space-y-1">
+                <div className="flex items-center justify-between gap-2">
                   <span className="text-gray-600">Tarifa referencial:</span>
-                  <span className="text-gray-600">S/ {referencePrice.toFixed(2)}</span>
+                  <span className="text-gray-600 whitespace-nowrap">S/ {referencePrice.toFixed(2)}</span>
                 </div>
-                <div className="flex items-center justify-between pt-1 border-t border-purple-200">
+                <div className="flex items-center justify-between gap-2 pt-1 border-t border-purple-200">
                   <span className="font-semibold text-purple-900">Tu oferta:</span>
-                  <span className="font-bold text-lg text-purple-700">
+                  <span className="font-bold text-base sm:text-lg text-purple-700 whitespace-nowrap">
                     S/ {parseFloat(watchOfferedPrice || 0).toFixed(2)}
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-purple-600 mt-2">
+              <p className="text-[10px] sm:text-xs text-purple-600 mt-2">
                 El guia revisara tu oferta y decidira si la acepta o rechaza.
               </p>
             </div>
 
             {/* Botones de accion */}
-            <div className="flex gap-4 pb-8">
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 pb-4 sm:pb-8">
               <button
                 type="button"
                 onClick={() => navigate(`/marketplace/guide/${guideId}`)}
-                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting || isCheckingDate || (dateAvailability && !dateAvailability.available)}
-                className="flex-1 px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 {isSubmitting ? (
                   <>

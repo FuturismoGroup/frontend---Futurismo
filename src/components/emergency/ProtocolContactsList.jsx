@@ -26,30 +26,31 @@ const ProtocolContactsList = ({ contacts = [] }) => {
         {t('emergency.protocol.emergencyContacts')}
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {contacts.map((contact, index) => (
           <div
             key={index}
-            className="bg-red-50 border border-red-200 rounded-lg p-4"
+            className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4"
           >
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <ContactTypeIcon type={contact?.type} className="w-6 h-6 text-red-600" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-red-100 rounded-lg flex-shrink-0">
+                <ContactTypeIcon type={contact?.type} className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
               </div>
-              <div className="flex-1">
-                <h4 className="font-medium text-red-900">{contact?.name || 'Contacto'}</h4>
-                <p className="text-red-700 font-mono text-lg font-bold">
+              <div className="flex-1 min-w-0">
+                <h4 className="font-medium text-sm sm:text-base text-red-900 truncate">{contact?.name || 'Contacto'}</h4>
+                <p className="text-red-700 font-mono text-sm sm:text-lg font-bold truncate">
                   {contact?.phone || '-'}
                 </p>
-                <p className="text-red-600 text-sm capitalize">
+                <p className="text-red-600 text-xs sm:text-sm capitalize truncate">
                   {contact?.type ? t(`emergency.protocol.contactTypes.${contact.type}`, contact.type) : '-'}
                 </p>
               </div>
               {contact?.phone && (
                 <a
                   href={`tel:${contact.phone}`}
-                  className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex-shrink-0"
                   title={t('emergency.protocol.callNow')}
+                  aria-label={t('emergency.protocol.callNow')}
                 >
                   <PhoneIcon className="w-4 h-4" />
                 </a>

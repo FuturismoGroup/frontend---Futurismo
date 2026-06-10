@@ -124,152 +124,165 @@ const WeekView = ({ onTimeSlotClick, onDateClick, onEventClick, onEventEdit }) =
 
   return (
     <div className="h-full flex flex-col bg-white">
-      {/* Scrollable container for header + body (prevents scrollbar misalignment) */}
-      <div className="flex-1 overflow-y-auto">
-        {/* Week header - sticky inside scroll container */}
-        <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
-          <div className="flex">
-            {/* Space for hours column */}
-            <div className="w-16 flex-shrink-0 border-r border-gray-200" />
+      {/* Scrollable container for header + body. En móvil permitimos
+          scroll horizontal para no aplastar las columnas de los días. */}
+      <div className="flex-1 overflow-y-auto overflow-x-auto">
+        <div className="min-w-[640px] sm:min-w-0">
+          {/* Week header - sticky inside scroll container */}
+          <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
+            <div className="flex">
+              {/* Espacio para columna de horas */}
+              <div className="w-12 sm:w-16 flex-shrink-0 border-r border-gray-200" />
 
-            {/* Días */}
-            {weekDays.map((day) => (
+              {/* Días */}
+              {weekDays.map((day) => (
+                <div
+                  key={day.toString()}
+                  className={`
+                    flex-1 min-w-0 p-2 sm:p-4 text-center border-r border-gray-200 last:border-r-0
+                    ${isToday(day) ? 'bg-blue-50' : 'hover:bg-gray-50'}
+                  `}
+                >
+                  <div className={`text-[10px] sm:text-sm font-medium ${isToday(day) ? 'text-blue-600' : 'text-gray-500'}`}>
+                    {format(day, 'EEE', { locale: i18n.language === 'es' ? es : undefined }).toUpperCase()}
+                  </div>
+                  <div className={`text-lg sm:text-2xl font-semibold mt-0.5 sm:mt-1 ${isToday(day) ? 'text-blue-600' : 'text-gray-900'}`}>
+                    {format(day, 'd')}
+                  </div>
+                  {isToday(day) && (
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full mx-auto mt-1 sm:mt-2" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* All-day events section */}
+          {totalAllDayEvents > 0 && (
+            <div className="sticky top-[64px] sm:top-[88px] z-10 border-b border-gray-200 bg-gray-50">
+              <div className="flex">
+                {/* Label column */}
+                <div className="w-12 sm:w-16 flex-shrink-0 p-1 sm:p-2 text-right border-r border-gray-200">
+                  <span className="text-[10px] sm:text-xs text-gray-500 font-medium">
+                    {t('calendar.allDay', 'Todo el día')}
+                  </span>
+                </div>
+
+                {/* All-day events for each day */}
+                {weekDays.map((day) => {
+                  const dayAllDayEvents = getAllDayEventsForDay(day);
+                  return (
+                    <div
+                      key={`allday-${day.toString()}`}
+                      className={`
+                        flex-1 min-w-0 p-1 border-r border-gray-200 last:border-r-0 min-h-[40px]
+                        ${isToday(day) ? 'bg-blue-50/50' : ''}
+                      `}
+                    >
+                      {dayAllDayEvents.map((event) => (
+                        <div
+                          key={event.id}
+                          onClick={() => handleEventClick(event)}
+                          onDoubleClick={() => handleEventDoubleClick(event)}
+                          className={`
+                            text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 mb-1 rounded cursor-pointer truncate
+                            ${event.color ? '' : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'}
+                            ${selectedEvent?.id === event.id ? 'ring-2 ring-blue-500' : ''}
+                          `}
+                          style={event.color ? { backgroundColor: `${event.color}20`, color: event.color } : {}}
+                          title={event.title}
+                        >
+                          {event.title}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Week content */}
+          <div className="relative">
+            {/* Current time line */}
+            {currentTimePosition !== null && todayColumn >= 0 && (
               <div
-                key={day.toString()}
-                className={`
-                  flex-1 p-4 text-center border-r border-gray-200 last:border-r-0
-                  ${isToday(day) ? 'bg-blue-50' : 'hover:bg-gray-50'}
-                `}
+                className="absolute z-10 flex items-center pointer-events-none current-time-line"
+                style={{
+                  top: `${currentTimePosition}px`,
+                }}
               >
-                <div className={`text-sm font-medium ${isToday(day) ? 'text-blue-600' : 'text-gray-500'}`}>
-                  {format(day, 'EEE', { locale: i18n.language === 'es' ? es : undefined }).toUpperCase()}
+                <div className="w-2 h-2 bg-red-500 rounded-full -ml-1"></div>
+                <div className="flex-1 h-0.5 bg-red-500"></div>
+              </div>
+            )}
+            <style>{`
+              .current-time-line {
+                left: calc(48px + ${todayColumn} * (100% - 48px) / 7);
+                width: calc((100% - 48px) / 7);
+              }
+              @media (min-width: 640px) {
+                .current-time-line {
+                  left: calc(64px + ${todayColumn} * (100% - 64px) / 7);
+                  width: calc((100% - 64px) / 7);
+                }
+              }
+            `}</style>
+
+            {/* Hours grid */}
+            {hours.map((hour) => (
+              <div key={hour} className="flex border-b border-gray-100 hover:bg-gray-50 group">
+                {/* Hour column */}
+                <div className="w-12 sm:w-16 flex-shrink-0 p-1 sm:p-2 text-right border-r border-gray-200">
+                  <span className="text-[10px] sm:text-xs text-gray-500 font-medium">
+                    {String(hour).padStart(2, '0')}:00
+                  </span>
                 </div>
-                <div className={`text-2xl font-semibold mt-1 ${isToday(day) ? 'text-blue-600' : 'text-gray-900'}`}>
-                  {format(day, 'd')}
-                </div>
-                {isToday(day) && (
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mx-auto mt-2" />
-                )}
+
+                {/* Day columns */}
+                {weekDays.map((day) => {
+                  const slotKey = `${format(day, 'yyyy-MM-dd')}-${hour}`;
+                  return (
+                    <WeekSlot
+                      key={day.toString()}
+                      day={day}
+                      hour={hour}
+                      slotKey={slotKey}
+                      hoveredSlot={hoveredSlot}
+                      draggedOver={draggedOver}
+                      isAdmin={isAdmin}
+                      isOccupied={isSlotOccupied(day, hour)}
+                      onSlotClick={handleTimeSlotClick}
+                      onSlotHover={handleSlotHover}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                    >
+                      {renderEventsForDayAndHour(day, hour)}
+                    </WeekSlot>
+                  );
+                })}
               </div>
             ))}
           </div>
         </div>
-
-        {/* All-day events section */}
-        {totalAllDayEvents > 0 && (
-          <div className="sticky top-[88px] z-10 border-b border-gray-200 bg-gray-50">
-            <div className="flex">
-              {/* Label column */}
-              <div className="w-16 flex-shrink-0 p-2 text-right border-r border-gray-200">
-                <span className="text-xs text-gray-500 font-medium">
-                  {t('calendar.allDay', 'Todo el día')}
-                </span>
-              </div>
-
-              {/* All-day events for each day */}
-              {weekDays.map((day) => {
-                const dayAllDayEvents = getAllDayEventsForDay(day);
-                return (
-                  <div
-                    key={`allday-${day.toString()}`}
-                    className={`
-                      flex-1 p-1 border-r border-gray-200 last:border-r-0 min-h-[40px]
-                      ${isToday(day) ? 'bg-blue-50/50' : ''}
-                    `}
-                  >
-                    {dayAllDayEvents.map((event) => (
-                      <div
-                        key={event.id}
-                        onClick={() => handleEventClick(event)}
-                        onDoubleClick={() => handleEventDoubleClick(event)}
-                        className={`
-                          text-xs px-2 py-1 mb-1 rounded cursor-pointer truncate
-                          ${event.color ? '' : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'}
-                          ${selectedEvent?.id === event.id ? 'ring-2 ring-blue-500' : ''}
-                        `}
-                        style={event.color ? { backgroundColor: `${event.color}20`, color: event.color } : {}}
-                        title={event.title}
-                      >
-                        {event.title}
-                      </div>
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Week content */}
-        <div className="relative">
-          {/* Current time line */}
-          {currentTimePosition !== null && todayColumn >= 0 && (
-            <div
-              className="absolute z-10 flex items-center pointer-events-none"
-              style={{
-                top: `${currentTimePosition}px`,
-                left: `calc(64px + ${todayColumn} * (100% - 64px) / 7)`,
-                width: `calc((100% - 64px) / 7)`
-              }}
-            >
-              <div className="w-2 h-2 bg-red-500 rounded-full -ml-1"></div>
-              <div className="flex-1 h-0.5 bg-red-500"></div>
-            </div>
-          )}
-
-          {/* Hours grid */}
-          {hours.map((hour) => (
-            <div key={hour} className="flex border-b border-gray-100 hover:bg-gray-50 group">
-              {/* Hour column */}
-              <div className="w-16 flex-shrink-0 p-2 text-right border-r border-gray-200">
-                <span className="text-xs text-gray-500 font-medium">
-                  {String(hour).padStart(2, '0')}:00
-                </span>
-              </div>
-
-              {/* Day columns */}
-              {weekDays.map((day) => {
-                const slotKey = `${format(day, 'yyyy-MM-dd')}-${hour}`;
-                return (
-                  <WeekSlot
-                    key={day.toString()}
-                    day={day}
-                    hour={hour}
-                    slotKey={slotKey}
-                    hoveredSlot={hoveredSlot}
-                    draggedOver={draggedOver}
-                    isAdmin={isAdmin}
-                    isOccupied={isSlotOccupied(day, hour)}
-                    onSlotClick={handleTimeSlotClick}
-                    onSlotHover={handleSlotHover}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                  >
-                    {renderEventsForDayAndHour(day, hour)}
-                  </WeekSlot>
-                );
-              })}
-            </div>
-          ))}
-        </div>
       </div>
 
-      {/* Footer with information */}
-      <div className="flex-shrink-0 p-4 border-t border-gray-200 bg-gray-50">
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <div className="flex items-center space-x-4">
-            <span>{t('calendar.weekView.weekOf', { date: format(weekStart, 'd MMM', { locale: i18n.language === 'es' ? es : undefined }) })}</span>
-            <span>•</span>
-            <span>
+      {/* Footer con información */}
+      <div className="flex-shrink-0 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between gap-2 text-xs sm:text-sm text-gray-600 flex-wrap">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <span className="truncate">{t('calendar.weekView.weekOf', { date: format(weekStart, 'd MMM', { locale: i18n.language === 'es' ? es : undefined }) })}</span>
+            <span className="hidden sm:inline">•</span>
+            <span className="truncate">
               {t('calendar.weekView.eventCount', { count: totalEvents })}
             </span>
           </div>
-          
-          <div className="flex items-center space-x-4">
+
+          <div className="flex items-center">
             {todayColumn >= 0 && (
-              <div className="flex items-center space-x-2">
-                <ClockIcon className="w-4 h-4 text-blue-500" />
+              <div className="flex items-center space-x-1.5 sm:space-x-2">
+                <ClockIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500" />
                 <span className="text-blue-600 font-medium">
                   {format(currentTime, 'HH:mm')}
                 </span>

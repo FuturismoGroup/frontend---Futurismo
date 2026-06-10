@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   CalendarIcon,
   UserGroupIcon,
@@ -54,6 +55,7 @@ const parseJsonField = (value) => {
 };
 
 const TourAssignments = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -97,7 +99,7 @@ const TourAssignments = () => {
 
         await Promise.allSettled(promises);
       } catch {
-        toast.error('Error al cargar los datos');
+        toast.error(t('assignments.page.loadDataError'));
       }
     };
 
@@ -178,7 +180,7 @@ const TourAssignments = () => {
   const handleOpenAssignModal = async (reservation) => {
     // Solo se pueden asignar recursos a reservas confirmadas
     if (reservation.status?.toLowerCase() === 'pending') {
-      toast.error('Debe confirmar la reserva antes de asignar recursos');
+      toast.error(t('assignments.page.mustConfirmFirst'));
       return;
     }
     setSelectedReservation(reservation);
@@ -216,7 +218,7 @@ const TourAssignments = () => {
         setAvailableVehicles(vehicles || []);
       }
     } catch {
-      toast.error('Error al cargar recursos disponibles');
+      toast.error(t('assignments.page.loadResourcesError', { type: '' }));
       setAvailableGuides([]);
     } finally {
       setCheckingAvailability(false);
@@ -272,7 +274,7 @@ const TourAssignments = () => {
     const needsVehicle = selectedVehicle && selectedVehicle !== existingAssignment.vehicleId;
 
     if (!needsGuide && !needsDriver && !needsVehicle) {
-      toast.error('No hay cambios para asignar');
+      toast.error(t('assignments.page.noChangesToAssign'));
       return;
     }
 
@@ -286,7 +288,7 @@ const TourAssignments = () => {
           reservationId: selectedReservation.id,
           validateCompetences: false
         });
-        toast.success('Guia asignado exitosamente');
+        toast.success(t('assignments.page.guideAssignedSuccess'));
       }
 
       if (needsDriver) {
@@ -326,11 +328,11 @@ const TourAssignments = () => {
         const tourId = reservation?.tour_id || reservation?.tourId || reservation?.tour?.id;
         if (tourId) {
           await toursService.removeAssignment(tourId, type);
-          toast.success('Asignacion removida exitosamente');
+          toast.success(t('assignments.page.assignmentRemoved'));
           await fetchReservations({});
         }
       } catch {
-        toast.error('Error al remover la asignación');
+        toast.error(t('assignments.page.removeAssignmentError'));
       }
     }
   };
@@ -348,7 +350,7 @@ const TourAssignments = () => {
       await exportService.exportAssignments(format, exportStatus);
       toast.success(`Reporte exportado exitosamente como ${format.toUpperCase()}`);
     } catch {
-      toast.error('Error al exportar el reporte');
+      toast.error(t('assignments.page.exportError'));
     } finally {
       setIsExporting(false);
     }
@@ -393,17 +395,17 @@ const TourAssignments = () => {
         <div className="flex items-center mb-4">
           <UserGroupIcon className="h-8 w-8 text-blue-600 mr-3" />
           <h1 className="text-3xl font-bold text-gray-900">
-            Asignacion de Tours
+            {t('assignments.page.title')}
           </h1>
         </div>
         <p className="text-gray-600">
-          Asigna guías, choferes y vehículos a las reservas pendientes
+          {t('assignments.page.subtitle')}
         </p>
       </div>
 
       {/* Quick Access Management */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Gestión de Recursos</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('assignments.page.resourceManagement')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/drivers')}
@@ -412,8 +414,8 @@ const TourAssignments = () => {
             <div className="flex items-center">
               <TruckIcon className="w-6 h-6 text-blue-600 mr-3" />
               <div>
-                <h4 className="font-semibold text-gray-900">Choferes</h4>
-                <p className="text-sm text-gray-600">Gestionar conductores</p>
+                <h4 className="font-semibold text-gray-900">{t('assignments.page.driversCard')}</h4>
+                <p className="text-sm text-gray-600">{t('assignments.page.driversCardDesc')}</p>
               </div>
               <ChevronRightIcon className="w-4 h-4 text-gray-400 ml-auto" />
             </div>
@@ -426,8 +428,8 @@ const TourAssignments = () => {
             <div className="flex items-center">
               <BuildingOffice2Icon className="w-6 h-6 text-green-600 mr-3" />
               <div>
-                <h4 className="font-semibold text-gray-900">Agencias</h4>
-                <p className="text-sm text-gray-600">Gestionar agencias</p>
+                <h4 className="font-semibold text-gray-900">{t('assignments.page.agenciesCard')}</h4>
+                <p className="text-sm text-gray-600">{t('assignments.page.agenciesCardDesc')}</p>
               </div>
               <ChevronRightIcon className="w-4 h-4 text-gray-400 ml-auto" />
             </div>
@@ -440,8 +442,8 @@ const TourAssignments = () => {
             <div className="flex items-center">
               <TruckIcon className="w-6 h-6 text-purple-600 mr-3" />
               <div>
-                <h4 className="font-semibold text-gray-900">Vehículos</h4>
-                <p className="text-sm text-gray-600">Gestionar flota</p>
+                <h4 className="font-semibold text-gray-900">{t('assignments.page.vehiclesCard')}</h4>
+                <p className="text-sm text-gray-600">{t('assignments.page.vehiclesCardDesc')}</p>
               </div>
               <ChevronRightIcon className="w-4 h-4 text-gray-400 ml-auto" />
             </div>
@@ -455,7 +457,7 @@ const TourAssignments = () => {
           <div className="flex items-center">
             <ClockIcon className="h-8 w-8 text-blue-600" />
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Total Reservas</p>
+              <p className="text-sm font-medium text-gray-500">{t('assignments.page.stats.totalReservations')}</p>
               <p className="text-2xl font-bold text-gray-900">{counts.total}</p>
             </div>
           </div>
@@ -465,7 +467,7 @@ const TourAssignments = () => {
           <div className="flex items-center">
             <ExclamationTriangleIcon className="h-8 w-8 text-yellow-600" />
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Sin Asignar</p>
+              <p className="text-sm font-medium text-gray-500">{t('assignments.page.stats.unassigned')}</p>
               <p className="text-2xl font-bold text-gray-900">{counts.pending}</p>
             </div>
           </div>
@@ -475,7 +477,7 @@ const TourAssignments = () => {
           <div className="flex items-center">
             <CheckCircleIcon className="h-8 w-8 text-green-600" />
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Asignados</p>
+              <p className="text-sm font-medium text-gray-500">{t('assignments.page.stats.assigned')}</p>
               <p className="text-2xl font-bold text-gray-900">{counts.assigned}</p>
             </div>
           </div>
@@ -485,7 +487,7 @@ const TourAssignments = () => {
           <div className="flex items-center">
             <CalendarIcon className="h-8 w-8 text-blue-600" />
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Hoy</p>
+              <p className="text-sm font-medium text-gray-500">{t('assignments.page.stats.today')}</p>
               <p className="text-2xl font-bold text-gray-900">{counts.today}</p>
             </div>
           </div>
@@ -499,10 +501,10 @@ const TourAssignments = () => {
             <FunnelIcon className="h-5 w-5 text-gray-400" />
             <div className="flex items-center space-x-2">
               {[
-                { key: 'all', label: 'Todos' },
-                { key: 'pending', label: 'Sin Asignar' },
-                { key: 'assigned', label: 'Asignados' },
-                { key: 'today', label: 'Hoy' }
+                { key: 'all', label: t('assignments.page.filters.all') },
+                { key: 'pending', label: t('assignments.page.filters.unassigned') },
+                { key: 'assigned', label: t('assignments.page.filters.assigned') },
+                { key: 'today', label: t('assignments.page.filters.today') }
               ].map(({ key, label }) => (
                 <button
                   key={key}
@@ -524,7 +526,7 @@ const TourAssignments = () => {
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Buscar por tour o código..."
+                placeholder={t('assignments.page.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
@@ -540,7 +542,7 @@ const TourAssignments = () => {
                     ? 'bg-blue-600 text-white'
                     : 'bg-white text-gray-500 hover:bg-gray-100'
                 }`}
-                title="Vista de lista"
+                title={t('assignments.page.listView')}
               >
                 <ListBulletIcon className="h-5 w-5" />
               </button>
@@ -551,7 +553,7 @@ const TourAssignments = () => {
                     ? 'bg-blue-600 text-white'
                     : 'bg-white text-gray-500 hover:bg-gray-100'
                 }`}
-                title="Vista de tarjetas"
+                title={t('assignments.page.cardsView')}
               >
                 <Squares2X2Icon className="h-5 w-5" />
               </button>
@@ -565,7 +567,7 @@ const TourAssignments = () => {
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
-                {isExporting ? 'Exportando...' : 'Exportar'}
+                {isExporting ? t('assignments.page.exporting') : t('history.exportButton')}
               </button>
 
               {showExportMenu && (
@@ -575,13 +577,13 @@ const TourAssignments = () => {
                       onClick={() => handleExport('excel')}
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                     >
-                      Exportar a Excel
+                      {t('assignments.page.exportExcel')}
                     </button>
                     <button
                       onClick={() => handleExport('pdf')}
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                     >
-                      Exportar a PDF
+                      {t('assignments.page.exportPdf')}
                     </button>
                   </div>
                 </div>
@@ -598,14 +600,14 @@ const TourAssignments = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tour</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha / Hora</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pax</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Guia</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chofer</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehículo</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('assignments.page.table.tour')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('assignments.page.table.dateTime')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('assignments.page.table.pax')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('assignments.page.table.guide')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('assignments.page.table.driver')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('assignments.page.table.vehicle')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('assignments.page.table.status')}</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('assignments.page.table.actions')}</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">

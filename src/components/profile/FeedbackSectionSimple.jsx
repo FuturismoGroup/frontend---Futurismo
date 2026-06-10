@@ -111,20 +111,21 @@ const FeedbackSectionSimple = ({ userRole = 'agency' }) => {
   const texts = getTexts();
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3 flex-1">
-          <div className="p-2 bg-pink-100 rounded-lg">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 lg:p-6">
+      <div className="flex items-center justify-between gap-2 mb-4 sm:mb-6">
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <div className="p-2 bg-pink-100 rounded-lg flex-shrink-0">
             <ChatBubbleLeftRightIcon className="w-5 h-5 text-pink-600" />
           </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">{texts.title}</h3>
-            <p className="text-sm text-gray-500">{texts.subtitle}</p>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">{texts.title}</h3>
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{texts.subtitle}</p>
           </div>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
             title={isCollapsed ? t('common.expand') : t('common.collapse')}
+            aria-label={isCollapsed ? t('common.expand') : t('common.collapse')}
           >
             {isCollapsed ? (
               <ChevronDownIcon className="w-5 h-5" />
@@ -139,7 +140,7 @@ const FeedbackSectionSimple = ({ userRole = 'agency' }) => {
         <div>
           {/* Formulario simple - Solo para agencias */}
           {canAddFeedback && (
-            <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-6 mb-6">
+            <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6">
               <h4 className="text-md font-semibold text-gray-900 mb-4">
                 💡 {texts.formTitle}
               </h4>

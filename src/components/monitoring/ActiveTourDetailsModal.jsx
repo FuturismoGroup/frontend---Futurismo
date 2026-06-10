@@ -712,7 +712,7 @@ const ActiveTourDetailsModal = ({ isOpen, onClose, tour, onViewOnMap }) => {
                       <UserGroupIcon className="w-4 h-4 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 font-medium">Guía</p>
+                      <p className="text-xs text-gray-500 font-medium">{t('monitoring.comp.guideLabel')}</p>
                       <p className="text-sm text-gray-900 font-semibold">{selectedPhoto.guideName}</p>
                     </div>
                   </div>
@@ -723,7 +723,7 @@ const ActiveTourDetailsModal = ({ isOpen, onClose, tour, onViewOnMap }) => {
                       <ClockIcon className="w-4 h-4 text-orange-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 font-medium">Hora</p>
+                      <p className="text-xs text-gray-500 font-medium">{t('monitoring.comp.timeLabel')}</p>
                       <p className="text-sm text-gray-900 font-semibold">
                         {new Date(selectedPhoto.timestamp).toLocaleTimeString('es-ES', {
                           hour: '2-digit',
@@ -741,7 +741,7 @@ const ActiveTourDetailsModal = ({ isOpen, onClose, tour, onViewOnMap }) => {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 font-medium">Fecha</p>
+                      <p className="text-xs text-gray-500 font-medium">{t('monitoring.comp.dateLabel')}</p>
                       <p className="text-sm text-gray-900 font-semibold">
                         {new Date(selectedPhoto.timestamp).toLocaleDateString('es-ES', {
                           day: '2-digit',

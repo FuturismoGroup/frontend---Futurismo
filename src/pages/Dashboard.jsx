@@ -40,7 +40,7 @@ const Dashboard = () => {
       {/* Header */}
       <div className="page-header">
         <h1 className="page-title">
-          {getGreeting()}, {user?.name || 'Usuario'} ✨
+          {getGreeting()}, {user?.name || t('dashboard.user')} ✨
         </h1>
         <p className="page-subtitle">
           {t('dashboard.todaySummary')}
@@ -56,9 +56,9 @@ const Dashboard = () => {
         ) : error ? (
           <div className="col-span-full">
             <div className="alert alert-error text-center">
-              <p className="mb-4">Error: {error}</p>
+              <p className="mb-4">{t('dashboard.errorPrefix')}: {error}</p>
               <button onClick={refresh} className="btn btn-error">
-                Reintentar
+                {t('dashboard.retry')}
               </button>
             </div>
           </div>

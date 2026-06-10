@@ -135,7 +135,7 @@ const HistoryTable = ({
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                 <button
                   className="flex items-center space-x-1 hover:text-gray-700"
                   onClick={() => onSort('date')}
@@ -144,7 +144,7 @@ const HistoryTable = ({
                   {getSortIcon('date')}
                 </button>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                 <button
                   className="flex items-center space-x-1 hover:text-gray-700"
                   onClick={() => onSort('serviceName')}
@@ -153,7 +153,7 @@ const HistoryTable = ({
                   {getSortIcon('serviceName')}
                 </button>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                 <button
                   className="flex items-center space-x-1 hover:text-gray-700"
                   onClick={() => onSort('clientName')}
@@ -162,13 +162,13 @@ const HistoryTable = ({
                   {getSortIcon('clientName')}
                 </button>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                 {t('history.table.headers.type')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                 {t('history.table.headers.status')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                 <button
                   className="flex items-center space-x-1 hover:text-gray-700"
                   onClick={() => onSort('guide')}
@@ -178,7 +178,7 @@ const HistoryTable = ({
                 </button>
               </th>
               {!isEmployedGuide && (
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                   <button
                     className="flex items-center space-x-1 hover:text-gray-700"
                     onClick={() => onSort('amount')}
@@ -188,10 +188,10 @@ const HistoryTable = ({
                   </button>
                 </th>
               )}
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                 {t('history.table.headers.rating')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                 {t('history.table.headers.actions')}
               </th>
             </tr>
@@ -199,19 +199,19 @@ const HistoryTable = ({
           <tbody className="bg-white divide-y divide-gray-200">
             {services.length === 0 ? (
               <tr>
-                <td colSpan={isEmployedGuide ? "8" : "9"} className="px-6 py-12 text-center text-gray-500">
-                  <DocumentTextIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  <p className="text-lg font-medium">{t('history.table.noResults')}</p>
-                  <p className="text-sm">{t('history.table.noResultsDescription')}</p>
+                <td colSpan={isEmployedGuide ? "8" : "9"} className="px-3 sm:px-6 py-8 sm:py-12 text-center text-gray-500">
+                  <DocumentTextIcon className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-400" />
+                  <p className="text-sm sm:text-lg font-medium">{t('history.table.noResults')}</p>
+                  <p className="text-xs sm:text-sm">{t('history.table.noResultsDescription')}</p>
                 </td>
               </tr>
             ) : (
               services.map((service) => (
                 <tr key={service.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {formatDate(service.date)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">
                         {service.serviceName}
@@ -221,16 +221,16 @@ const HistoryTable = ({
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {service.clientName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     {getServiceTypeBadge(service.serviceType)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(service.status)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm text-gray-900">{service.guide}</div>
                       {service.driver && (
@@ -241,11 +241,11 @@ const HistoryTable = ({
                     </div>
                   </td>
                   {!isEmployedGuide && (
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {formatCurrency(service.amount)}
                     </td>
                   )}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     {service.rating ? (
                       <StarRating rating={service.rating} size="sm" showValue />
                     ) : (service.status === 'completed' || service.status === 'confirmed') ? (
@@ -254,7 +254,7 @@ const HistoryTable = ({
                       <span className="text-xs text-gray-400">-</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => onViewDetails(service)}

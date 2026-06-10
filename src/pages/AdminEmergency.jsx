@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ShieldCheckIcon, ArchiveBoxIcon, CogIcon, UserGroupIcon, ExclamationTriangleIcon, DocumentTextIcon, ArrowDownTrayIcon, PlusIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon, FunnelIcon, CheckCircleIcon, PhoneIcon, ChartBarIcon, EyeIcon, SwatchIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 import useEmergencyStore from '../stores/emergencyStore';
 import ProtocolEditor from '../components/emergency/ProtocolEditor';
 import MaterialsManager from '../components/emergency/MaterialsManager';
@@ -9,6 +10,7 @@ import emergencyPDFService from '../services/emergencyPDFService';
 import { getIconDisplay } from '../utils/emergencyIcons';
 
 const AdminEmergency = () => {
+  const { t } = useTranslation();
   const protocols = useEmergencyStore((state) => state.protocols);
   const materials = useEmergencyStore((state) => state.materials);
   const categories = useEmergencyStore((state) => state.categories);
@@ -64,13 +66,13 @@ const AdminEmergency = () => {
   const handleDownloadAllProtocols = async () => {
     try {
       if (!protocols || protocols.length === 0) {
-        alert('No hay protocolos disponibles para generar el PDF. Por favor, crea algunos protocolos primero.');
+        alert(t('emergency.adminPage.noProtocolsAlert'));
         return;
       }
       await emergencyPDFService.downloadAllProtocolsPDF(protocols);
     } catch (error) {
       console.error('Error descargando protocolos:', error);
-      alert(`Error al generar el PDF de protocolos: ${error.message}`);
+      alert(`${t('emergency.adminPage.pdfGenerateError')} ${error.message}`);
     }
   };
 
@@ -79,7 +81,7 @@ const AdminEmergency = () => {
       await emergencyPDFService.downloadGuideEmergencyKit();
     } catch (error) {
       console.error('Error descargando kit:', error);
-      alert('Error al generar el PDF del kit');
+      alert(t('emergency.adminPage.kitPdfError'));
     }
   };
 
@@ -136,10 +138,10 @@ const AdminEmergency = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <ShieldCheckIcon className="w-8 h-8 mr-3 text-red-500" />
-            Administración de Emergencias
+            {t('emergency.adminPage.title')}
           </h1>
           <p className="text-gray-600 mt-1">
-            Panel de control para gestión de protocolos y materiales de emergencia
+            {t('emergency.adminPage.subtitle')}
           </p>
         </div>
 
@@ -149,7 +151,7 @@ const AdminEmergency = () => {
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
           >
             <DocumentTextIcon className="w-4 h-4" />
-            <span>Manual PDF</span>
+            <span>{t('emergency.adminPage.manualPdf')}</span>
           </button>
         </div>
       </div>
@@ -166,9 +168,9 @@ const AdminEmergency = () => {
             }`}
           >
             <ChartBarIcon className="w-4 h-4 inline mr-2" />
-            Resumen General
+            {t('emergency.adminPage.tabs.overview')}
           </button>
-          
+
           <button
             onClick={() => setActiveTab('protocols')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
@@ -178,9 +180,9 @@ const AdminEmergency = () => {
             }`}
           >
             <ShieldCheckIcon className="w-4 h-4 inline mr-2" />
-            Protocolos ({protocols?.length || 0})
+            {t('emergency.adminPage.tabs.protocols')} ({protocols?.length || 0})
           </button>
-          
+
           <button
             onClick={() => setActiveTab('materials')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
@@ -190,7 +192,7 @@ const AdminEmergency = () => {
             }`}
           >
             <ArchiveBoxIcon className="w-4 h-4 inline mr-2" />
-            Materiales ({materials?.length || 0})
+            {t('emergency.adminPage.tabs.materials')} ({materials?.length || 0})
           </button>
 
           <button
@@ -202,7 +204,7 @@ const AdminEmergency = () => {
             }`}
           >
             <SwatchIcon className="w-4 h-4 inline mr-2" />
-            Categorías ({categories?.length || 0})
+            {t('emergency.adminPage.tabs.categories')} ({categories?.length || 0})
           </button>
 
           <button
@@ -214,7 +216,7 @@ const AdminEmergency = () => {
             }`}
           >
             <PhoneIcon className="w-4 h-4 inline mr-2" />
-            Tipos de Contacto
+            {t('emergency.adminPage.tabs.contactTypes')}
           </button>
 
         </nav>
@@ -231,7 +233,7 @@ const AdminEmergency = () => {
                   <ShieldCheckIcon className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Protocolos</p>
+                  <p className="text-sm font-medium text-gray-600">{t('emergency.adminPage.stats.totalProtocols')}</p>
                   <p className="text-2xl font-semibold text-gray-900">{stats.totalProtocols}</p>
                 </div>
               </div>
@@ -243,7 +245,7 @@ const AdminEmergency = () => {
                   <ExclamationTriangleIcon className="w-6 h-6 text-red-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Alta Prioridad</p>
+                  <p className="text-sm font-medium text-gray-600">{t('emergency.adminPage.stats.highPriority')}</p>
                   <p className="text-2xl font-semibold text-gray-900">{stats.highPriorityProtocols}</p>
                 </div>
               </div>
@@ -255,7 +257,7 @@ const AdminEmergency = () => {
                   <ArchiveBoxIcon className="w-6 h-6 text-purple-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Materiales</p>
+                  <p className="text-sm font-medium text-gray-600">{t('emergency.adminPage.stats.totalMaterials')}</p>
                   <p className="text-2xl font-semibold text-gray-900">{stats.totalMaterials}</p>
                 </div>
               </div>
@@ -267,7 +269,7 @@ const AdminEmergency = () => {
                   <CheckCircleIcon className="w-6 h-6 text-green-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Obligatorios</p>
+                  <p className="text-sm font-medium text-gray-600">{t('emergency.adminPage.stats.mandatory')}</p>
                   <p className="text-2xl font-semibold text-gray-900">{stats.mandatoryMaterials}</p>
                 </div>
               </div>
@@ -279,7 +281,7 @@ const AdminEmergency = () => {
                   <CogIcon className="w-6 h-6 text-yellow-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Categorías</p>
+                  <p className="text-sm font-medium text-gray-600">{t('emergency.adminPage.stats.categories')}</p>
                   <p className="text-2xl font-semibold text-gray-900">{stats.categoriesCount}</p>
                 </div>
               </div>
@@ -288,7 +290,7 @@ const AdminEmergency = () => {
 
           {/* Acciones rápidas */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Acciones Rápidas</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">{t('emergency.adminPage.quickActions.title')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <button
                 onClick={() => setIsEditingProtocol(true)}
@@ -297,8 +299,8 @@ const AdminEmergency = () => {
                 <div className="flex items-center space-x-3">
                   <PlusIcon className="w-6 h-6 text-green-600" />
                   <div>
-                    <h4 className="font-medium text-green-900">Nuevo Protocolo</h4>
-                    <p className="text-sm text-green-700">Crear protocolo de emergencia</p>
+                    <h4 className="font-medium text-green-900">{t('emergency.adminPage.quickActions.newProtocol')}</h4>
+                    <p className="text-sm text-green-700">{t('emergency.adminPage.quickActions.newProtocolDesc')}</p>
                   </div>
                 </div>
               </button>
@@ -310,8 +312,8 @@ const AdminEmergency = () => {
                 <div className="flex items-center space-x-3">
                   <ArchiveBoxIcon className="w-6 h-6 text-purple-600" />
                   <div>
-                    <h4 className="font-medium text-purple-900">Gestionar Materiales</h4>
-                    <p className="text-sm text-purple-700">Administrar equipos necesarios</p>
+                    <h4 className="font-medium text-purple-900">{t('emergency.adminPage.quickActions.manageMaterials')}</h4>
+                    <p className="text-sm text-purple-700">{t('emergency.adminPage.quickActions.manageMaterialsDesc')}</p>
                   </div>
                 </div>
               </button>
@@ -323,8 +325,8 @@ const AdminEmergency = () => {
                 <div className="flex items-center space-x-3">
                   <ArrowDownTrayIcon className="w-6 h-6 text-blue-600" />
                   <div>
-                    <h4 className="font-medium text-blue-900">Generar Manual</h4>
-                    <p className="text-sm text-blue-700">Descargar manual completo</p>
+                    <h4 className="font-medium text-blue-900">{t('emergency.adminPage.quickActions.generateManual')}</h4>
+                    <p className="text-sm text-blue-700">{t('emergency.adminPage.quickActions.generateManualDesc')}</p>
                   </div>
                 </div>
               </button>
@@ -335,12 +337,12 @@ const AdminEmergency = () => {
           <div className="bg-white rounded-lg border border-gray-200">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">Protocolos Recientes</h3>
+                <h3 className="text-lg font-medium text-gray-900">{t('emergency.adminPage.recentProtocols')}</h3>
                 <button
                   onClick={() => setActiveTab('protocols')}
                   className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                 >
-                  Ver todos →
+                  {t('emergency.adminPage.viewAll')}
                 </button>
               </div>
             </div>
@@ -392,7 +394,7 @@ const AdminEmergency = () => {
                   <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
-                    placeholder="Buscar protocolos..."
+                    placeholder={t('emergency.adminPage.searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -406,7 +408,7 @@ const AdminEmergency = () => {
                     onChange={(e) => setFilterCategory(e.target.value)}
                     className="border border-gray-300 rounded-lg px-3 py-2"
                   >
-                    <option value="">Todas las categorías</option>
+                    <option value="">{t('emergency.adminPage.allCategories')}</option>
                     {(categories || []).map(category => (
                       <option key={category.id} value={category.id}>
                         {getIconDisplay(category.icon)} {category.name}
@@ -421,7 +423,7 @@ const AdminEmergency = () => {
                 className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
               >
                 <PlusIcon className="w-4 h-4" />
-                <span>Nuevo Protocolo</span>
+                <span>{t('emergency.adminPage.newProtocolBtn')}</span>
               </button>
             </div>
           </div>
@@ -433,25 +435,25 @@ const AdminEmergency = () => {
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Protocolo
+                      {t('emergency.adminPage.table.protocol')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Categoría
+                      {t('emergency.adminPage.table.category')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Prioridad
+                      {t('emergency.adminPage.table.priority')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Pasos
+                      {t('emergency.adminPage.table.steps')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Contactos
+                      {t('emergency.adminPage.table.contacts')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actualizado
+                      {t('emergency.adminPage.table.updated')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Acciones
+                      {t('emergency.adminPage.table.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -483,10 +485,10 @@ const AdminEmergency = () => {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {protocol.steps?.length || protocol.stepsCount || 0} pasos
+                          {t('emergency.adminPage.table.stepsCount', { count: protocol.steps?.length || protocol.stepsCount || 0 })}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {protocol.contacts?.length || 0} contactos
+                          {t('emergency.adminPage.table.contactsCount', { count: protocol.contacts?.length || 0 })}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           {protocol.updatedAt ? new Date(protocol.updatedAt).toLocaleDateString() : '-'}
@@ -499,19 +501,19 @@ const AdminEmergency = () => {
                                 setIsEditingProtocol(true);
                               }}
                               className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                              title="Editar protocolo"
+                              title={t('emergency.adminPage.editProtocolTitle')}
                             >
                               <PencilIcon className="w-4 h-4" />
                             </button>
-                            
+
                             <button
                               onClick={() => {
-                                if (confirm('¿Estás seguro de eliminar este protocolo?')) {
+                                if (confirm(t('emergency.adminPage.deleteProtocolConfirm'))) {
                                   deleteProtocol(protocol.id);
                                 }
                               }}
                               className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                              title="Eliminar protocolo"
+                              title={t('emergency.adminPage.deleteProtocolTitle')}
                             >
                               <TrashIcon className="w-4 h-4" />
                             </button>

@@ -85,25 +85,25 @@ const useDashboard = () => {
         return {
           card1: {
             value: stats.toursThisWeek ?? 0,
-            label: 'Tours esta semana',
+            label: i18next.t('dashboard.indicators.toursThisWeek'),
             icon: 'calendar',
             trend: stats.toursThisWeekTrend || null
           },
           card2: {
             value: getFormattedNextTour(),
-            label: 'Siguiente tour',
+            label: i18next.t('dashboard.indicators.nextTour'),
             icon: 'clock',
             trend: null
           },
           card3: {
             value: stats.personalRating ? stats.personalRating.toFixed(1) : '0.0',
-            label: 'Rating personal',
+            label: i18next.t('dashboard.indicators.personalRating'),
             icon: 'star',
             trend: stats.ratingTrend || null
           },
           card4: {
             value: stats.monthlyIncome ?? 0,
-            label: 'Ingresos mensuales',
+            label: i18next.t('dashboard.indicators.monthlyIncome'),
             icon: 'dollar',
             format: 'currency',
             trend: stats.monthlyIncomeTrend || null
@@ -114,19 +114,19 @@ const useDashboard = () => {
         return {
           card1: {
             value: stats.activeServices ?? 0,
-            label: 'Servicios activos',
+            label: i18next.t('dashboard.indicators.activeServices'),
             icon: 'service',
             trend: stats.activeServicesTrend || null
           },
           card2: {
             value: stats.completedToday ?? 0,
-            label: 'Completados hoy',
+            label: i18next.t('dashboard.indicators.completedToday'),
             icon: 'check',
             trend: stats.completedTodayTrend || null
           },
           card3: {
             value: stats.monthlyReservations ?? 0,
-            label: 'Reservas del mes',
+            label: i18next.t('dashboard.indicators.monthlyReservations'),
             icon: 'calendar',
             trend: null
           }
@@ -137,26 +137,26 @@ const useDashboard = () => {
         return {
           card1: {
             value: stats.activeServices ?? 0,
-            label: 'Servicios activos',
+            label: i18next.t('dashboard.indicators.activeServices'),
             icon: 'service',
             trend: stats.activeServicesTrend || null
           },
           card2: {
             value: stats.totalAgencies ?? 0,
-            label: 'Agencias totales',
+            label: i18next.t('dashboard.indicators.totalAgencies'),
             icon: 'building',
             trend: stats.totalAgenciesTrend || null
           },
           card3: {
             value: stats.totalRevenue ?? 0,
-            label: 'Ingresos totales',
+            label: i18next.t('dashboard.indicators.totalRevenue'),
             icon: 'dollar',
             format: 'currency',
             trend: stats.totalRevenueTrend || null
           },
           card4: {
             value: stats.totalGuides ?? 0,
-            label: 'Guías registrados',
+            label: i18next.t('dashboard.indicators.registeredGuides'),
             icon: 'user',
             trend: null
           }

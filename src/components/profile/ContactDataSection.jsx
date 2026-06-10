@@ -88,20 +88,21 @@ const ContactDataSection = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3 flex-1">
-          <div className="p-2 bg-green-100 rounded-lg">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 lg:p-6">
+      <div className="flex items-start justify-between gap-2 mb-4 sm:mb-6 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
             <PhoneIcon className="w-5 h-5 text-green-600" />
           </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">{t('profile.comp.contactData')}</h3>
-            <p className="text-sm text-gray-500">{t('profile.comp.contactDataSubtitle')}</p>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">{t('profile.comp.contactData')}</h3>
+            <p className="text-xs sm:text-sm text-gray-500 truncate">{t('profile.comp.contactDataSubtitle')}</p>
           </div>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
             title={isCollapsed ? t('common.expand') : t('common.collapse')}
+            aria-label={isCollapsed ? t('common.expand') : t('common.collapse')}
           >
             {isCollapsed ? (
               <ChevronDownIcon className="w-5 h-5" />
@@ -110,22 +111,22 @@ const ContactDataSection = () => {
             )}
           </button>
         </div>
-        
+
         {!isCollapsed && (
           !isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-xs sm:text-sm flex-shrink-0"
             >
               <PencilIcon className="w-4 h-4" />
               {t('common.edit')}
             </button>
           ) : (
-            <div className="flex gap-2">
+            <div className="flex gap-1 sm:gap-2 flex-shrink-0">
               <button
                 onClick={handleSave}
                 disabled={isLocalLoading || storeLoading}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm"
               >
                 {isLocalLoading || storeLoading ? (
                   <>
@@ -133,7 +134,7 @@ const ContactDataSection = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    {t('common.saving')}
+                    <span className="hidden sm:inline">{t('common.saving')}</span>
                   </>
                 ) : (
                   <>
@@ -145,7 +146,7 @@ const ContactDataSection = () => {
               <button
                 onClick={handleCancel}
                 disabled={isLocalLoading || storeLoading}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm"
               >
                 <XMarkIcon className="w-4 h-4" />
                 {t('common.cancel')}

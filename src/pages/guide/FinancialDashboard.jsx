@@ -585,20 +585,20 @@ const FinancialDashboard = () => {
     const colors = colorStyles[colorType] || colorStyles.blue;
 
     return (
-      <div className={`bg-white rounded-lg shadow-md p-6 border-l-4 ${colors.border}`}>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-600">{title}</p>
-            <p className="text-2xl font-bold text-gray-900">{value}</p>
-            {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
+      <div className={`bg-white rounded-lg shadow-md p-3 sm:p-4 lg:p-6 border-l-4 ${colors.border}`}>
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">{title}</p>
+            <p className="text-base sm:text-xl lg:text-2xl font-bold text-gray-900 break-words">{value}</p>
+            {subtitle && <p className="text-[10px] sm:text-sm text-gray-500 truncate">{subtitle}</p>}
             {trend !== null && trend !== undefined && (
               <div className={`flex items-center mt-1 ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {trend > 0 ? <ArrowTrendingUpIcon className="w-4 h-4 mr-1" /> : <ArrowTrendingDownIcon className="w-4 h-4 mr-1" />}
-                <span className="text-xs font-medium">{Math.abs(trend)}%</span>
+                {trend > 0 ? <ArrowTrendingUpIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> : <ArrowTrendingDownIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />}
+                <span className="text-[10px] sm:text-xs font-medium">{Math.abs(trend)}%</span>
               </div>
             )}
           </div>
-          <Icon className={`w-8 h-8 ${colors.icon}`} />
+          <Icon className={`w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 ${colors.icon} flex-shrink-0`} />
         </div>
       </div>
     );
@@ -617,25 +617,27 @@ const FinancialDashboard = () => {
     if (!pagination || pagination.totalPages <= 1) return null;
 
     return (
-      <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
-        <div className="text-sm text-gray-500">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 px-3 sm:px-4 py-3 border-t border-gray-200">
+        <div className="text-xs sm:text-sm text-gray-500 text-center sm:text-left">
           Mostrando {((pagination.page - 1) * pagination.limit) + 1} - {Math.min(pagination.page * pagination.limit, pagination.total)} de {pagination.total}
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center justify-center gap-2">
           <button
             onClick={() => onPageChange(pagination.page - 1)}
             disabled={pagination.page <= 1}
             className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            aria-label="Página anterior"
           >
             <ChevronLeftIcon className="w-4 h-4" />
           </button>
-          <span className="px-3 py-2 text-sm">
-            Página {pagination.page} de {pagination.totalPages}
+          <span className="px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap">
+            Pág. {pagination.page} / {pagination.totalPages}
           </span>
           <button
             onClick={() => onPageChange(pagination.page + 1)}
             disabled={pagination.page >= pagination.totalPages}
             className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            aria-label="Página siguiente"
           >
             <ChevronRightIcon className="w-4 h-4" />
           </button>
@@ -677,16 +679,16 @@ const FinancialDashboard = () => {
     return (
       <div className="bg-white rounded-lg shadow-md">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800">Historial de Cálculos</h3>
-              <p className="text-sm text-gray-500 mt-1">
+        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200">
+          <div className="flex items-start sm:items-center justify-between gap-3 flex-wrap">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800">Historial de Cálculos</h3>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">
                 Proyecciones de rentabilidad guardadas desde la calculadora
               </p>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <ClipboardDocumentListIcon className="w-5 h-5" />
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 flex-shrink-0">
+              <ClipboardDocumentListIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>{pagination?.total || 0} cálculos</span>
             </div>
           </div>
@@ -718,15 +720,15 @@ const FinancialDashboard = () => {
               {calculationsArray.map((calc) => (
                 <div
                   key={calc.id}
-                  className="p-4 hover:bg-gray-50 transition-colors"
+                  className="p-3 sm:p-4 hover:bg-gray-50 transition-colors"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-sm text-gray-500">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center flex-wrap gap-2 sm:gap-3 mb-2">
+                        <span className="text-xs sm:text-sm text-gray-500">
                           {formatDate(calc.createdAt)}
                         </span>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium ${
                           calc.profitMargin >= 50
                             ? 'bg-green-100 text-green-700'
                             : calc.profitMargin >= 30
@@ -737,47 +739,48 @@ const FinancialDashboard = () => {
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
-                        <div>
-                          <p className="text-xs text-gray-500">Ingreso Bruto</p>
-                          <p className="text-sm font-semibold text-green-600">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mt-3">
+                        <div className="min-w-0">
+                          <p className="text-[10px] sm:text-xs text-gray-500 truncate">Ingreso Bruto</p>
+                          <p className="text-xs sm:text-sm font-semibold text-green-600 truncate">
                             {formatCurrency(calc.grossIncome)}
                           </p>
                         </div>
-                        <div>
-                          <p className="text-xs text-gray-500">Gastos Est.</p>
-                          <p className="text-sm font-semibold text-red-600">
+                        <div className="min-w-0">
+                          <p className="text-[10px] sm:text-xs text-gray-500 truncate">Gastos Est.</p>
+                          <p className="text-xs sm:text-sm font-semibold text-red-600 truncate">
                             {formatCurrency(calc.estimatedExpenses)}
                           </p>
                         </div>
-                        <div>
-                          <p className="text-xs text-gray-500">Ganancia Neta</p>
-                          <p className={`text-sm font-semibold ${
+                        <div className="min-w-0">
+                          <p className="text-[10px] sm:text-xs text-gray-500 truncate">Ganancia Neta</p>
+                          <p className={`text-xs sm:text-sm font-semibold truncate ${
                             calc.netIncome >= 0 ? 'text-blue-600' : 'text-red-600'
                           }`}>
                             {formatCurrency(calc.netIncome)}
                           </p>
                         </div>
-                        <div>
-                          <p className="text-xs text-gray-500">Participantes</p>
-                          <p className="text-sm font-semibold text-gray-700">
+                        <div className="min-w-0">
+                          <p className="text-[10px] sm:text-xs text-gray-500 truncate">Participantes</p>
+                          <p className="text-xs sm:text-sm font-semibold text-gray-700 truncate">
                             {calc.participants}
                           </p>
                         </div>
                       </div>
 
                       {calc.notes && (
-                        <p className="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                        <p className="mt-2 text-[10px] sm:text-xs text-gray-500 bg-gray-50 p-2 rounded break-words">
                           {calc.notes}
                         </p>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 ml-4">
+                    <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 flex-shrink-0">
                       <button
                         onClick={() => setDetailsModal(calc)}
                         className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         title="Ver detalles"
+                        aria-label="Ver detalles"
                       >
                         <EyeIcon className="w-4 h-4" />
                       </button>
@@ -786,6 +789,7 @@ const FinancialDashboard = () => {
                         disabled={deletingId === calc.id}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                         title="Eliminar"
+                        aria-label="Eliminar"
                       >
                         {deletingId === calc.id ? (
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
@@ -1401,24 +1405,24 @@ const FinancialDashboard = () => {
             </div>
 
             {/* Gastos por Categoría */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 lg:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
                 {t('financial.expensesByCategory')}
               </h3>
               {Object.keys(localStats.expensesByCategory || {}).length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                   {Object.entries(localStats.expensesByCategory).map(([category, amount]) => {
                     const categoryInfo = expenseCategories?.find(cat => cat.label === category);
                     const colorClasses = categoryInfo ? getColorClasses(categoryInfo.color) : { bg: 'bg-gray-100', text: 'text-gray-800' };
                     return (
-                      <div key={category} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <span className={`w-8 h-8 rounded-full flex items-center justify-center ${colorClasses.bg}`}>
+                      <div key={category} className="flex items-center justify-between gap-2 p-2.5 sm:p-3 border rounded-lg">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${colorClasses.bg}`}>
                             {categoryInfo ? getIconEmoji(categoryInfo.icon) : '📋'}
                           </span>
-                          <span className="text-sm font-medium text-gray-700">{category}</span>
+                          <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">{category}</span>
                         </div>
-                        <span className="text-sm font-bold text-gray-900">
+                        <span className="text-xs sm:text-sm font-bold text-gray-900 flex-shrink-0">
                           {formatCurrency(amount)}
                         </span>
                       </div>
@@ -1433,11 +1437,11 @@ const FinancialDashboard = () => {
         )}
 
         {activeTab === 'calculator' && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 lg:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
               Calculadora de Rentabilidad por Tour
             </h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1589,13 +1593,13 @@ const FinancialDashboard = () => {
           <div className="space-y-6">
             {/* Ingresos */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="flex items-center justify-between p-4 border-b">
-                <h3 className="text-lg font-semibold text-gray-800">Ingresos Recientes</h3>
+              <div className="flex items-center justify-between gap-2 p-3 sm:p-4 border-b">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 truncate">Ingresos Recientes</h3>
                 <button
                   onClick={() => setShowIncomeForm(true)}
-                  className="text-green-600 hover:text-green-700 text-sm font-medium"
+                  className="text-green-600 hover:text-green-700 text-xs sm:text-sm font-medium whitespace-nowrap flex-shrink-0"
                 >
-                  + Agregar Ingreso
+                  + Ingreso
                 </button>
               </div>
               {income && income.length > 0 ? (
@@ -1703,13 +1707,13 @@ const FinancialDashboard = () => {
 
             {/* Gastos */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="flex items-center justify-between p-4 border-b">
-                <h3 className="text-lg font-semibold text-gray-800">Gastos Recientes</h3>
+              <div className="flex items-center justify-between gap-2 p-3 sm:p-4 border-b">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 truncate">Gastos Recientes</h3>
                 <button
                   onClick={() => setShowExpenseForm(true)}
-                  className="text-red-600 hover:text-red-700 text-sm font-medium"
+                  className="text-red-600 hover:text-red-700 text-xs sm:text-sm font-medium whitespace-nowrap flex-shrink-0"
                 >
-                  + Agregar Gasto
+                  + Gasto
                 </button>
               </div>
               {expenses && expenses.length > 0 ? (
@@ -1814,14 +1818,14 @@ const FinancialDashboard = () => {
         )}
 
         {activeTab === 'reports' && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-800">Reportes Financieros - Este Mes</h3>
-              <div className="flex items-center gap-2">
+          <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 lg:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800">Reportes Financieros - Este Mes</h3>
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <button
                   onClick={handleExportExcel}
                   disabled={isExporting}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+                  className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg transition-colors text-xs sm:text-sm font-medium ${
                     isExporting
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-emerald-600 hover:bg-emerald-700'
@@ -1833,7 +1837,7 @@ const FinancialDashboard = () => {
                 <button
                   onClick={handleExportPDF}
                   disabled={isExporting}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+                  className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg transition-colors text-xs sm:text-sm font-medium ${
                     isExporting
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-red-600 hover:bg-red-700'
@@ -1844,7 +1848,7 @@ const FinancialDashboard = () => {
                 </button>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <h4 className="font-semibold text-gray-700 mb-3">Resumen Mensual</h4>
                 <div className="space-y-2 text-sm">
