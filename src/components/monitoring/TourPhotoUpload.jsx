@@ -229,7 +229,7 @@ const TourPhotoUpload = ({ stopId, stopName, requiredLocation, onPhotoUploaded, 
               <div key={photo.id} className="relative group">
                 <img
                   src={resolveFileUrl(photo.url)}
-                  alt={`Foto de ${photo.stopName}`}
+                  alt={t('monitoring.page.photoAlt', { name: photo.stopName })}
                   className="w-full h-24 object-cover rounded-lg border border-gray-200"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center">

@@ -407,6 +407,9 @@ const ReservationWizard = ({ onClose, onComplete }) => {
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+    } else if (onClose) {
+      // En el primer paso, "Volver" cierra el wizard y regresa al módulo anterior
+      onClose();
     }
   };
 
@@ -907,7 +910,7 @@ const ReservationWizard = ({ onClose, onComplete }) => {
             type="button"
             onClick={handleBack}
             className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-white hover:border-gray-400 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed font-semibold shadow-sm bg-white text-xs sm:text-sm"
-            disabled={currentStep === 1}
+            disabled={currentStep === 1 && !onClose}
           >
             <ChevronLeftIcon className="w-4 h-4" />
             {t('common.back')}

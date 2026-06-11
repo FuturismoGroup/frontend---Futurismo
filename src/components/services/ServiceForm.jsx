@@ -370,7 +370,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
                 className={`px-4 py-2.5 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
                   errors.title ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
                 }`}
-                placeholder="Ej: City Tour Lima Centro Histórico"
+                placeholder={t('services.placeholders.title')}
               />
               {errors.title && (
                 <p className="mt-1.5 text-sm text-red-600 flex items-center">
@@ -392,7 +392,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
                   className={`pl-11 pr-4 py-2.5 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
                     errors.destination ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
                   }`}
-                  placeholder="Centro Histórico de Lima"
+                  placeholder={t('services.placeholders.destination')}
                 />
               </div>
               {errors.destination && (
@@ -415,7 +415,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
                     value={field.value}
                     onChange={field.onChange}
                     error={!!errors.languages}
-                    placeholder="Selecciona los idiomas disponibles"
+                    placeholder={t('services.placeholders.languages')}
                   />
                 )}
               />
@@ -518,7 +518,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
                 className={`px-4 py-2.5 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none ${
                   errors.description ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
                 }`}
-                placeholder="Describe los lugares a visitar, actividades incluidas, etc."
+                placeholder={t('services.placeholders.description')}
               />
               {errors.description && (
                 <p className="mt-1.5 text-sm text-red-600 flex items-center">
@@ -543,7 +543,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
                 <div className="relative group">
                   <img
                     src={resolveFileUrl(imagePreview)}
-                    alt="Preview"
+                    alt={t('upload.previewAlt')}
                     className="w-40 h-40 object-cover rounded-lg border border-gray-200"
                   />
                   <button
@@ -626,7 +626,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
                 {...register('includes')}
                 rows={4}
                 className="px-4 py-2.5 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none bg-white"
-                placeholder="Ej: Transporte, guía, entradas, almuerzo..."
+                placeholder={t('services.placeholders.includes')}
               />
             </div>
 
@@ -639,7 +639,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
                 {...register('excludes')}
                 rows={4}
                 className="px-4 py-2.5 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none bg-white"
-                placeholder="Ej: Bebidas extras, propinas, gastos personales..."
+                placeholder={t('services.placeholders.excludes')}
               />
             </div>
 
@@ -652,7 +652,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
                 {...register('notes')}
                 rows={3}
                 className="px-4 py-2.5 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none bg-white"
-                placeholder="Información adicional importante sobre el servicio..."
+                placeholder={t('services.placeholders.notes')}
               />
             </div>
           </div>

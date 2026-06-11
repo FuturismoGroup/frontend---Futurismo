@@ -55,7 +55,7 @@ const RewardsStore = () => {
   const agencyId = user?.agencyId || user?.id;
   const currentAgency = agencies.find(agency => agency.id === agencyId) || {
     id: agencyId || '1',
-    name: user?.name || 'Mi Agencia',
+    name: user?.name || t('rewards.store.myAgency'),
     email: user?.email || 'mi@agencia.com',
     totalPoints: 0,
     availablePoints: 0,
@@ -100,18 +100,18 @@ const RewardsStore = () => {
     if (!selectedReward) return;
 
     if (currentAgency.availablePoints < selectedReward.points) {
-      toast.error('No tienes suficientes puntos para este canje');
+      toast.error(t('rewards.store.insufficientPoints'));
       return;
     }
 
     if (selectedReward.stock <= 0) {
-      toast.error('Este premio no tiene stock disponible');
+      toast.error(t('rewards.store.outOfStock'));
       return;
     }
 
     try {
       await requestRedemption(currentAgency.id, selectedReward.id);
-      toast.success('Solicitud de canje enviada. Te notificaremos cuando sea aprobada.');
+      toast.success(t('rewards.store.redemptionSent'));
       setShowRedeemModal(false);
       setSelectedReward(null);
       // ELM-427: Recargar canjes desde API-046 para reflejar el nuevo canje
@@ -119,7 +119,7 @@ const RewardsStore = () => {
         fetchAgencyRedemptions(agencyId);
       }
     } catch (error) {
-      toast.error(error.message || 'Error al procesar la solicitud');
+      toast.error(error.message || t('rewards.store.requestError'));
     }
   };
 
@@ -153,9 +153,9 @@ const RewardsStore = () => {
           <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-4 sm:p-6 text-white">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="min-w-0 flex-1">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">Tienda de Premios</h1>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">{t('rewards.store.title')}</h1>
                 <p className="text-xs sm:text-base text-purple-100">
-                  Canjea tus puntos por increíbles premios y experiencias
+                  {t('rewards.store.subtitle')}
                 </p>
               </div>
               <div className="text-center flex-shrink-0">
@@ -166,7 +166,7 @@ const RewardsStore = () => {
                       {currentAgency.availablePoints.toLocaleString()}
                     </span>
                   </div>
-                  <p className="text-xs sm:text-sm text-purple-100">Puntos disponibles</p>
+                  <p className="text-xs sm:text-sm text-purple-100">{t('rewards.store.availablePoints')}</p>
                 </div>
               </div>
             </div>
@@ -181,7 +181,7 @@ const RewardsStore = () => {
                 <StarIconSolid className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
               </div>
               <div className="ml-2 sm:ml-4 min-w-0">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Puntos Totales</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">{t('rewards.store.totalPoints')}</p>
                 <p className="text-base sm:text-2xl font-bold text-gray-900 truncate">
                   {currentAgency.totalPoints.toLocaleString()}
                 </p>
@@ -195,7 +195,7 @@ const RewardsStore = () => {
                 <CheckCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
               </div>
               <div className="ml-2 sm:ml-4 min-w-0">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Canjes Exitosos</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">{t('rewards.store.successfulRedemptions')}</p>
                 <p className="text-base sm:text-2xl font-bold text-gray-900">
                   {myRedemptions.filter(r => r.status === 'delivered').length}
                 </p>
@@ -209,7 +209,7 @@ const RewardsStore = () => {
                 <ClockIcon className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
               </div>
               <div className="ml-2 sm:ml-4 min-w-0">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Pendientes</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">{t('rewards.store.pending')}</p>
                 <p className="text-base sm:text-2xl font-bold text-gray-900">
                   {myRedemptions.filter(r => r.status === 'pending').length}
                 </p>
@@ -223,7 +223,7 @@ const RewardsStore = () => {
                 <GiftIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
               </div>
               <div className="ml-2 sm:ml-4 min-w-0">
-                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Premios Disponibles</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">{t('rewards.store.availableRewards')}</p>
                 <p className="text-base sm:text-2xl font-bold text-gray-900">
                   {filteredAndSortedRewards.length}
                 </p>
@@ -244,7 +244,7 @@ const RewardsStore = () => {
               }`}
             >
               <GiftIcon className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1 sm:mr-2" />
-              Tienda ({filteredAndSortedRewards.length})
+              {t('rewards.store.storeTab')} ({filteredAndSortedRewards.length})
             </button>
             <button
               onClick={() => setActiveTab('my_redemptions')}
@@ -255,7 +255,7 @@ const RewardsStore = () => {
               }`}
             >
               <ShoppingCartIcon className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1 sm:mr-2" />
-              Mis Canjes ({myRedemptions.length})
+              {t('rewards.store.myRedemptionsTab')} ({myRedemptions.length})
             </button>
           </nav>
         </div>
@@ -268,7 +268,7 @@ const RewardsStore = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 flex-1">
                   <div className="flex items-center">
                     <FunnelIcon className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm font-medium text-gray-700">Filtros:</span>
+                    <span className="text-xs sm:text-sm font-medium text-gray-700">{t('rewards.store.filters')}</span>
                   </div>
 
                   {/* ELM-424: Select de categorias - Usa API real /api/rewards/categories */}
@@ -277,7 +277,7 @@ const RewardsStore = () => {
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="flex-1 sm:flex-none border border-gray-300 rounded-lg px-3 py-2 text-sm"
                   >
-                    <option value="">Todas las categorías</option>
+                    <option value="">{t('rewards.store.allCategories')}</option>
                     {/* Prioriza categorias desde BD, fallback a constantes */}
                     {rewardCategories && rewardCategories.length > 0
                       ? rewardCategories.map((cat) => (
@@ -294,15 +294,15 @@ const RewardsStore = () => {
                     onChange={(e) => setSortBy(e.target.value)}
                     className="flex-1 sm:flex-none border border-gray-300 rounded-lg px-3 py-2 text-sm"
                   >
-                    <option value="points_asc">Menos puntos primero</option>
-                    <option value="points_desc">Más puntos primero</option>
-                    <option value="name_asc">Nombre A-Z</option>
-                    <option value="stock_desc">Mayor stock</option>
+                    <option value="points_asc">{t('rewards.store.sortPointsAsc')}</option>
+                    <option value="points_desc">{t('rewards.store.sortPointsDesc')}</option>
+                    <option value="name_asc">{t('rewards.store.sortNameAsc')}</option>
+                    <option value="stock_desc">{t('rewards.store.sortStockDesc')}</option>
                   </select>
                 </div>
 
                 <div className="text-xs sm:text-sm text-gray-500 flex-shrink-0">
-                  {filteredAndSortedRewards.length} premio(s) disponible(s)
+                  {t('rewards.store.rewardsAvailableCount', { count: filteredAndSortedRewards.length })}
                 </div>
               </div>
             </div>
@@ -324,9 +324,9 @@ const RewardsStore = () => {
               ) : filteredAndSortedRewards.length === 0 ? (
                 <div className="col-span-full text-center py-12">
                   <GiftIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No hay premios disponibles</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{t('rewards.store.noRewardsAvailable')}</h3>
                   <p className="text-gray-500">
-                    {selectedCategory ? 'Intenta con otra categoría' : 'Vuelve pronto para ver nuevos premios'}
+                    {selectedCategory ? t('rewards.store.tryAnotherCategory') : t('rewards.store.comeBackSoon')}
                   </p>
                 </div>
               ) : (
@@ -366,7 +366,7 @@ const RewardsStore = () => {
                         {reward.stock <= 5 && (
                           <div className="absolute top-2 right-2">
                             <span className="badge badge-red text-xs">
-                              Últimas {reward.stock} unidades
+                              {t('rewards.store.lastUnits', { count: reward.stock })}
                             </span>
                           </div>
                         )}
@@ -387,10 +387,10 @@ const RewardsStore = () => {
                             <span className="text-lg font-bold text-purple-600">
                               {reward.points.toLocaleString()}
                             </span>
-                            <span className="text-sm text-gray-500 ml-1">pts</span>
+                            <span className="text-sm text-gray-500 ml-1">{t('rewards.pointsUnit')}</span>
                           </div>
                           <div className="text-sm text-gray-500">
-                            Stock: {reward.stock}
+                            {t('rewards.store.stockLabel')}: {reward.stock}
                           </div>
                         </div>
                         
@@ -403,7 +403,7 @@ const RewardsStore = () => {
                             className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 flex items-center justify-center"
                           >
                             <EyeIcon className="h-4 w-4 mr-2" />
-                            Ver
+                            {t('rewards.store.view')}
                           </button>
                           <button
                             onClick={() => {
@@ -418,7 +418,7 @@ const RewardsStore = () => {
                             }`}
                           >
                             <GiftIcon className="h-4 w-4 mr-2" />
-                            {!canRedeem ? 'Sin puntos' : reward.stock === 0 ? 'Sin stock' : 'Canjear'}
+                            {!canRedeem ? t('rewards.store.noPoints') : reward.stock === 0 ? t('rewards.store.noStock') : t('rewards.store.redeem')}
                           </button>
                         </div>
                       </div>
@@ -436,11 +436,11 @@ const RewardsStore = () => {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Premio</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Puntos</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Estado</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Fecha Solicitud</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Notas</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.reward')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.points')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.status')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.redemptionsTable.requestDate')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.detail.notes')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -448,8 +448,8 @@ const RewardsStore = () => {
                     <tr>
                       <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
                         <ShoppingCartIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                        <p>No tienes canjes registrados</p>
-                        <p className="text-sm">¡Comienza canjeando tus primeros puntos!</p>
+                        <p>{t('rewards.store.noRedemptions')}</p>
+                        <p className="text-sm">{t('rewards.store.startRedeeming')}</p>
                       </td>
                     </tr>
                   ) : (
@@ -492,7 +492,7 @@ const RewardsStore = () => {
                   <div className="p-3 bg-purple-100 rounded-full mr-4">
                     <GiftIcon className="h-6 w-6 text-purple-600" />
                   </div>
-                  <h2 className="text-xl font-bold">Confirmar Canje</h2>
+                  <h2 className="text-xl font-bold">{t('rewards.store.confirmRedemption')}</h2>
                 </div>
 
                 <div className="mb-6">
@@ -501,21 +501,21 @@ const RewardsStore = () => {
                   
                   <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Puntos requeridos:</span>
+                      <span className="text-sm text-gray-600">{t('rewards.store.requiredPoints')}</span>
                       <span className="text-sm font-medium text-purple-600">
-                        {selectedReward.points.toLocaleString()} pts
+                        {selectedReward.points.toLocaleString()} {t('rewards.pointsUnit')}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Tus puntos actuales:</span>
+                      <span className="text-sm text-gray-600">{t('rewards.store.yourCurrentPoints')}</span>
                       <span className="text-sm font-medium">
-                        {currentAgency.availablePoints.toLocaleString()} pts
+                        {currentAgency.availablePoints.toLocaleString()} {t('rewards.pointsUnit')}
                       </span>
                     </div>
                     <div className="flex justify-between border-t pt-2">
-                      <span className="text-sm font-medium text-gray-900">Puntos restantes:</span>
+                      <span className="text-sm font-medium text-gray-900">{t('rewards.store.remainingPoints')}</span>
                       <span className="text-sm font-medium text-green-600">
-                        {(currentAgency.availablePoints - selectedReward.points).toLocaleString()} pts
+                        {(currentAgency.availablePoints - selectedReward.points).toLocaleString()} {t('rewards.pointsUnit')}
                       </span>
                     </div>
                   </div>
@@ -525,7 +525,7 @@ const RewardsStore = () => {
                   <div className="flex">
                     <div className="ml-3">
                       <p className="text-sm text-blue-800">
-                        Tu solicitud será revisada por el administrador. Te notificaremos cuando sea aprobada y esté lista para entrega.
+                        {t('rewards.store.requestReviewNote')}
                       </p>
                     </div>
                   </div>
@@ -539,14 +539,14 @@ const RewardsStore = () => {
                     }}
                     className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
                   >
-                    Cancelar
+                    {t('rewards.admin.rewardForm.cancel')}
                   </button>
                   <button
                     onClick={handleRedeemRequest}
                     disabled={loading}
                     className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
                   >
-                    {loading ? 'Procesando...' : 'Confirmar Canje'}
+                    {loading ? t('rewards.admin.rewardForm.processing') : t('rewards.store.confirmRedemption')}
                   </button>
                 </div>
               </div>
@@ -560,7 +560,7 @@ const RewardsStore = () => {
             <div className="bg-white rounded-lg max-w-lg w-full">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold">Detalles del Premio</h2>
+                  <h2 className="text-2xl font-bold">{t('rewards.admin.detail.rewardTitle')}</h2>
                   <button
                     onClick={() => {
                       setShowDetailsModal(false);
@@ -598,7 +598,7 @@ const RewardsStore = () => {
                     <div className="bg-gray-50 rounded-lg p-4">
                       <div className="flex items-center mb-2">
                         <StarIconSolid className="h-5 w-5 text-yellow-400 mr-2" />
-                        <span className="text-sm font-medium text-gray-700">Puntos</span>
+                        <span className="text-sm font-medium text-gray-700">{t('rewards.admin.table.points')}</span>
                       </div>
                       <span className="text-xl font-bold text-purple-600">
                         {selectedReward.points.toLocaleString()}
@@ -608,7 +608,7 @@ const RewardsStore = () => {
                     <div className="bg-gray-50 rounded-lg p-4">
                       <div className="flex items-center mb-2">
                         <CubeIcon className="h-5 w-5 text-green-500 mr-2" />
-                        <span className="text-sm font-medium text-gray-700">Stock</span>
+                        <span className="text-sm font-medium text-gray-700">{t('rewards.admin.table.stock')}</span>
                       </div>
                       <span className="text-xl font-bold text-gray-900">
                         {selectedReward.stock}
@@ -622,7 +622,7 @@ const RewardsStore = () => {
                         {selectedReward.categoryName}
                       </span>
                     ) : (
-                      <span className="text-sm text-gray-400">Sin categoría</span>
+                      <span className="text-sm text-gray-400">{t('rewards.admin.noCategory')}</span>
                     )}
                   </div>
                 </div>
@@ -640,7 +640,7 @@ const RewardsStore = () => {
                         : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                     }`}
                   >
-                    Canjear Premio
+                    {t('rewards.store.redeemReward')}
                   </button>
                 </div>
               </div>

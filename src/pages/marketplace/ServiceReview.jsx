@@ -98,19 +98,19 @@ const ServiceReview = () => {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Califica tu experiencia</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('marketplace.review.title')}</h1>
 
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center gap-4">
               <img
                 src={resolveFileUrl(guide.profilePhoto) || '/images/default-avatar.png'}
-                alt={guide.name || 'Guia'}
+                alt={guide.name || t('marketplace.review.fallbackGuide')}
                 className="w-12 h-12 rounded-full object-cover"
               />
               <div className="flex-1">
-                <p className="font-medium text-gray-900">{guide.name || 'Guia'}</p>
+                <p className="font-medium text-gray-900">{guide.name || t('marketplace.review.fallbackGuide')}</p>
                 <p className="text-sm text-gray-600">
-                  {request.location || 'Servicio freelance'} •
+                  {request.location || t('marketplace.review.freelanceService')} •
                   {' '}{formatDateSafe(request.serviceDate) || '-'}
                 </p>
               </div>
@@ -122,7 +122,7 @@ const ServiceReview = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Calificacion */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Calificacion</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('marketplace.review.rating')}</h2>
 
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -154,12 +154,12 @@ const ServiceReview = () => {
 
           {/* Comentario */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Comentario</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('marketplace.review.comment')}</h2>
 
             <textarea
               {...register('comment')}
               rows={4}
-              placeholder="Cuentanos tu experiencia con el guia (opcional)"
+              placeholder={t('marketplace.review.commentPlaceholder')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500"
             />
             {errors.comment && (
@@ -182,7 +182,7 @@ const ServiceReview = () => {
                   ))}
                 </div>
                 <p className="text-cyan-900">
-                  Tu calificacion: <span className="font-semibold">{watchRating}/5</span>
+                  {t('marketplace.review.yourRating')} <span className="font-semibold">{watchRating}/5</span>
                 </p>
               </div>
             </div>
@@ -195,7 +195,7 @@ const ServiceReview = () => {
               onClick={() => navigate(`/marketplace/requests/${requestId}`)}
               className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
             >
-              Cancelar
+              {t('marketplace.review.cancel')}
             </button>
             <button
               type="submit"
@@ -205,10 +205,10 @@ const ServiceReview = () => {
               {isSubmitting ? (
                 <span className="flex items-center justify-center">
                   <LoadingSpinner size="sm" className="mr-2" />
-                  Enviando...
+                  {t('marketplace.review.sending')}
                 </span>
               ) : (
-                'Enviar resena'
+                t('marketplace.review.submit')
               )}
             </button>
           </div>

@@ -83,20 +83,20 @@ const StopsManager = ({ stops = [], onChange, errors }) => {
                 {/* Primera fila: Nombre y duración */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div className="md:col-span-2">
-                    <label className="sr-only">Nombre de la parada</label>
+                    <label className="sr-only">{t('services.stops.nameLabel')}</label>
                     <div className="relative">
                       <MapPinIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
                         type="text"
                         value={stop.name}
                         onChange={(e) => updateStop(stop.id, 'name', e.target.value)}
-                        placeholder="Nombre del lugar"
+                        placeholder={t('services.stops.namePlaceholder')}
                         className="pl-11 pr-3 py-2.5 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-gray-50 hover:bg-white font-medium"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="sr-only">Duración</label>
+                    <label className="sr-only">{t('settings.tours.defaultDuration')}</label>
                     <div className="relative">
                       <ClockIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
@@ -108,7 +108,7 @@ const StopsManager = ({ stops = [], onChange, errors }) => {
                         className="pl-11 pr-12 py-2.5 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-gray-50 hover:bg-white"
                       />
                       <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-500 font-medium">
-                        min
+                        {t('services.stops.minutesShort')}
                       </span>
                     </div>
                   </div>
@@ -116,11 +116,11 @@ const StopsManager = ({ stops = [], onChange, errors }) => {
 
                 {/* Segunda fila: Descripción */}
                 <div>
-                  <label className="sr-only">Descripción</label>
+                  <label className="sr-only">{t('services.description')}</label>
                   <textarea
                     value={stop.description}
                     onChange={(e) => updateStop(stop.id, 'description', e.target.value)}
-                    placeholder="Descripción de actividades en esta parada (opcional)"
+                    placeholder={t('services.stops.descriptionPlaceholder')}
                     rows="2"
                     className="px-4 py-2.5 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all bg-gray-50 hover:bg-white"
                   />
@@ -138,7 +138,7 @@ const StopsManager = ({ stops = [], onChange, errors }) => {
                       ? 'text-gray-300 cursor-not-allowed bg-gray-100'
                       : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50 shadow-sm'
                   }`}
-                  title={t('pdf.previousDay')}
+                  title={t('services.stops.moveUp')}
                 >
                   <ChevronUpIcon className="h-5 w-5" />
                 </button>
@@ -151,7 +151,7 @@ const StopsManager = ({ stops = [], onChange, errors }) => {
                       ? 'text-gray-300 cursor-not-allowed bg-gray-100'
                       : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50 shadow-sm'
                   }`}
-                  title={t('pdf.nextDay')}
+                  title={t('services.stops.moveDown')}
                 >
                   <ChevronDownIcon className="h-5 w-5" />
                 </button>
@@ -179,7 +179,7 @@ const StopsManager = ({ stops = [], onChange, errors }) => {
         <div className="p-1 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
           <PlusIcon className="h-5 w-5" />
         </div>
-        <span>{t('common.add')}</span>
+        <span>{t('services.stops.addStop')}</span>
       </button>
 
       {/* Mensaje de error si existe */}
@@ -196,10 +196,10 @@ const StopsManager = ({ stops = [], onChange, errors }) => {
         <div className="text-center py-8 px-4 bg-blue-50 rounded-xl border-2 border-dashed border-blue-200">
           <MapPinIcon className="h-12 w-12 text-blue-400 mx-auto mb-3" />
           <p className="text-sm text-gray-600 font-medium mb-1">
-            {t('common.noData')}
+            {t('services.stops.emptyTitle')}
           </p>
           <p className="text-xs text-gray-500">
-            {t('common.add')}
+            {t('services.stops.emptyHint')}
           </p>
         </div>
       )}

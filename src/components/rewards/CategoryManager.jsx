@@ -27,28 +27,28 @@ const CategoryManager = ({ onCategoriesChanged }) => {
 
   // Iconos disponibles (usando nombres de Heroicons)
   const availableIcons = [
-    { value: 'gift', label: '🎁 Regalo' },
-    { value: 'device-mobile', label: '📱 Tecnología' },
-    { value: 'airplane', label: '✈️ Viajes' },
-    { value: 'academic-cap', label: '🎓 Educación' },
-    { value: 'shopping-cart', label: '🛒 Compras' },
-    { value: 'ticket', label: '🎫 Entretenimiento' },
-    { value: 'heart', label: '❤️ Bienestar' },
-    { value: 'home', label: '🏠 Hogar' },
-    { value: 'sparkles', label: '✨ Experiencias' },
-    { value: 'credit-card', label: '💳 Tarjetas' }
+    { value: 'gift', emoji: '🎁', labelKey: 'rewards.categoryManager.icons.gift' },
+    { value: 'device-mobile', emoji: '📱', labelKey: 'rewards.categoryManager.icons.technology' },
+    { value: 'airplane', emoji: '✈️', labelKey: 'rewards.categoryManager.icons.travel' },
+    { value: 'academic-cap', emoji: '🎓', labelKey: 'rewards.categoryManager.icons.education' },
+    { value: 'shopping-cart', emoji: '🛒', labelKey: 'rewards.categoryManager.icons.shopping' },
+    { value: 'ticket', emoji: '🎫', labelKey: 'rewards.categoryManager.icons.entertainment' },
+    { value: 'heart', emoji: '❤️', labelKey: 'rewards.categoryManager.icons.wellness' },
+    { value: 'home', emoji: '🏠', labelKey: 'rewards.categoryManager.icons.home' },
+    { value: 'sparkles', emoji: '✨', labelKey: 'rewards.categoryManager.icons.experiences' },
+    { value: 'credit-card', emoji: '💳', labelKey: 'rewards.categoryManager.icons.cards' }
   ];
 
   // Colores predefinidos
   const availableColors = [
-    { value: '#3B82F6', label: 'Azul' },
-    { value: '#10B981', label: 'Verde' },
-    { value: '#F59E0B', label: 'Naranja' },
-    { value: '#EF4444', label: 'Rojo' },
-    { value: '#8B5CF6', label: 'Morado' },
-    { value: '#EC4899', label: 'Rosa' },
-    { value: '#06B6D4', label: 'Cian' },
-    { value: '#84CC16', label: 'Lima' }
+    { value: '#3B82F6', labelKey: 'rewards.categoryManager.colors.blue' },
+    { value: '#10B981', labelKey: 'rewards.categoryManager.colors.green' },
+    { value: '#F59E0B', labelKey: 'rewards.categoryManager.colors.orange' },
+    { value: '#EF4444', labelKey: 'rewards.categoryManager.colors.red' },
+    { value: '#8B5CF6', labelKey: 'rewards.categoryManager.colors.purple' },
+    { value: '#EC4899', labelKey: 'rewards.categoryManager.colors.pink' },
+    { value: '#06B6D4', labelKey: 'rewards.categoryManager.colors.cyan' },
+    { value: '#84CC16', labelKey: 'rewards.categoryManager.colors.lime' }
   ];
 
   useEffect(() => {
@@ -141,7 +141,7 @@ const CategoryManager = ({ onCategoriesChanged }) => {
   };
 
   const handleDelete = async (categoryId) => {
-    if (!window.confirm(t('validation.confirmDelete', { defaultValue: '¿Está seguro de eliminar esta categoría?' }))) return;
+    if (!window.confirm(t('rewards.categoryManager.confirmDelete'))) return;
 
     setLoading(true);
     try {
@@ -334,7 +334,7 @@ const CategoryManager = ({ onCategoriesChanged }) => {
                 >
                   {availableIcons.map((icon) => (
                     <option key={icon.value} value={icon.value}>
-                      {icon.label}
+                      {icon.emoji} {t(icon.labelKey)}
                     </option>
                   ))}
                 </select>
@@ -357,7 +357,7 @@ const CategoryManager = ({ onCategoriesChanged }) => {
                           : 'border-gray-300'
                       }`}
                       style={{ backgroundColor: colorOption.value }}
-                      title={colorOption.label}
+                      title={t(colorOption.labelKey)}
                     />
                   ))}
                 </div>

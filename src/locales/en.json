@@ -217,7 +217,8 @@
         "previousMonth": "previous month",
         "previousQuarter": "previous quarter",
         "previousYear": "previous year",
-        "previousPeriod": "previous period"
+        "previousPeriod": "previous period",
+        "totalIncome": "Total Income"
       },
       "months": {
         "jan": "Jan",
@@ -249,8 +250,25 @@
         "bestDay": "Best day",
         "conversionRate": "Conversion rate",
         "saturday": "Saturdays"
-      }
-    }
+      },
+      "loadError": "Error loading statistics"
+    },
+    "errorPrefix": "Error",
+    "incomeLegend": "Income",
+    "indicators": {
+      "activeServices": "Active services",
+      "completedToday": "Completed today",
+      "monthlyIncome": "Monthly income",
+      "monthlyReservations": "Monthly reservations",
+      "nextTour": "Next tour",
+      "personalRating": "Personal rating",
+      "registeredGuides": "Registered guides",
+      "totalAgencies": "Total agencies",
+      "totalRevenue": "Total revenue",
+      "toursThisWeek": "Tours this week"
+    },
+    "retry": "Retry",
+    "user": "User"
   },
   "guideDashboard": {
     "greeting": "Hello, {{name}}!",
@@ -473,7 +491,9 @@
       "twoDaysAgo": "2 days ago",
       "oneDayAgo": "1 day ago",
       "specialReqsTitle": "Special Requirements",
-      "noTourists": "No registered tourists"
+      "noTourists": "No registered tourists",
+      "tourExcludes": "Does Not Include",
+      "tourIncludes": "Includes"
     },
     "validationMessages": {
       "tourRequired": "Tour is required",
@@ -484,7 +504,19 @@
       "groupRequired": "At least one group is required",
       "adultsRequired": "At least one adult per group",
       "invalidEmail": "Invalid email",
-      "invalidPhone": "Invalid phone"
+      "invalidPhone": "Invalid phone",
+      "accommodationRequired": "Accommodation is required",
+      "destinationRequired": "Destination is required",
+      "originRequired": "Origin is required",
+      "packageNameRequired": "Package name is required",
+      "pickupLocationRequired": "Pickup location is required",
+      "serviceTypeRequired": "Service type is required",
+      "tourNameRequired": "Tour name is required",
+      "touristEmailRequired": "Tourist email is required",
+      "touristNameRequired": "Tourist name is required",
+      "touristPassportRequired": "Tourist passport is required",
+      "touristsCountMismatch": "The number of tourists does not match the total",
+      "touristsRequired": "At least one tourist is required"
     },
     "noGuideAssigned": "No guide assigned",
     "noCategory": "No category",
@@ -500,7 +532,8 @@
     "changeGuideBtn": "Change Guide",
     "thisYear": "This year",
     "smallGroup": "Small Group (2-4)",
-    "defaultLanguage": "Spanish"
+    "defaultLanguage": "Spanish",
+    "date": "Date"
   },
   "monitoring": {
     "title": "Service Monitoring",
@@ -575,7 +608,8 @@
       "tourPauseError": "Error pausing the tour",
       "tourCompletedSuccess": "Tour completed successfully",
       "tourCompleteError": "Error completing the tour",
-      "photoTakenSuccess": "Photo captured successfully"
+      "photoTakenSuccess": "Photo captured successfully",
+      "photoAlt": "Photo of {{name}}"
     },
     "tour": {
       "checkIn": "Check-in",
@@ -607,7 +641,8 @@
       "stopPhotos": "Stop photos",
       "noPhotos": "No photos",
       "notVisitedYet": "Not visited yet",
-      "optional": "Optional"
+      "optional": "Optional",
+      "photosUpdated": "Photos updated"
     },
     "guide": {
       "active": "Active",
@@ -744,7 +779,12 @@
       "startPrefix": "Start: ",
       "endPrefix": "End: ",
       "currentLocation": "Current location",
-      "stops": "Stops"
+      "stops": "Stops",
+      "approximatePosition": "Approximate position (no GPS yet)",
+      "servicesShort": "services",
+      "noStop": "No stop",
+      "photosLabel": "Photos",
+      "tourLabel": "Tour"
     },
     "messages": {
       "loadError": "Error loading monitoring data",
@@ -752,7 +792,13 @@
       "statusUpdateError": "Error updating status",
       "locationUpdateError": "Error updating location",
       "noActiveGuides": "No active guides",
-      "connectionError": "Server connection error"
+      "connectionError": "Server connection error",
+      "connectionLost": "Connection lost",
+      "connectionRestored": "Connection restored",
+      "fetchError": "Error loading monitoring",
+      "locationUpdated": "Location updated",
+      "updateError": "Error updating",
+      "updateSuccess": "Updated successfully"
     },
     "inTransit": "In transit",
     "noGuide": "No guide",
@@ -1033,7 +1079,10 @@
       "loadError": "Error loading calendar events",
       "createSuccess": "Event created successfully",
       "updateSuccess": "Event updated successfully",
-      "deleteSuccess": "Event deleted successfully"
+      "deleteSuccess": "Event deleted successfully",
+      "conflictDetected": "A schedule conflict was detected",
+      "eventError": "Error processing the event",
+      "fetchError": "Error loading events"
     },
     "errors": {
       "titleRequired": "Title is required",
@@ -1096,7 +1145,9 @@
       "month": "Month",
       "week": "Week",
       "day": "Day"
-    }
+    },
+    "allDay": "All day",
+    "today": "Today"
   },
   "profile": {
     "administration": "Administration",
@@ -1468,7 +1519,18 @@
       "holder": "Holder",
       "adminContactSubtitle": "Administrator contact information",
       "errorLoadingContact": "Error loading contact information",
-      "contactUpdated": "Contact information updated successfully"
+      "contactUpdated": "Contact information updated successfully",
+      "agencyRatingsSubtitle": "Ratings and feedback received from clients",
+      "agencyRatingsTitle": "Agency Ratings",
+      "feedback": {
+        "submitting": "Submitting..."
+      },
+      "ratingsInfoNote": "Ratings are submitted by clients after each service.",
+      "security": {
+        "passwordRecommendation": "We recommend using a strong, unique password.",
+        "passwordUpdated": "Password updated successfully",
+        "securityNoteDesc": "Keep your account secure by updating your password regularly."
+      }
     },
     "paymentMethods": {
       "bankTransfer": "Bank Transfer",
@@ -1485,7 +1547,20 @@
       "passwordChangeSuccess": "Password updated successfully",
       "passwordChangeError": "Error updating password",
       "imageUploadError": "Error uploading image",
-      "imageSizeError": "Image is too large. Maximum 5MB."
+      "imageSizeError": "Image is too large. Maximum 5MB.",
+      "documentError": "Error uploading the document",
+      "documentUploaded": "Document uploaded successfully",
+      "passwordChanged": "Password changed successfully",
+      "passwordError": "Error changing the password",
+      "paymentMethodAdded": "Payment method added successfully",
+      "paymentMethodError": "Error processing the payment method",
+      "paymentMethodRemoved": "Payment method removed successfully",
+      "photoUploadError": "Error uploading the photo",
+      "photoUploadSuccess": "Photo uploaded successfully"
+    },
+    "photo": {
+      "invalidType": "Invalid file type. Use JPG, PNG or WEBP.",
+      "tooLarge": "The image is too large."
     }
   },
   "navigation": {
@@ -1581,7 +1656,8 @@
     "contactSupport": "Contact support",
     "newUpdateAvailable": "New update available",
     "version2Info": "Version 2.1.0 includes improvements to the notification system",
-    "viewMoreDetails": "View more details →"
+    "viewMoreDetails": "View more details →",
+    "consultAvailability": "Check availability"
   },
   "recentActivity": {
     "recentActivity": "Recent Activity",
@@ -1724,7 +1800,22 @@
       "assignmentRemoved": "Assignment removed successfully",
       "removeAssignmentError": "Error removing assignment",
       "exportSuccess": "Report exported successfully as {{format}}",
-      "exportError": "Error exporting report"
+      "exportError": "Error exporting report",
+      "unnamedTour": "Unnamed tour",
+      "assignResourcesTooltip": "Assign resources",
+      "vehicleAssigned": "Vehicle assigned",
+      "noTime": "No time",
+      "noReservationsRegisteredDesc": "There are no reservations registered in the system. Create a new reservation to get started.",
+      "allReservationsAssignedDesc": "All reservations have complete assignments or there are no reservations matching the filters.",
+      "noGuidesAvailableForReservation": "There are no guides available for this reservation on the selected date.",
+      "noDriversAvailableForReservation": "There are no drivers available for this reservation on the selected date.",
+      "noVehiclesAvailableForReservation": "There are no vehicles available with the required capacity for this reservation.",
+      "requiredCapacityPassengers": "Required capacity: {{count}} passengers",
+      "driversLower": "drivers",
+      "vehiclesLower": "vehicles",
+      "assignmentError": "Assignment error",
+      "pdfDownloadSuccess": "Assignment sheet downloaded successfully",
+      "pdfDownloadError": "Error downloading the assignment sheet"
     }
   },
   "search": {
@@ -1755,7 +1846,9 @@
     "deleteConfirm": "Are you sure you want to delete this reservation?",
     "allDestinations": "All destinations",
     "tourDestination": "Tour / Destination",
-    "pax": "pax"
+    "pax": "pax",
+    "clientOrAgency": "Client or agency",
+    "dateRange": "Date range"
   },
   "roles": {
     "agency": "🏢 Agency",
@@ -1896,7 +1989,15 @@
     "unknown": "Unknown",
     "notSpecified": "Not specified",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "closeMenu": "Close menu",
+    "currentLanguage": "Current language",
+    "date": "Date",
+    "hours": "hours",
+    "perPerson": "per person",
+    "selectTime": "Select time",
+    "time": "Time",
+    "user": "User"
   },
   "agencyPoints": {
     "title": "Points System",
@@ -2979,7 +3080,8 @@
       },
       "actions": {
         "viewDetails": "View details",
-        "rate": "Rate"
+        "rate": "Rate",
+        "viewRating": "View rating"
       },
       "notRated": "Not rated",
       "noResults": "No results found",
@@ -3283,7 +3385,11 @@
       "expert": "Expert",
       "principiante": "Beginner",
       "basico": "Basic",
-      "nativo": "Native"
+      "nativo": "Native",
+      "avanzado": "Advanced",
+      "experto": "Expert",
+      "intermedio": "Intermediate",
+      "native": "Native"
     },
     "types": {
       "planta": "Staff Guide",
@@ -3641,7 +3747,12 @@
       "mandatory": "Mandatory",
       "itemsIncluded": "items included",
       "viewItemsIncluded": "View items included",
-      "noDescription": "No description"
+      "noDescription": "No description",
+      "categories": "Categories",
+      "errorDeletingCategory": "Error deleting the category",
+      "errorLoadingCategories": "Error loading categories",
+      "errorSavingCategory": "Error saving the category",
+      "noCategoriesCreated": "No categories created"
     },
     "priorityLevels": {
       "critical": "Critical",
@@ -3669,7 +3780,10 @@
       "deleteSuccess": "Protocol deleted successfully",
       "deleteError": "Error deleting protocol",
       "createError": "Error creating protocol",
-      "updateError": "Error updating protocol"
+      "updateError": "Error updating protocol",
+      "fetchError": "Error loading emergencies",
+      "incidentError": "Error reporting the incident",
+      "incidentReported": "Incident reported successfully"
     },
     "pdf": {
       "title": "EMERGENCY PROTOCOL",
@@ -3823,7 +3937,54 @@
     },
     "deleteSuccess": "Service deleted successfully",
     "deleteError": "Error deleting service",
-    "refreshError": "Error refreshing services list"
+    "refreshError": "Error refreshing services list",
+    "serviceInfo": "Service Information",
+    "description": "Description",
+    "includedServices": "Included Services",
+    "includes": "Includes",
+    "excludes": "Does Not Include",
+    "additionalNotes": "Additional Notes",
+    "availableLanguages": "Available languages",
+    "creationDate": "Creation date",
+    "hours": "hours",
+    "error": "Error",
+    "searchPlaceholder": "Tour name...",
+    "durationShort": "1-3h",
+    "durationMedium": "4-6h",
+    "durationLong": "7+h",
+    "deleteServiceTitle": "Delete Service",
+    "deleteConfirmPrefix": "Are you sure you want to delete the service",
+    "deleteConfirmSuffix": "? This action will change the service status to inactive.",
+    "conflictTitle": "The service cannot be deleted",
+    "conflictServicePrefix": "The service",
+    "conflictHas": "has",
+    "conflictActiveCount": "{{count}} active reservation(s)",
+    "conflictActiveReservations": "active reservations",
+    "conflictAssociated": "associated.",
+    "conflictHowToDelete": "To delete this service:",
+    "conflictStep1": "Complete or cancel pending reservations",
+    "conflictStep2": "Wait for the scheduled tours to finish",
+    "understood": "Got it",
+    "placeholders": {
+      "title": "E.g.: City Tour Lima Historic Center",
+      "destination": "Historic Center of Lima",
+      "languages": "Select the available languages",
+      "description": "Describe the places to visit, included activities, etc.",
+      "includes": "E.g.: Transport, guide, tickets, lunch...",
+      "excludes": "E.g.: Extra drinks, tips, personal expenses...",
+      "notes": "Important additional information about the service..."
+    },
+    "stops": {
+      "nameLabel": "Stop name",
+      "namePlaceholder": "Place name",
+      "descriptionPlaceholder": "Description of activities at this stop (optional)",
+      "minutesShort": "min",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "addStop": "Add stop",
+      "emptyTitle": "No stops added",
+      "emptyHint": "Add stops to build the itinerary"
+    }
   },
   "providers": {
     "title": "Provider Management",
@@ -4001,11 +4162,17 @@
       },
       "comments": "Comments (optional)",
       "commentsPlaceholder": "Share your experience to help other users...",
-      "submit": "Submit Rating"
+      "submit": "Submit Rating",
+      "alreadyRated": "You have already rated this service"
     },
     "errors": {
-      "ratingRequired": "Rating is required"
-    }
+      "ratingRequired": "Rating is required",
+      "alreadyRated": "This reservation has already been rated",
+      "invalidData": "Invalid rating data",
+      "noReservation": "Reservation not found",
+      "submitFailed": "Error submitting the rating"
+    },
+    "success": "Rating submitted successfully"
   },
   "Restaurantes": "Restaurants",
   "Transporte": "Transportation",
@@ -4115,7 +4282,9 @@
     "confirmDeleteProtocol": "Are you sure you want to delete this protocol?",
     "confirmDeleteServiceType": "Are you sure you want to delete this service type?",
     "writeComment": "Please write your comment",
-    "onlyAgenciesCanComment": "Only agencies can submit feedback"
+    "onlyAgenciesCanComment": "Only agencies can submit feedback",
+    "dniDigits": "The ID must have exactly 8 digits",
+    "formHasErrors": "The form has errors"
   },
   "marketplace": {
     "comp": {
@@ -4189,7 +4358,12 @@
       "reviewSingular": "review",
       "reviewPlural": "reviews",
       "reviewsTab": "Reviews",
-      "guideNotFound": "Guide userId not found"
+      "guideNotFound": "Guide userId not found",
+      "fetchError": "Error loading the marketplace",
+      "requestCreated": "Request created successfully",
+      "responseError": "Error sending the response",
+      "responseSent": "Response sent successfully",
+      "reviewCreated": "Review submitted successfully"
     },
     "agencyDashboard": {
       "title": "My Requests",
@@ -4285,7 +4459,264 @@
       "calendarHint": "Click a green day to block it, or a red day to unblock it",
       "nowVisible": "You are now visible in the marketplace",
       "noLongerVisible": "You are no longer visible in the marketplace",
-      "scheduleSaved": "Schedule saved successfully"
+      "scheduleSaved": "Schedule saved successfully",
+      "updateError": "Error updating availability"
+    },
+    "guidesPage": {
+      "title": "Guides Marketplace",
+      "subtitle": "Find and hire specialized freelance guides",
+      "gridView": "Grid view",
+      "listView": "List view",
+      "totalGuides": "Total Guides",
+      "available": "Available",
+      "averageRating": "Average Rating",
+      "totalReviews": "Total Reviews",
+      "filters": "Filters",
+      "allGuides": "All guides",
+      "onlyAvailable": "Only available",
+      "busy": "Busy",
+      "languages": "Languages",
+      "allLanguages": "All languages",
+      "specialty": "Specialty",
+      "allSpecialties": "All specialties",
+      "minRating": "Minimum Rating",
+      "anyRating": "Any rating",
+      "starsPlus": "{{count}}+ stars",
+      "verified": "Verified",
+      "all": "All",
+      "onlyVerified": "Only verified",
+      "clearFilters": "Clear filters",
+      "availableGuides": "Available Guides ({{count}})",
+      "sortedBy": "Sorted by:",
+      "guide": "Guide",
+      "specialties": "Specialties",
+      "rating": "Rating",
+      "expShort": "Exp.",
+      "price": "Price",
+      "noGuidesAvailable": "No guides available",
+      "adjustSearchFilters": "Try adjusting the search filters to find more guides.",
+      "statusAvailable": "Available",
+      "statusUnavailable": "Unavailable",
+      "license": "License",
+      "yearsExperienceCount": "{{count}} years of experience",
+      "languagesLabel": "Languages:",
+      "specialtiesLabel": "Specialties:",
+      "toursCompletedCount": "{{count}} completed tours",
+      "perPersonSuffix": "/person",
+      "noRateConfigured": "No rate configured",
+      "viewProfile": "View Profile",
+      "yearsShort": "{{count}} yrs",
+      "view": "View"
+    },
+    "guideDashboardPage": {
+      "agency": "Agency",
+      "peopleCount": "{{count}} people",
+      "refPricePerPerson": "Ref: S/. {{price}} / person",
+      "offeredPrice": "Offered price",
+      "detail": "Detail",
+      "reject": "Reject",
+      "accept": "Accept",
+      "viewDetail": "View detail",
+      "errorLoadingRequests": "Error loading requests",
+      "fallbackGuideName": "Guide",
+      "tabs": {
+        "requests": "Requests",
+        "upcoming": "Upcoming",
+        "completed": "Completed"
+      },
+      "panelTitle": "Freelance Guide Panel",
+      "welcome": "Welcome, {{name}}",
+      "notifications": "Notifications",
+      "settings": "Settings",
+      "monthlyIncome": "Monthly income",
+      "onlyCompletedServices": "Completed services only",
+      "toursCompleted": "Completed tours",
+      "thisMonth": "This month",
+      "rating": "Rating",
+      "toursThisWeek": "Tours this week",
+      "confirmed": "Confirmed",
+      "completeVerification": "Complete your profile verification",
+      "verifiedProfilesNote": "Verified profiles receive more job opportunities.",
+      "goToMyProfile": "Go to my profile",
+      "infoPanelDescription": "Here you can view your income statistics (completed services only), assigned tours, marketplace requests and your rating. For more details, visit the Monitoring section.",
+      "retry": "Retry",
+      "reasonOptional": "Reason (optional)",
+      "reasonPlaceholder": "You can provide a reason for the agency...",
+      "empty": {
+        "noPending": "You have no pending requests",
+        "noPendingSub": "Agencies will send you requests when they need your services.",
+        "noUpcoming": "You have no upcoming services",
+        "noUpcomingSub": "When you accept requests, they will appear here as scheduled services.",
+        "noCompleted": "You have no finished services",
+        "noCompletedSub": "Here you will see your completed, rejected or cancelled services.",
+        "noRequests": "You have no service requests"
+      }
+    },
+    "profile": {
+      "levelBeginner": "Beginner",
+      "levelIntermediate": "Intermediate",
+      "levelExpert": "Expert",
+      "backToMarketplace": "Back to marketplace",
+      "newInMarketplace": "New in the marketplace",
+      "toursCompletedCount": "{{count}} completed tours",
+      "joinedIn": "Joined in {{year}}",
+      "tabAbout": "About",
+      "tabExperience": "Experience",
+      "tabAvailability": "Availability",
+      "aboutMe": "About me",
+      "profileNotCompleted": "This guide has not completed their profile yet.",
+      "languages": "Languages",
+      "noLanguages": "No languages registered",
+      "specialties": "Specialties",
+      "noSpecialties": "No specialties registered",
+      "workZones": "Work zones",
+      "noWorkZones": "No work zones registered",
+      "museumExperience": "Museum Experience",
+      "noMuseumExperience": "No museum experience registered",
+      "museumNumber": "Museum #{{number}}",
+      "yearsExperienceCount": "{{count}} years of experience",
+      "levelLabel": "Level",
+      "professionalExperience": "Professional experience",
+      "noExperience": "No experience registered",
+      "certifications": "Certifications",
+      "noCertifications": "No certifications registered",
+      "statistics": "Statistics",
+      "toursPerformed": "Tours performed",
+      "reviewsReceived": "Reviews received",
+      "noRatingsYet": "No ratings yet",
+      "noReviewsReceived": "This guide has not received reviews yet",
+      "verified": "Verified",
+      "noReviewsToShow": "No reviews to show yet",
+      "availabilityRealtimeNote": "Availability is shown in real time. Schedules may change based on confirmed bookings.",
+      "ratePerPerson": "Rate per person",
+      "noRateConfigured": "No rate configured",
+      "bookInAdvance": "Book in advance",
+      "verifiedGuide": "Verified guide",
+      "requestService": "Request service",
+      "sendMessage": "Send message",
+      "guaranteeNote": "All our guides are verified and have civil liability insurance.",
+      "shareTitle": "Tour guide: {{name}}"
+    },
+    "requestDetail": {
+      "loadError": "The request could not be loaded",
+      "confirmCancel": "Cancel this request?",
+      "cancelled": "Request cancelled",
+      "cancelError": "Error cancelling",
+      "confirmComplete": "Mark this service as completed?",
+      "completed": "Service completed",
+      "completeError": "Error completing",
+      "confirmAccept": "Accept this service request?",
+      "accepted": "Request accepted",
+      "acceptError": "Error accepting",
+      "rejectPrompt": "Reason for rejection (optional):",
+      "rejected": "Request rejected",
+      "rejectError": "Error rejecting",
+      "backToPanel": "Back to panel",
+      "title": "Service Request",
+      "subtitle": "Freelance marketplace service",
+      "cancelRequest": "Cancel request",
+      "markCompleted": "Mark completed",
+      "rateService": "Rate service",
+      "reject": "Reject",
+      "accept": "Accept",
+      "date": "Date",
+      "timeDuration": "Time / Duration",
+      "location": "Location",
+      "notSpecified": "Not specified",
+      "group": "Group",
+      "peopleCount": "{{count}} people",
+      "messages": "Messages",
+      "agencyMessage": "Message from the agency",
+      "specialRequirements": "Special requirements",
+      "guideResponse": "Guide response",
+      "priceDetail": "Price Detail",
+      "refPricePerPerson": "Reference rate per person",
+      "refTotal": "Reference total ({{count}} people)",
+      "offeredPrice": "Offered price",
+      "timeline": "Timeline",
+      "requestCreated": "Request created",
+      "rejectedByGuide": "Rejected by guide",
+      "acceptedByGuide": "Accepted by guide",
+      "serviceCompleted": "Service completed",
+      "requestCancelled": "Request cancelled",
+      "fallbackGuide": "Guide",
+      "viewFullProfile": "View full profile",
+      "contact": "Contact",
+      "agency": "Agency",
+      "review": "Review"
+    },
+    "requestForm": {
+      "validation": {
+        "dateRequired": "Date is required",
+        "dateFuture": "Date must be in the future",
+        "startTimeRequired": "Start time is required",
+        "invalidTime": "Invalid time format (HH:MM)",
+        "mustBeNumber": "Must be a number",
+        "groupSizeRequired": "Number of people is required",
+        "minOnePerson": "Minimum 1 person",
+        "maxFiftyPeople": "Maximum 50 people",
+        "priceRequired": "Offered price is required",
+        "minPrice": "The minimum price is S/ 1.00",
+        "locationRequired": "Meeting point is required",
+        "minThreeChars": "Minimum 3 characters",
+        "selectLanguage": "Select at least one language",
+        "maxThousandChars": "Maximum 1000 characters",
+        "maxFiveHundredChars": "Maximum 500 characters"
+      },
+      "guideProfileNotFound": "Guide profile not found",
+      "guideLoadError": "Error loading guide data",
+      "guideNoRate": "The guide has no rate configured",
+      "submitError": "Error sending the request",
+      "loadingGuide": "Loading guide data...",
+      "fallbackGuide": "Guide",
+      "title": "Request Service",
+      "reviewsCount": "{{count}} reviews",
+      "perPerson": "per person",
+      "rateUnavailable": "Rate unavailable",
+      "rateUnavailableDesc": "This guide does not have a per-person rate configured yet. You cannot send a request until the guide sets their price.",
+      "backToGuideProfile": "Back to guide profile",
+      "peopleCount": "Number of people",
+      "peopleRange": "People (1 - 50)",
+      "guideRefRate": "Guide reference rate",
+      "pricePerPerson": "Price per person",
+      "peopleQuantity": "Number of people",
+      "refTotal": "Reference total",
+      "yourOfferLabel": "Your total price offer (S/)",
+      "offerPlaceholder": "Enter your offer",
+      "offerHint": "You can offer a price different from the reference. The guide will decide whether to accept or reject your offer.",
+      "dateAndPlace": "Date and place",
+      "serviceDate": "Service date",
+      "checkingAvailability": "Checking availability...",
+      "availableOnDate": "Available on this date",
+      "startTime": "Start time",
+      "meetingPoint": "Meeting point",
+      "meetingPointPlaceholder": "E.g.: Plaza de Armas, Cusco",
+      "requiredLanguages": "Required languages",
+      "guideNoLanguages": "The guide has no languages configured.",
+      "additionalInfo": "Additional information",
+      "messageLabel": "Message for the guide (optional)",
+      "messagePlaceholder": "Briefly describe what you need, group expectations, etc.",
+      "specialReqLabel": "Special requirements (optional)",
+      "specialReqPlaceholder": "E.g.: Reduced mobility, food allergies, specific needs...",
+      "offerSummary": "Offer summary",
+      "refRateLabel": "Reference rate:",
+      "yourOffer": "Your offer:",
+      "offerReviewNote": "The guide will review your offer and decide whether to accept or reject it.",
+      "cancel": "Cancel",
+      "sending": "Sending...",
+      "submit": "Send request"
+    },
+    "review": {
+      "title": "Rate your experience",
+      "fallbackGuide": "Guide",
+      "freelanceService": "Freelance service",
+      "rating": "Rating",
+      "comment": "Comment",
+      "commentPlaceholder": "Tell us about your experience with the guide (optional)",
+      "yourRating": "Your rating:",
+      "cancel": "Cancel",
+      "sending": "Sending...",
+      "submit": "Send review"
     }
   },
   "notifications": {
@@ -4312,7 +4743,12 @@
       "deleteSuccess": "Driver deleted successfully",
       "deleteError": "Error deleting driver",
       "createError": "Error creating driver",
-      "updateError": "Error updating driver"
+      "updateError": "Error updating driver",
+      "assignError": "Error assigning the driver",
+      "assignSuccess": "Driver assigned successfully",
+      "availabilityError": "Error updating availability",
+      "fetchError": "Error loading drivers",
+      "notFound": "Driver not found"
     }
   },
   "rewards": {
@@ -4348,7 +4784,12 @@
       "fileTooLarge": "File is too large. Maximum 5MB.",
       "saving": "Saving...",
       "saveConfig": "Save Configuration",
-      "exampleDescription": "E.g.: Bonus for exceptional performance, Award for achieved goal, etc."
+      "exampleDescription": "E.g.: Bonus for exceptional performance, Award for achieved goal, etc.",
+      "fetchError": "Error loading rewards",
+      "insufficientPoints": "You don't have enough points",
+      "outOfStock": "Reward out of stock",
+      "redemptionError": "Error processing the redemption",
+      "redemptionSuccess": "Redemption completed successfully"
     },
     "admin": {
       "title": "Rewards System",
@@ -4403,7 +4844,9 @@
         "cancel": "Cancel",
         "processing": "Processing...",
         "update": "Update",
-        "create": "Create Reward"
+        "create": "Create Reward",
+        "namePlaceholder": "E.g.: iPad Air 10.9",
+        "imagePreviewAlt": "Preview"
       },
       "detail": {
         "rewardTitle": "Reward Details",
@@ -4447,7 +4890,8 @@
         "pointsGreaterThanZero": "Points must be greater than 0",
         "assignError": "Error assigning points",
         "statusUpdated": "Redemption status updated",
-        "updateStatusError": "Error updating status"
+        "updateStatusError": "Error updating status",
+        "pointsAssigned": "{{points}} points assigned to {{agency}}"
       },
       "validation": {
         "nameRequired": "Name is required",
@@ -4461,6 +4905,96 @@
         "processError": "Error processing the request",
         "deleteSuccess": "Reward deleted successfully",
         "deleteError": "Error deleting the reward"
+      },
+      "confirmDeleteReward": "Are you sure you want to delete the reward \"{{name}}\"?",
+      "pointsPerSolExample": "Example: If set to 0.1, a S/ 500 reservation grants {{points}} points",
+      "agencyLevelsFullDesc": "Configure the total accumulated points required to reach each level. Levels only grant a distinctive badge.",
+      "agenciesTable": {
+        "agency": "Agency",
+        "totalPoints": "Total Points",
+        "availablePoints": "Available Points",
+        "usedPoints": "Used Points",
+        "registerDate": "Register Date"
+      },
+      "redemptionsTable": {
+        "requestDate": "Request Date"
+      }
+    },
+    "pointsUnit": "pts",
+    "store": {
+      "title": "Rewards Store",
+      "subtitle": "Redeem your points for amazing rewards and experiences",
+      "availablePoints": "Available points",
+      "totalPoints": "Total Points",
+      "successfulRedemptions": "Successful Redemptions",
+      "pending": "Pending",
+      "availableRewards": "Available Rewards",
+      "storeTab": "Store",
+      "myRedemptionsTab": "My Redemptions",
+      "filters": "Filters:",
+      "allCategories": "All categories",
+      "sortPointsAsc": "Fewest points first",
+      "sortPointsDesc": "Most points first",
+      "sortNameAsc": "Name A-Z",
+      "sortStockDesc": "Highest stock",
+      "rewardsAvailableCount": "{{count}} reward(s) available",
+      "noRewardsAvailable": "No rewards available",
+      "tryAnotherCategory": "Try another category",
+      "comeBackSoon": "Come back soon to see new rewards",
+      "lastUnits": "Last {{count}} units",
+      "stockLabel": "Stock",
+      "view": "View",
+      "noPoints": "Not enough points",
+      "noStock": "Out of stock",
+      "redeem": "Redeem",
+      "noRedemptions": "You have no redemptions registered",
+      "startRedeeming": "Start by redeeming your first points!",
+      "confirmRedemption": "Confirm Redemption",
+      "requiredPoints": "Required points:",
+      "yourCurrentPoints": "Your current points:",
+      "remainingPoints": "Remaining points:",
+      "requestReviewNote": "Your request will be reviewed by the administrator. We will notify you when it is approved and ready for delivery.",
+      "redeemReward": "Redeem Reward",
+      "insufficientPoints": "You don't have enough points for this redemption",
+      "outOfStock": "This reward has no available stock",
+      "redemptionSent": "Redemption request sent. We will notify you when it is approved.",
+      "requestError": "Error processing the request",
+      "myAgency": "My Agency"
+    },
+    "test": {
+      "title": "Rewards System - Working!",
+      "description": "If you can see this page, the rewards system is correctly configured.",
+      "implementedTitle": "Implemented System:",
+      "itemConstants": "Rewards constants",
+      "itemStore": "Rewards store",
+      "itemAdmin": "Admin: Rewards management",
+      "itemAgency": "Agency: Redemption store",
+      "itemRoutes": "Routes configured in App.jsx",
+      "itemSidebar": "Links in Sidebar.jsx"
+    },
+    "categoryManager": {
+      "confirmDelete": "Are you sure you want to delete this category?",
+      "icons": {
+        "gift": "Gift",
+        "technology": "Technology",
+        "travel": "Travel",
+        "education": "Education",
+        "shopping": "Shopping",
+        "entertainment": "Entertainment",
+        "wellness": "Wellness",
+        "home": "Home",
+        "experiences": "Experiences",
+        "cards": "Cards"
+      },
+      "colors": {
+        "blue": "Blue",
+        "green": "Green",
+        "orange": "Orange",
+        "red": "Red",
+        "purple": "Purple",
+        "pink": "Pink",
+        "cyan": "Cyan",
+        "lime": "Lime"
       }
     }
   },
@@ -4478,7 +5012,14 @@
       "deleteSuccess": "Vehicle deleted successfully",
       "deleteError": "Error deleting vehicle",
       "createError": "Error creating vehicle",
-      "updateError": "Error updating vehicle"
+      "updateError": "Error updating vehicle",
+      "assignError": "Error assigning the vehicle",
+      "assignSuccess": "Vehicle assigned successfully",
+      "availabilityError": "Error updating availability",
+      "fetchError": "Error loading vehicles",
+      "maintenanceError": "Error updating maintenance",
+      "maintenanceSuccess": "Maintenance updated successfully",
+      "notFound": "Vehicle not found"
     }
   },
   "languageNames": {

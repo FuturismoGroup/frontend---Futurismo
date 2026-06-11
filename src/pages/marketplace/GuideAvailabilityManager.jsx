@@ -249,7 +249,7 @@ const GuideAvailabilityManager = () => {
         }
       }
     } catch (err) {
-      toast.error(err.message || 'Error al actualizar disponibilidad');
+      toast.error(err.message || t('marketplace.availability.updateError'));
     } finally {
       setActionInProgress(null);
     }

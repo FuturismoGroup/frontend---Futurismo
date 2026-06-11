@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import useServiceChart from '../../hooks/useServiceChart';
 import { useAuthStore } from '../../stores/authStore';
 import ChartControls from './ChartControls';
@@ -7,6 +8,7 @@ import ChartViews from './ChartViews';
 import ChartSummary from './ChartSummary';
 
 const ServiceChart = () => {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const hideIncome = user?.role === 'agency';
   const {
@@ -45,7 +47,7 @@ const ServiceChart = () => {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:p-8">
         <div className="text-center text-red-600">
-          <p className="text-sm sm:text-base">Error al cargar las estadísticas: {error}</p>
+          <p className="text-sm sm:text-base">{t('dashboard.chart.loadError')}: {error}</p>
         </div>
       </div>
     );

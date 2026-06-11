@@ -79,7 +79,7 @@ const GuideMarketplaceProfile = () => {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: `Guía turístico: ${guide.fullName || guide.name}`,
+        title: t('marketplace.profile.shareTitle', { name: guide.fullName || guide.name }),
         text: guide.bio || '',
         url: window.location.href
       });
@@ -99,9 +99,9 @@ const GuideMarketplaceProfile = () => {
   // Derivar badge de nivel según años de experiencia
   const getExperienceBadge = (years) => {
     if (!years || years <= 0) return null;
-    if (years < 3) return { label: 'Principiante', className: 'bg-blue-100 text-blue-800' };
-    if (years < 8) return { label: 'Intermedio', className: 'bg-yellow-100 text-yellow-800' };
-    return { label: 'Experto', className: 'bg-green-100 text-green-800' };
+    if (years < 3) return { label: t('marketplace.profile.levelBeginner'), className: 'bg-blue-100 text-blue-800' };
+    if (years < 8) return { label: t('marketplace.profile.levelIntermediate'), className: 'bg-yellow-100 text-yellow-800' };
+    return { label: t('marketplace.profile.levelExpert'), className: 'bg-green-100 text-green-800' };
   };
 
   if (isLoading) {
@@ -121,57 +121,57 @@ const GuideMarketplaceProfile = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header con imagen de fondo */}
-      <div className="relative h-96 bg-gradient-to-br from-cyan-600 to-blue-600">
+      <div className="relative h-[24rem] sm:h-96 bg-gradient-to-br from-cyan-600 to-blue-600">
         {/* Navegación */}
         <div className="absolute top-0 left-0 right-0 p-4">
           <button
             onClick={() => navigate('/marketplace')}
-            className="inline-flex items-center text-white hover:text-cyan-200 transition-colors"
+            className="inline-flex items-center text-white hover:text-cyan-200 transition-colors text-sm sm:text-base"
           >
-            <ChevronLeftIcon className="h-5 w-5 mr-1" />
-            Volver al marketplace
+            <ChevronLeftIcon className="h-5 w-5 mr-1 flex-shrink-0" />
+            {t('marketplace.profile.backToMarketplace')}
           </button>
         </div>
 
         {/* Información principal */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-8">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 sm:p-8 pt-16">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-end gap-6">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6">
               <img
                 src={resolveFileUrl(guide.profileImage || guide.profilePhoto || guide.guidePhoto) || `https://ui-avatars.com/api/?name=${guide.name}&background=random`}
                 alt={guide.name}
-                className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
+                className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white shadow-lg flex-shrink-0"
               />
-              <div className="flex-1">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                      {guide.name}
+              <div className="flex-1 min-w-0 w-full text-center sm:text-left">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between gap-3">
+                  <div className="min-w-0">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center justify-center sm:justify-start gap-2 sm:gap-3 break-words">
+                      <span className="break-words">{guide.name}</span>
                       {guide.verified && (
-                        <CheckBadgeIcon className="h-8 w-8 text-cyan-400" />
+                        <CheckBadgeIcon className="h-7 w-7 sm:h-8 sm:w-8 text-cyan-400 flex-shrink-0" />
                       )}
                     </h1>
-                    <div className="flex items-center gap-4 text-white/90">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1 text-sm sm:text-base text-white/90">
                       <div className="flex items-center gap-1">
                         {guide.reviewCount > 0 ? (
                           <>
-                            <StarIcon className="h-5 w-5 text-yellow-400" />
+                            <StarIcon className="h-5 w-5 text-yellow-400 flex-shrink-0" />
                             <span className="font-semibold">{parseFloat(guide.rating).toFixed(1)}</span>
                             <span>({guide.reviewCount} {guide.reviewCount === 1 ? t('marketplace.messages.reviewSingular') : t('marketplace.messages.reviewPlural')})</span>
                           </>
                         ) : (
-                          <span className="text-white/70 italic">Nuevo en el marketplace</span>
+                          <span className="text-white/70 italic">{t('marketplace.profile.newInMarketplace')}</span>
                         )}
                       </div>
-                      <span>•</span>
-                      <span>{guide.completedTours || 0} tours completados</span>
-                      <span>•</span>
-                      <span>Se unió en {new Date(guide.joinedDate || Date.now()).getFullYear()}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span>{t('marketplace.profile.toursCompletedCount', { count: guide.completedTours || 0 })}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span>{t('marketplace.profile.joinedIn', { year: new Date(guide.joinedDate || Date.now()).getFullYear() })}</span>
                     </div>
                   </div>
 
                   {/* Acciones */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={() => setIsFavorite(!isFavorite)}
                       className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
@@ -204,21 +204,21 @@ const GuideMarketplaceProfile = () => {
             {/* Tabs */}
             <div className="bg-white rounded-lg shadow-sm">
               <div className="border-b border-gray-200">
-                <nav className="flex -mb-px">
+                <nav className="flex -mb-px overflow-x-auto">
                   {['about', 'experience', 'reviews', 'availability'].map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`flex-1 py-4 px-6 text-center border-b-2 font-medium text-sm transition-colors ${
+                      className={`flex-shrink-0 sm:flex-1 py-4 px-4 sm:px-6 text-center border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                         activeTab === tab
                           ? 'border-cyan-500 text-cyan-600'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       }`}
                     >
-                      {tab === 'about' && 'Acerca de'}
-                      {tab === 'experience' && 'Experiencia'}
+                      {tab === 'about' && t('marketplace.profile.tabAbout')}
+                      {tab === 'experience' && t('marketplace.profile.tabExperience')}
                       {tab === 'reviews' && t('marketplace.messages.reviewsTab')}
-                      {tab === 'availability' && 'Disponibilidad'}
+                      {tab === 'availability' && t('marketplace.profile.tabAvailability')}
                     </button>
                   ))}
                 </nav>
@@ -230,11 +230,11 @@ const GuideMarketplaceProfile = () => {
                   <div className="space-y-6">
                     {/* Bio */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Sobre mí</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('marketplace.profile.aboutMe')}</h3>
                       {guide.bio ? (
                         <p className="text-gray-600">{guide.bio}</p>
                       ) : (
-                        <p className="text-gray-400 italic">Este guía aún no ha completado su perfil.</p>
+                        <p className="text-gray-400 italic">{t('marketplace.profile.profileNotCompleted')}</p>
                       )}
                     </div>
 
@@ -242,13 +242,13 @@ const GuideMarketplaceProfile = () => {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <LanguageIcon className="h-5 w-5 text-gray-400" />
-                        Idiomas
+                        {t('marketplace.profile.languages')}
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
                         {(() => {
                           const langs = safeArray(guide.languages);
                           if (langs.length === 0) {
-                            return <p className="text-gray-400 italic col-span-2">Sin idiomas registrados</p>;
+                            return <p className="text-gray-400 italic col-span-2">{t('marketplace.profile.noLanguages')}</p>;
                           }
                           return langs.map((lang, index) => {
                             const langCode = typeof lang === 'string' ? lang : (lang?.code || lang?.name || lang?.language || '');
@@ -271,13 +271,13 @@ const GuideMarketplaceProfile = () => {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <AcademicCapIcon className="h-5 w-5 text-gray-400" />
-                        Especialidades
+                        {t('marketplace.profile.specialties')}
                       </h3>
                       <div className="flex flex-wrap gap-2">
                         {(() => {
                           const specs = safeArray(guide.specialties);
                           if (specs.length === 0) {
-                            return <p className="text-gray-400 italic">Sin especialidades registradas</p>;
+                            return <p className="text-gray-400 italic">{t('marketplace.profile.noSpecialties')}</p>;
                           }
                           return specs.map((type, index) => {
                             const label = typeof type === 'string' ? type : (type?.name || type?.specialty || String(type));
@@ -298,13 +298,13 @@ const GuideMarketplaceProfile = () => {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <MapPinIcon className="h-5 w-5 text-gray-400" />
-                        Zonas de trabajo
+                        {t('marketplace.profile.workZones')}
                       </h3>
                       <div className="space-y-2">
                         {(() => {
                           const zones = safeArray(guide.workZones);
                           if (zones.length === 0) {
-                            return <p className="text-gray-400 italic">Sin zonas de trabajo registradas</p>;
+                            return <p className="text-gray-400 italic">{t('marketplace.profile.noWorkZones')}</p>;
                           }
                           return zones.map((zone, index) => {
                             const label = typeof zone === 'string' ? zone : (zone?.name || zone?.zone || String(zone));
@@ -323,24 +323,24 @@ const GuideMarketplaceProfile = () => {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <BuildingLibraryIcon className="h-5 w-5 text-gray-400" />
-                        Experiencia en Museos
+                        {t('marketplace.profile.museumExperience')}
                       </h3>
                       {(() => {
                         const museums = safeArray(guide.museums);
                         if (museums.length === 0) {
-                          return <p className="text-gray-400 italic">Sin experiencia en museos registrada</p>;
+                          return <p className="text-gray-400 italic">{t('marketplace.profile.noMuseumExperience')}</p>;
                         }
                         return (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {museums.map((museum, index) => (
                               <div key={index} className="border border-orange-200 rounded-lg bg-orange-50 p-3">
                                 <p className="font-medium text-orange-800 text-sm">
-                                  {typeof museum === 'string' ? museum : museum.name || `Museo #${index + 1}`}
+                                  {typeof museum === 'string' ? museum : museum.name || t('marketplace.profile.museumNumber', { number: index + 1 })}
                                 </p>
                                 {typeof museum === 'object' && (
                                   <div className="mt-1 text-xs text-orange-600 space-y-0.5">
-                                    {museum.years && <p>{museum.years} años de experiencia</p>}
-                                    {museum.expertise && <p>Nivel: {museum.expertise}</p>}
+                                    {museum.years && <p>{t('marketplace.profile.yearsExperienceCount', { count: museum.years })}</p>}
+                                    {museum.expertise && <p>{t('marketplace.profile.levelLabel')}: {museum.expertise}</p>}
                                   </div>
                                 )}
                               </div>
@@ -359,7 +359,7 @@ const GuideMarketplaceProfile = () => {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                         <UserGroupIcon className="h-5 w-5 text-gray-400" />
-                        Experiencia profesional
+                        {t('marketplace.profile.professionalExperience')}
                       </h3>
                       {guide.yearsOfExperience && guide.yearsOfExperience > 0 ? (
                         <div className="bg-gray-50 rounded-lg p-4">
@@ -379,7 +379,7 @@ const GuideMarketplaceProfile = () => {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-gray-400 italic">Sin experiencia registrada</p>
+                        <p className="text-gray-400 italic">{t('marketplace.profile.noExperience')}</p>
                       )}
                     </div>
 
@@ -387,12 +387,12 @@ const GuideMarketplaceProfile = () => {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                         <AcademicCapIcon className="h-5 w-5 text-gray-400" />
-                        Certificaciones
+                        {t('marketplace.profile.certifications')}
                       </h3>
                       {(() => {
                         const certs = safeArray(guide.certifications);
                         if (certs.length === 0) {
-                          return <p className="text-gray-400 italic">Sin certificaciones registradas</p>;
+                          return <p className="text-gray-400 italic">{t('marketplace.profile.noCertifications')}</p>;
                         }
                         return (
                           <div className="space-y-3">
@@ -416,19 +416,19 @@ const GuideMarketplaceProfile = () => {
 
                     {/* Estadísticas - solo datos reales */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Estadísticas</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('marketplace.profile.statistics')}</h3>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-gray-50 rounded-lg p-4 text-center">
                           <p className="text-2xl font-bold text-gray-900">
                             {guide.completedTours || 0}
                           </p>
-                          <p className="text-sm text-gray-600">Tours realizados</p>
+                          <p className="text-sm text-gray-600">{t('marketplace.profile.toursPerformed')}</p>
                         </div>
                         <div className="bg-gray-50 rounded-lg p-4 text-center">
                           <p className="text-2xl font-bold text-gray-900">
                             {guide.reviewCount || 0}
                           </p>
-                          <p className="text-sm text-gray-600">Reseñas recibidas</p>
+                          <p className="text-sm text-gray-600">{t('marketplace.profile.reviewsReceived')}</p>
                         </div>
                       </div>
                     </div>
@@ -465,9 +465,9 @@ const GuideMarketplaceProfile = () => {
                     ) : (
                       <div className="bg-gray-50 rounded-lg p-8 text-center">
                         <StarIcon className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                        <p className="text-gray-500 font-medium">Sin calificaciones aún</p>
+                        <p className="text-gray-500 font-medium">{t('marketplace.profile.noRatingsYet')}</p>
                         <p className="text-sm text-gray-400 mt-1">
-                          Este guía aún no ha recibido reseñas
+                          {t('marketplace.profile.noReviewsReceived')}
                         </p>
                       </div>
                     )}
@@ -502,7 +502,7 @@ const GuideMarketplaceProfile = () => {
                               </div>
                               {review.verified && (
                                 <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                                  Verificado
+                                  {t('marketplace.profile.verified')}
                                 </span>
                               )}
                             </div>
@@ -516,7 +516,7 @@ const GuideMarketplaceProfile = () => {
                     ) : (
                       !guide.rating && (
                         <p className="text-center text-gray-400 italic py-4">
-                          Aún no hay reseñas para mostrar
+                          {t('marketplace.profile.noReviewsToShow')}
                         </p>
                       )
                     )}
@@ -528,7 +528,7 @@ const GuideMarketplaceProfile = () => {
                   <div className="space-y-6">
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                       <p className="text-sm text-yellow-800">
-                        La disponibilidad se muestra en tiempo real. Los horarios pueden cambiar según las reservas confirmadas.
+                        {t('marketplace.profile.availabilityRealtimeNote')}
                       </p>
                     </div>
 
@@ -549,7 +549,7 @@ const GuideMarketplaceProfile = () => {
               {/* Tarifa del guía */}
               {guide.pricePerPerson ? (
                 <div className="text-center mb-6 p-4 bg-purple-50 border border-purple-100 rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">Tarifa por persona</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('marketplace.profile.ratePerPerson')}</p>
                   <p className="text-3xl font-bold text-purple-700">
                     S/ {parseFloat(guide.pricePerPerson).toFixed(2)}
                   </p>
@@ -557,7 +557,7 @@ const GuideMarketplaceProfile = () => {
               ) : (
                 <div className="text-center mb-6 py-4">
                   <CurrencyDollarIcon className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400">Sin tarifa configurada</p>
+                  <p className="text-sm text-gray-400">{t('marketplace.profile.noRateConfigured')}</p>
                 </div>
               )}
 
@@ -565,12 +565,12 @@ const GuideMarketplaceProfile = () => {
               <div className="space-y-3 mb-6">
                 <div className="flex items-center gap-3 text-sm">
                   <CalendarIcon className="h-5 w-5 text-gray-400" />
-                  <span>Reserva con anticipación</span>
+                  <span>{t('marketplace.profile.bookInAdvance')}</span>
                 </div>
 
                 <div className="flex items-center gap-3 text-sm">
                   <ShieldCheckIcon className="h-5 w-5 text-gray-400" />
-                  <span>Guía verificado</span>
+                  <span>{t('marketplace.profile.verifiedGuide')}</span>
                 </div>
               </div>
 
@@ -580,7 +580,7 @@ const GuideMarketplaceProfile = () => {
                   onClick={handleBooking}
                   className="w-full bg-cyan-600 text-white px-4 py-3 rounded-lg hover:bg-cyan-700 transition-colors font-medium"
                 >
-                  Solicitar servicio
+                  {t('marketplace.profile.requestService')}
                 </button>
 
                 <button
@@ -588,7 +588,7 @@ const GuideMarketplaceProfile = () => {
                   className="w-full bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   <ChatBubbleLeftRightIcon className="h-5 w-5" />
-                  Enviar mensaje
+                  {t('marketplace.profile.sendMessage')}
                 </button>
               </div>
 
@@ -597,7 +597,7 @@ const GuideMarketplaceProfile = () => {
                 <div className="flex items-start gap-2 text-sm text-gray-600">
                   <ShieldCheckIcon className="h-5 w-5 text-green-500 flex-shrink-0" />
                   <p>
-                    Todos nuestros guías están verificados y cuentan con seguro de responsabilidad civil.
+                    {t('marketplace.profile.guaranteeNote')}
                   </p>
                 </div>
               </div>

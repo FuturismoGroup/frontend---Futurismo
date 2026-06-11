@@ -149,7 +149,7 @@ const ActiveTourDetailsModal = ({ isOpen, onClose, tour, onViewOnMap }) => {
         id: p.id,
         url: p.url,
         thumbnail: p.url, // Usar misma URL si no hay thumbnail
-        stopName: p.stopName || 'Sin parada',
+        stopName: p.stopName || t('monitoring.comp.noStop'),
         comment: p.caption,
         guideName: tour.guideName,
         tourName: tour.tourName,

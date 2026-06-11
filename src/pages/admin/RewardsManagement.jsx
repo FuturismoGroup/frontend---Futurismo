@@ -307,7 +307,7 @@ const RewardsManagement = () => {
 
   // Manejar eliminación
   const handleDelete = async (reward) => {
-    if (window.confirm(`¿Está seguro de eliminar el premio "${reward.name}"?`)) {
+    if (window.confirm(t('rewards.admin.confirmDeleteReward', { name: reward.name }))) {
       try {
         await deleteReward(reward.id);
         toast.success(t('rewards.admin.messages.deleteSuccess'));
@@ -346,7 +346,7 @@ const RewardsManagement = () => {
 
     try {
       await addPointsToAgency(selectedAgency.id, points, pointsData.reason);
-      toast.success(`${points} puntos asignados a ${selectedAgency.name}`);
+      toast.success(t('rewards.admin.assignPoints.pointsAssigned', { points, agency: selectedAgency.name }));
       setShowPointsModal(false);
       setSelectedAgency(null);
       setPointsData({ points: '', reason: '' });
@@ -522,7 +522,7 @@ const RewardsManagement = () => {
                         </td>
                         <td className="px-6 py-4 text-center">
                           <span className="text-sm font-medium text-purple-600">
-                            {reward.points.toLocaleString()} pts
+                            {reward.points.toLocaleString()} {t('rewards.pointsUnit')}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-center">
@@ -578,12 +578,12 @@ const RewardsManagement = () => {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Agencia</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Puntos Totales</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Puntos Disponibles</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Puntos Usados</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Fecha Registro</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.agenciesTable.agency')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.agenciesTable.totalPoints')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.agenciesTable.availablePoints')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.agenciesTable.usedPoints')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.agenciesTable.registerDate')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -618,14 +618,14 @@ const RewardsManagement = () => {
                           <button
                             onClick={() => handleViewDetails(agency, 'agency')}
                             className="text-blue-600 hover:text-blue-800"
-                            title="Ver detalles"
+                            title={t('rewards.admin.viewDetails')}
                           >
                             <EyeIcon className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => handleAssignPoints(agency)}
                             className="text-green-600 hover:text-green-800"
-                            title="Asignar puntos"
+                            title={t('rewards.admin.assignPointsTitle')}
                           >
                             <PlusCircleIcon className="h-5 w-5" />
                           </button>
@@ -645,12 +645,12 @@ const RewardsManagement = () => {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Agencia</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Premio</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Puntos</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Estado</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Fecha Solicitud</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.agenciesTable.agency')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.reward')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.points')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.status')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.redemptionsTable.requestDate')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">{t('rewards.admin.table.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -679,7 +679,7 @@ const RewardsManagement = () => {
                         <button
                           onClick={() => handleViewDetails(redemption, 'redemption')}
                           className="text-blue-600 hover:text-blue-800"
-                          title="Ver detalles"
+                          title={t('rewards.admin.viewDetails')}
                         >
                           <EyeIcon className="h-5 w-5" />
                         </button>
@@ -704,15 +704,15 @@ const RewardsManagement = () => {
           <div className="max-w-2xl">
             {/* Fórmula de puntos */}
             <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">Fórmula de Puntos</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('rewards.admin.pointsFormula')}</h3>
               <p className="text-sm text-gray-500 mb-4">
-                Configura cuántos puntos gana una agencia por cada sol gastado en reservaciones confirmadas.
+                {t('rewards.admin.pointsFormulaDesc')}
               </p>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Puntos por Sol (S/)
+                    {t('rewards.admin.pointsPerSol')}
                   </label>
                   <input
                     type="number"
@@ -723,13 +723,13 @@ const RewardsManagement = () => {
                     step="0.01"
                   />
                   <p className="text-xs text-gray-400 mt-1">
-                    Ejemplo: Si vale 0.1, una reserva de S/ 500 otorga {Math.floor(500 * (pointsConfig.pointsPerSol || 0))} puntos
+                    {t('rewards.admin.pointsPerSolExample', { points: Math.floor(500 * (pointsConfig.pointsPerSol || 0)) })}
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Meses de Expiración
+                    {t('rewards.admin.expiryMonths')}
                   </label>
                   <input
                     type="number"
@@ -738,16 +738,16 @@ const RewardsManagement = () => {
                     className="w-48 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     min="0"
                   />
-                  <p className="text-xs text-gray-400 mt-1">0 = sin expiración</p>
+                  <p className="text-xs text-gray-400 mt-1">{t('rewards.admin.noExpiry')}</p>
                 </div>
               </div>
             </div>
 
             {/* Niveles */}
             <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">Niveles de Agencia</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('rewards.admin.agencyLevels')}</h3>
               <p className="text-sm text-gray-500 mb-4">
-                Configura los puntos totales acumulados necesarios para alcanzar cada nivel. Los niveles solo otorgan un badge distintivo.
+                {t('rewards.admin.agencyLevelsFullDesc')}
               </p>
 
               <div className="space-y-3">
@@ -764,7 +764,7 @@ const RewardsManagement = () => {
                         {level.name}
                       </span>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-500">desde</span>
+                        <span className="text-sm text-gray-500">{t('rewards.admin.fromLabel')}</span>
                         <input
                           type="number"
                           value={level.minPoints}
@@ -775,7 +775,7 @@ const RewardsManagement = () => {
                           }`}
                           min="0"
                         />
-                        <span className="text-sm text-gray-500">puntos</span>
+                        <span className="text-sm text-gray-500">{t('rewards.admin.pointsLabel')}</span>
                       </div>
                     </div>
                   );
@@ -803,7 +803,7 @@ const RewardsManagement = () => {
               <form onSubmit={handleSubmit} className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold">
-                    {editingReward ? 'Editar Premio' : 'Nuevo Premio'}
+                    {editingReward ? t('rewards.admin.rewardForm.editTitle') : t('rewards.admin.rewardForm.newTitle')}
                   </h2>
                   <button
                     type="button"
@@ -817,21 +817,21 @@ const RewardsManagement = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nombre del Premio *
+                      {t('rewards.admin.rewardForm.name')}
                     </label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                       className={`w-full border rounded-lg px-3 py-2 ${errors.name ? 'border-red-500' : ''}`}
-                      placeholder="Ej: iPad Air 10.9"
+                      placeholder={t('rewards.admin.rewardForm.namePlaceholder')}
                     />
                     {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Descripción *
+                      {t('rewards.admin.rewardForm.description')}
                     </label>
                     <textarea
                       value={formData.description}
@@ -846,7 +846,7 @@ const RewardsManagement = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Puntos Requeridos *
+                        {t('rewards.admin.rewardForm.requiredPoints')}
                       </label>
                       <input
                         type="number"
@@ -861,7 +861,7 @@ const RewardsManagement = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Stock *
+                        {t('rewards.admin.rewardForm.stock')}
                       </label>
                       <input
                         type="number"
@@ -877,14 +877,14 @@ const RewardsManagement = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Categoría *
+                      {t('rewards.admin.rewardForm.category')}
                     </label>
                     <select
                       value={formData.category}
                       onChange={(e) => setFormData({...formData, category: e.target.value})}
                       className={`w-full border rounded-lg px-3 py-2 ${errors.category ? 'border-red-500' : ''}`}
                     >
-                      <option value="">Seleccionar categoría</option>
+                      <option value="">{t('rewards.admin.rewardForm.selectCategory')}</option>
                       {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                       ))}
@@ -894,7 +894,7 @@ const RewardsManagement = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Imagen del Premio
+                      {t('rewards.admin.rewardForm.image')}
                     </label>
                     <div className="space-y-3">
                       {/* Vista previa de imagen */}
@@ -902,7 +902,7 @@ const RewardsManagement = () => {
                         <div className="relative w-full h-40 bg-gray-100 rounded-lg overflow-hidden">
                           <img
                             src={imagePreview}
-                            alt="Vista previa"
+                            alt={t('rewards.admin.rewardForm.imagePreviewAlt')}
                             className="w-full h-full object-cover"
                           />
                           <button
@@ -927,9 +927,9 @@ const RewardsManagement = () => {
                           <div className="flex flex-col items-center justify-center pt-5 pb-6">
                             <PhotoIcon className="w-8 h-8 mb-2 text-gray-400" />
                             <p className="mb-1 text-sm text-gray-500">
-                              <span className="font-semibold">Click para subir imagen</span>
+                              <span className="font-semibold">{t('rewards.admin.rewardForm.uploadHint')}</span>
                             </p>
-                            <p className="text-xs text-gray-500">PNG, JPG, GIF o WEBP (máx. 5MB)</p>
+                            <p className="text-xs text-gray-500">{t('rewards.admin.rewardForm.fileTypes')}</p>
                           </div>
                           <input
                             type="file"
@@ -951,7 +951,7 @@ const RewardsManagement = () => {
                       className="mr-2"
                     />
                     <label htmlFor="active" className="text-sm text-gray-700">
-                      Premio activo y disponible para canje
+                      {t('rewards.admin.rewardForm.activeForRedemption')}
                     </label>
                   </div>
                 </div>
@@ -962,14 +962,14 @@ const RewardsManagement = () => {
                     onClick={resetForm}
                     className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
                   >
-                    Cancelar
+                    {t('rewards.admin.rewardForm.cancel')}
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
                     className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
                   >
-                    {loading ? 'Procesando...' : editingReward ? 'Actualizar' : 'Crear Premio'}
+                    {loading ? t('rewards.admin.rewardForm.processing') : editingReward ? t('rewards.admin.rewardForm.update') : t('rewards.admin.rewardForm.create')}
                   </button>
                 </div>
               </form>
@@ -984,8 +984,8 @@ const RewardsManagement = () => {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold">
-                    {selectedItem.type === 'reward' ? 'Detalles del Premio' :
-                     selectedItem.type === 'agency' ? 'Detalles de la Agencia' : 'Detalles del Canje'}
+                    {selectedItem.type === 'reward' ? t('rewards.admin.detail.rewardTitle') :
+                     selectedItem.type === 'agency' ? t('rewards.admin.detail.agencyTitle') : t('rewards.admin.detail.redemptionTitle')}
                   </h2>
                   <button
                     onClick={() => setShowDetails(false)}
@@ -999,32 +999,32 @@ const RewardsManagement = () => {
                 {selectedItem.type === 'reward' && (
                   <div className="space-y-4">
                     <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="font-medium mb-2">Información del Premio</h3>
+                      <h3 className="font-medium mb-2">{t('rewards.admin.detail.rewardInfo')}</h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Nombre:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.name')}</span>
                           <span className="font-medium">{selectedItem.name}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Categoría:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.category')}</span>
                           <span className="font-medium">
                             {categories.find(c => c.id === selectedItem.category)?.name || selectedItem.category}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Puntos Requeridos:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.pointsRequired')}</span>
                           <span className="font-medium text-purple-600">
                             {selectedItem.points.toLocaleString()}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Stock:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.stock')}</span>
                           <span className="font-medium">{selectedItem.stock}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Estado:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.status')}</span>
                           <span className={`badge ${selectedItem.active ? 'badge-green' : 'badge-gray'}`}>
-                            {selectedItem.active ? 'Activo' : 'Inactivo'}
+                            {selectedItem.active ? t('rewards.admin.active') : t('rewards.admin.inactive')}
                           </span>
                         </div>
                       </div>
@@ -1032,7 +1032,7 @@ const RewardsManagement = () => {
 
                     {selectedItem.description && (
                       <div>
-                        <h4 className="font-medium mb-2">Descripción</h4>
+                        <h4 className="font-medium mb-2">{t('rewards.admin.detail.description')}</h4>
                         <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
                           {selectedItem.description}
                         </p>
@@ -1041,7 +1041,7 @@ const RewardsManagement = () => {
 
                     {selectedItem.image && (
                       <div>
-                        <h4 className="font-medium mb-2">Imagen</h4>
+                        <h4 className="font-medium mb-2">{t('rewards.admin.detail.image')}</h4>
                         <img
                           src={resolveFileUrl(selectedItem.image)}
                           alt={selectedItem.name}
@@ -1055,26 +1055,26 @@ const RewardsManagement = () => {
                 {selectedItem.type === 'agency' && (
                   <div className="space-y-4">
                     <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="font-medium mb-2">Información de la Agencia</h3>
+                      <h3 className="font-medium mb-2">{t('rewards.admin.detail.agencyInfo')}</h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Nombre:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.name')}</span>
                           <span className="font-medium">{selectedItem.name}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Puntos Actuales:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.currentPoints')}</span>
                           <span className="font-medium text-purple-600">
                             {selectedItem.points?.toLocaleString() || 0}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Puntos Totales Ganados:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.totalEarned')}</span>
                           <span className="font-medium text-green-600">
                             {selectedItem.totalPointsEarned?.toLocaleString() || 0}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Canjes Realizados:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.redemptionsCount')}</span>
                           <span className="font-medium">{selectedItem.redemptionsCount || 0}</span>
                         </div>
                       </div>
@@ -1085,24 +1085,24 @@ const RewardsManagement = () => {
                 {selectedItem.type === 'redemption' && (
                   <div className="space-y-4">
                     <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="font-medium mb-2">Información del Canje</h3>
+                      <h3 className="font-medium mb-2">{t('rewards.admin.detail.redemptionInfo')}</h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Agencia:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.agencyLabel')}</span>
                           <span className="font-medium">{selectedItem.agencyName}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Premio:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.rewardLabel')}</span>
                           <span className="font-medium">{selectedItem.rewardName}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Puntos:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.pointsLabel')}</span>
                           <span className="font-medium text-purple-600">
                             {selectedItem.points.toLocaleString()}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-500">Estado:</span>
+                          <span className="text-gray-500">{t('rewards.admin.detail.status')}</span>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${REDEMPTION_STATUS_COLORS[selectedItem.status] || 'bg-gray-100 text-gray-800'}`}>
                             {t(REDEMPTION_STATUS_LABELS[selectedItem.status] || '', { defaultValue: selectedItem.status })}
                           </span>
@@ -1112,7 +1112,7 @@ const RewardsManagement = () => {
 
                     {selectedItem.notes && (
                       <div>
-                        <h4 className="font-medium mb-2">Notas</h4>
+                        <h4 className="font-medium mb-2">{t('rewards.admin.detail.notes')}</h4>
                         <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
                           {selectedItem.notes}
                         </p>
@@ -1123,25 +1123,25 @@ const RewardsManagement = () => {
                       {selectedItem.status === 'pending' && (
                         <>
                           <button
-                            onClick={() => handleUpdateRedemption(selectedItem.id, 'approved', 'Canje aprobado para entrega')}
+                            onClick={() => handleUpdateRedemption(selectedItem.id, 'approved', t('rewards.admin.detail.approveSuccess'))}
                             className="px-3 py-2 bg-green-600 text-white rounded text-sm hover:bg-green-700"
                           >
-                            Aprobar
+                            {t('rewards.admin.detail.approve')}
                           </button>
                           <button
-                            onClick={() => handleUpdateRedemption(selectedItem.id, 'cancelled', 'Canje cancelado')}
+                            onClick={() => handleUpdateRedemption(selectedItem.id, 'cancelled', t('rewards.admin.detail.rejectSuccess'))}
                             className="px-3 py-2 bg-red-600 text-white rounded text-sm hover:bg-red-700"
                           >
-                            Rechazar
+                            {t('rewards.admin.detail.reject')}
                           </button>
                         </>
                       )}
                       {selectedItem.status === 'approved' && (
                         <button
-                          onClick={() => handleUpdateRedemption(selectedItem.id, 'delivered', 'Premio entregado exitosamente')}
+                          onClick={() => handleUpdateRedemption(selectedItem.id, 'delivered', t('rewards.admin.detail.deliveredSuccess'))}
                           className="px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
                         >
-                          Marcar Entregado
+                          {t('rewards.admin.detail.markDelivered')}
                         </button>
                       )}
                     </div>
@@ -1158,7 +1158,7 @@ const RewardsManagement = () => {
             <div className="bg-white rounded-lg max-w-md w-full">
               <form onSubmit={handlePointsSubmit} className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold">Asignar Puntos</h2>
+                  <h2 className="text-2xl font-bold">{t('rewards.admin.assignPoints.title')}</h2>
                   <button
                     type="button"
                     onClick={() => {
@@ -1180,13 +1180,13 @@ const RewardsManagement = () => {
                   </div>
                   <div className="text-sm text-gray-600 space-y-1">
                     <div className="flex justify-between">
-                      <span>Puntos actuales:</span>
+                      <span>{t('rewards.admin.assignPoints.currentPoints')}</span>
                       <span className="font-medium text-purple-600">
                         {selectedAgency.availablePoints.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Total histórico:</span>
+                      <span>{t('rewards.admin.assignPoints.totalHistoric')}</span>
                       <span className="font-medium">
                         {selectedAgency.totalPoints.toLocaleString()}
                       </span>
@@ -1197,7 +1197,7 @@ const RewardsManagement = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Puntos a Asignar *
+                      {t('rewards.admin.assignPoints.pointsToAssign')}
                     </label>
                     <input
                       type="number"
@@ -1212,14 +1212,14 @@ const RewardsManagement = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Motivo/Razón *
+                      {t('rewards.admin.assignPoints.reason')}
                     </label>
                     <textarea
                       value={pointsData.reason}
                       onChange={(e) => setPointsData({...pointsData, reason: e.target.value})}
                       rows={3}
                       className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="Ej: Bonificación por desempeño excepcional, Premio por meta alcanzada, etc."
+                      placeholder={t('rewards.messages.exampleDescription')}
                       required
                     />
                   </div>
@@ -1230,7 +1230,7 @@ const RewardsManagement = () => {
                         <CheckCircleIcon className="h-5 w-5 text-green-600 mr-2" />
                         <div className="text-sm">
                           <span className="text-green-800">
-                            Nuevos puntos totales: {' '}
+                            {t('rewards.admin.assignPoints.newTotal')} {' '}
                             <span className="font-semibold">
                               {(selectedAgency.availablePoints + parseInt(pointsData.points || 0)).toLocaleString()}
                             </span>
@@ -1251,7 +1251,7 @@ const RewardsManagement = () => {
                     }}
                     className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
                   >
-                    Cancelar
+                    {t('rewards.admin.assignPoints.cancel')}
                   </button>
                   <button
                     type="submit"
@@ -1259,7 +1259,7 @@ const RewardsManagement = () => {
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                   >
                     <PlusCircleIcon className="h-4 w-4 mr-2" />
-                    {loading ? 'Asignando...' : 'Asignar Puntos'}
+                    {loading ? t('rewards.admin.assignPoints.assigning') : t('rewards.admin.assignPoints.assign')}
                   </button>
                 </div>
               </form>

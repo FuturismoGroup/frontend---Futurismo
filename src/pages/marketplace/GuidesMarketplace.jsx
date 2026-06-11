@@ -132,10 +132,10 @@ const GuidesMarketplace = () => {
         <div className="min-w-0 flex-1">
           <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
             <SparklesIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-blue-500 flex-shrink-0" />
-            <span className="truncate">Marketplace de Guías</span>
+            <span className="truncate">{t('marketplace.guidesPage.title')}</span>
           </h1>
           <p className="text-xs sm:text-sm lg:text-base text-gray-600 mt-1">
-            Encuentra y contrata guías freelance especializados
+            {t('marketplace.guidesPage.subtitle')}
           </p>
         </div>
 
@@ -145,7 +145,7 @@ const GuidesMarketplace = () => {
             className={`p-2 rounded-lg transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center ${viewLayout === 'grid'
               ? 'bg-blue-100 text-blue-600'
               : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
-            title="Vista cuadrícula"
+            title={t('marketplace.guidesPage.gridView')}
           >
             <Squares2X2Icon className="w-5 h-5" />
           </button>
@@ -154,7 +154,7 @@ const GuidesMarketplace = () => {
             className={`p-2 rounded-lg transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center ${viewLayout === 'list'
               ? 'bg-blue-100 text-blue-600'
               : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
-            title="Vista lista"
+            title={t('marketplace.guidesPage.listView')}
           >
             <ListBulletIcon className="w-5 h-5" />
           </button>
@@ -167,7 +167,7 @@ const GuidesMarketplace = () => {
           <div className="flex items-center gap-2 sm:gap-3">
             <UserGroupIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-blue-500 flex-shrink-0" />
             <div className="min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">Total Guías</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">{t('marketplace.guidesPage.totalGuides')}</p>
               <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{stats.totalGuides}</p>
             </div>
           </div>
@@ -177,7 +177,7 @@ const GuidesMarketplace = () => {
           <div className="flex items-center gap-2 sm:gap-3">
             <SparklesIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-green-500 flex-shrink-0" />
             <div className="min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">Disponibles</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">{t('marketplace.guidesPage.available')}</p>
               <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{stats.availableGuides}</p>
             </div>
           </div>
@@ -187,7 +187,7 @@ const GuidesMarketplace = () => {
           <div className="flex items-center gap-2 sm:gap-3">
             <StarIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-yellow-500 flex-shrink-0" />
             <div className="min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">Rating Promedio</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">{t('marketplace.guidesPage.averageRating')}</p>
               <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{stats.averageRating}</p>
             </div>
           </div>
@@ -197,7 +197,7 @@ const GuidesMarketplace = () => {
           <div className="flex items-center gap-2 sm:gap-3">
             <CurrencyDollarIcon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-purple-500 flex-shrink-0" />
             <div className="min-w-0">
-              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">Total Reviews</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">{t('marketplace.guidesPage.totalReviews')}</p>
               <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{stats.totalReviews}</p>
             </div>
           </div>
@@ -245,7 +245,7 @@ const GuidesMarketplace = () => {
                 }`}
               >
                 <FunnelIcon className="w-4 h-4" />
-                <span>Filtros</span>
+                <span>{t('marketplace.guidesPage.filters')}</span>
               </button>
 
               {/* Availability filter */}
@@ -254,9 +254,9 @@ const GuidesMarketplace = () => {
                 onChange={(e) => handleFilterChange('availability', e.target.value)}
                 className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
               >
-                <option value="">Todos los guías</option>
-                <option value="available">Solo disponibles</option>
-                <option value="busy">Ocupados</option>
+                <option value="">{t('marketplace.guidesPage.allGuides')}</option>
+                <option value="available">{t('marketplace.guidesPage.onlyAvailable')}</option>
+                <option value="busy">{t('marketplace.guidesPage.busy')}</option>
               </select>
             </div>
           </div>
@@ -268,35 +268,35 @@ const GuidesMarketplace = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Idiomas
+                  {t('marketplace.guidesPage.languages')}
                 </label>
                 <select
                   value={typeof activeFilters.languages === 'string' ? activeFilters.languages : ''}
                   onChange={(e) => handleFilterChange('languages', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="">Todos los idiomas</option>
-                  <option value="es">Español</option>
-                  <option value="en">Inglés</option>
-                  <option value="pt">Portugués</option>
-                  <option value="fr">Francés</option>
-                  <option value="de">Alemán</option>
-                  <option value="it">Italiano</option>
-                  <option value="ja">Japonés</option>
-                  <option value="zh">Chino</option>
+                  <option value="">{t('marketplace.guidesPage.allLanguages')}</option>
+                  <option value="es">{t('languageNames.es')}</option>
+                  <option value="en">{t('languageNames.en')}</option>
+                  <option value="pt">{t('languageNames.pt')}</option>
+                  <option value="fr">{t('languageNames.fr')}</option>
+                  <option value="de">{t('languageNames.de')}</option>
+                  <option value="it">{t('languageNames.it')}</option>
+                  <option value="ja">{t('languageNames.ja')}</option>
+                  <option value="zh">{t('languageNames.zh')}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Especialidad
+                  {t('marketplace.guidesPage.specialty')}
                 </label>
                 <select
                   value={typeof activeFilters.tourTypes === 'string' ? activeFilters.tourTypes : ''}
                   onChange={(e) => handleFilterChange('tourTypes', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="">Todas las especialidades</option>
+                  <option value="">{t('marketplace.guidesPage.allSpecialties')}</option>
                   <option value="Cultural">{t('guides.specialties.cultural')}</option>
                   <option value="Histórico">{t('guides.specialties.historical')}</option>
                   <option value="Aventura">{t('guides.specialties.adventure')}</option>
@@ -309,32 +309,32 @@ const GuidesMarketplace = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Rating Mínimo
+                  {t('marketplace.guidesPage.minRating')}
                 </label>
                 <select
                   value={activeFilters.minRating?.toString() || ''}
                   onChange={(e) => handleFilterChange('minRating', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="">Cualquier rating</option>
-                  <option value="4.5">4.5+ estrellas</option>
-                  <option value="4.0">4.0+ estrellas</option>
-                  <option value="3.5">3.5+ estrellas</option>
-                  <option value="3.0">3.0+ estrellas</option>
+                  <option value="">{t('marketplace.guidesPage.anyRating')}</option>
+                  <option value="4.5">{t('marketplace.guidesPage.starsPlus', { count: '4.5' })}</option>
+                  <option value="4.0">{t('marketplace.guidesPage.starsPlus', { count: '4.0' })}</option>
+                  <option value="3.5">{t('marketplace.guidesPage.starsPlus', { count: '3.5' })}</option>
+                  <option value="3.0">{t('marketplace.guidesPage.starsPlus', { count: '3.0' })}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Verificado
+                  {t('marketplace.guidesPage.verified')}
                 </label>
                 <select
                   value={activeFilters.verified?.toString() || ''}
                   onChange={(e) => handleFilterChange('verified', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="">Todos</option>
-                  <option value="true">Solo verificados</option>
+                  <option value="">{t('marketplace.guidesPage.all')}</option>
+                  <option value="true">{t('marketplace.guidesPage.onlyVerified')}</option>
                 </select>
               </div>
             </div>
@@ -352,7 +352,7 @@ const GuidesMarketplace = () => {
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                Limpiar filtros
+                {t('marketplace.guidesPage.clearFilters')}
               </button>
             </div>
           </div>
@@ -363,10 +363,10 @@ const GuidesMarketplace = () => {
       <div className="bg-white rounded-lg shadow-sm border">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <h3 className="text-base sm:text-lg font-medium text-gray-900">
-            Guías Disponibles ({filteredGuides.length})
+            {t('marketplace.guidesPage.availableGuides', { count: filteredGuides.length })}
           </h3>
           <span className="text-xs sm:text-sm text-gray-500 truncate">
-            Ordenado por: {SORT_OPTIONS.find(o => o.value === sortBy)?.label}
+            {t('marketplace.guidesPage.sortedBy')} {SORT_OPTIONS.find(o => o.value === sortBy)?.label}
           </span>
         </div>
 
@@ -384,12 +384,12 @@ const GuidesMarketplace = () => {
               <div className="space-y-3">
                 {/* Header de la tabla */}
                 <div className="hidden lg:grid lg:grid-cols-12 gap-4 px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b">
-                  <div className="col-span-4">Guía</div>
-                  <div className="col-span-2">Especialidades</div>
-                  <div className="col-span-2">Idiomas</div>
-                  <div className="col-span-1 text-center">Rating</div>
-                  <div className="col-span-1 text-center">Exp.</div>
-                  <div className="col-span-1 text-right">Precio</div>
+                  <div className="col-span-4">{t('marketplace.guidesPage.guide')}</div>
+                  <div className="col-span-2">{t('marketplace.guidesPage.specialties')}</div>
+                  <div className="col-span-2">{t('marketplace.guidesPage.languages')}</div>
+                  <div className="col-span-1 text-center">{t('marketplace.guidesPage.rating')}</div>
+                  <div className="col-span-1 text-center">{t('marketplace.guidesPage.expShort')}</div>
+                  <div className="col-span-1 text-right">{t('marketplace.guidesPage.price')}</div>
                   <div className="col-span-1"></div>
                 </div>
                 {filteredGuides.map((guide) => (
@@ -400,9 +400,9 @@ const GuidesMarketplace = () => {
           ) : (
             <div className="text-center py-12">
               <UserGroupIcon className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No hay guías disponibles</h3>
+              <h3 className="mt-2 text-sm font-medium text-gray-900">{t('marketplace.guidesPage.noGuidesAvailable')}</h3>
               <p className="mt-1 text-sm text-gray-500">
-                Intenta ajustar los filtros de búsqueda para encontrar más guías.
+                {t('marketplace.guidesPage.adjustSearchFilters')}
               </p>
             </div>
           )}
@@ -430,7 +430,7 @@ const GuideCard = ({ guide, t, onViewProfile }) => (
             ? 'bg-green-100 text-green-800'
             : 'bg-gray-100 text-gray-800'
         }`}>
-          {guide.status === 'available' || guide.online ? 'Disponible' : 'No disponible'}
+          {guide.status === 'available' || guide.online ? t('marketplace.guidesPage.statusAvailable') : t('marketplace.guidesPage.statusUnavailable')}
         </span>
       </div>
     </div>
@@ -444,7 +444,7 @@ const GuideCard = ({ guide, t, onViewProfile }) => (
           {guide.licenseNumber && (
             <div className="flex items-center text-xs text-green-600 mt-1">
               <CheckBadgeIcon className="w-4 h-4 mr-1" />
-              Licencia: {guide.licenseNumber}
+              {t('marketplace.guidesPage.license')}: {guide.licenseNumber}
             </div>
           )}
         </div>
@@ -466,7 +466,7 @@ const GuideCard = ({ guide, t, onViewProfile }) => (
       {guide.yearsOfExperience > 0 && (
         <div className="flex items-center text-sm text-gray-600 mt-3">
           <ClockIcon className="w-4 h-4 mr-2 text-blue-500" />
-          <span>{guide.yearsOfExperience} años de experiencia</span>
+          <span>{t('marketplace.guidesPage.yearsExperienceCount', { count: guide.yearsOfExperience })}</span>
         </div>
       )}
 
@@ -474,7 +474,7 @@ const GuideCard = ({ guide, t, onViewProfile }) => (
         <div className="mt-3">
           <div className="flex items-center text-sm text-gray-600 mb-1">
             <LanguageIcon className="w-4 h-4 mr-2 text-blue-500" />
-            <span className="font-medium">Idiomas:</span>
+            <span className="font-medium">{t('marketplace.guidesPage.languagesLabel')}</span>
           </div>
           <div className="flex flex-wrap gap-1 ml-6">
             {(Array.isArray(guide.languages) ? guide.languages : []).slice(0, 4).map((lang, idx) => (
@@ -495,7 +495,7 @@ const GuideCard = ({ guide, t, onViewProfile }) => (
         <div className="mt-3">
           <div className="flex items-center text-sm text-gray-600 mb-1">
             <AcademicCapIcon className="w-4 h-4 mr-2 text-purple-500" />
-            <span className="font-medium">Especialidades:</span>
+            <span className="font-medium">{t('marketplace.guidesPage.specialtiesLabel')}</span>
           </div>
           <div className="flex flex-wrap gap-1 ml-6">
             {(Array.isArray(guide.specialties) ? guide.specialties : []).slice(0, 3).map((spec, idx) => (
@@ -522,7 +522,7 @@ const GuideCard = ({ guide, t, onViewProfile }) => (
       {guide.toursCompleted > 0 && (
         <div className="flex items-center text-sm text-gray-600 mt-2">
           <UserGroupIcon className="w-4 h-4 mr-2 text-orange-500" />
-          <span>{guide.toursCompleted} tours completados</span>
+          <span>{t('marketplace.guidesPage.toursCompletedCount', { count: guide.toursCompleted })}</span>
         </div>
       )}
 
@@ -532,17 +532,17 @@ const GuideCard = ({ guide, t, onViewProfile }) => (
             {guide.pricePerPerson ? (
               <p className="text-xl font-bold text-gray-900">
                 S/ {parseFloat(guide.pricePerPerson).toFixed(2)}
-                <span className="text-sm font-normal text-gray-500">/persona</span>
+                <span className="text-sm font-normal text-gray-500">{t('marketplace.guidesPage.perPersonSuffix')}</span>
               </p>
             ) : (
-              <span className="text-sm text-gray-400">Sin tarifa configurada</span>
+              <span className="text-sm text-gray-400">{t('marketplace.guidesPage.noRateConfigured')}</span>
             )}
           </div>
           <button
             onClick={onViewProfile}
             className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Ver Perfil
+            {t('marketplace.guidesPage.viewProfile')}
           </button>
         </div>
       </div>
@@ -626,7 +626,7 @@ const GuideListRow = ({ guide, t, onViewProfile }) => (
     {/* Experiencia */}
     <div className="col-span-1 text-center">
       <span className="text-sm text-gray-700">
-        {guide.yearsOfExperience || 0} años
+        {t('marketplace.guidesPage.yearsShort', { count: guide.yearsOfExperience || 0 })}
       </span>
     </div>
 
@@ -647,7 +647,7 @@ const GuideListRow = ({ guide, t, onViewProfile }) => (
         onClick={(e) => { e.stopPropagation(); onViewProfile(); }}
         className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Ver
+        {t('marketplace.guidesPage.view')}
       </button>
     </div>
   </div>

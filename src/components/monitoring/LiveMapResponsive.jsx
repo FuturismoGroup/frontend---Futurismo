@@ -278,7 +278,7 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
               ${service.guideName}
             </span>
           </p>
-          <p class="text-xs text-gray-500 mt-1">${service.tourists} turistas</p>
+          <p class="text-xs text-gray-500 mt-1">${service.tourists} ${t('monitoring.comp.tourists')}</p>
           <div class="mt-2 flex items-center justify-between">
             <span class="text-xs px-2 py-1 rounded-full ${
               service.status === 'enroute' ? 'bg-green-100 text-green-700' :
@@ -294,7 +294,7 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              Posición aproximada (sin GPS aún)
+              ${t('monitoring.comp.approximatePosition')}
             </p>
           ` : ''}
         </div>
@@ -389,7 +389,7 @@ const LiveMapResponsive = ({ services = [], loading = false, filters, onServiceS
               {isUpdating ? t('monitoring.comp.updating') : t('monitoring.comp.live')}
             </span>
             <span className="text-xs text-gray-500">
-              {Array.isArray(services) ? services.length : 0} servicios
+              {Array.isArray(services) ? services.length : 0} {t('monitoring.comp.servicesShort')}
             </span>
           </div>
         </div>

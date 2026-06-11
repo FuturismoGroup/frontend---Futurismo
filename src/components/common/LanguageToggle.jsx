@@ -27,7 +27,7 @@ const LanguageToggle = () => {
         <GlobeAltIcon className="w-5 h-5 text-gray-500 group-hover:text-gray-700 transition-colors" />
         <span className="text-base leading-none">{currentLanguage.flag}</span>
         <ChevronDownIcon
-          className={`w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-all ${isOpen ? 'rotate-180' : ''}`}
+          className={`hidden sm:block w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-all ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 

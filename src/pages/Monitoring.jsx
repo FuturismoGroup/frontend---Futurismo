@@ -544,7 +544,7 @@ const Monitoring = () => {
                           </span>
                           <span className="flex items-center gap-1">
                             <UserGroupIcon className="w-3 h-3" />
-                            {service.passengers || service.tourists || 0} turistas
+                            {service.passengers || service.tourists || 0} {t('monitoring.tourists').toLowerCase()}
                           </span>
                           {service.totalStops > 0 && (
                             <span className="flex items-center gap-1 text-green-600 font-medium">
@@ -700,7 +700,7 @@ const Monitoring = () => {
                               >
                                 <PlayIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                                 <span className="hidden sm:inline">{t('monitoring.actions.start')}</span>
-                                <span className="sm:hidden">Iniciar</span>
+                                <span className="sm:hidden">{t('monitoring.actions.start')}</span>
                               </button>
                             )}
                             
@@ -712,7 +712,7 @@ const Monitoring = () => {
                                 >
                                   <PauseIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                                   <span className="hidden sm:inline">{t('monitoring.actions.pause')}</span>
-                                  <span className="sm:hidden">Pausar</span>
+                                  <span className="sm:hidden">{t('monitoring.actions.pause')}</span>
                                 </button>
                                 <button
                                   onClick={() => handleCompleteTour(tour.id)}
@@ -720,7 +720,7 @@ const Monitoring = () => {
                                 >
                                   <CheckIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                                   <span className="hidden sm:inline">{t('monitoring.actions.complete')}</span>
-                                  <span className="sm:hidden">Finalizar</span>
+                                  <span className="sm:hidden">{t('monitoring.actions.complete')}</span>
                                 </button>
                               </>
                             )}
@@ -744,7 +744,7 @@ const Monitoring = () => {
                             >
                               <CameraIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                               <span className="text-center">
-                                {showCheckpoints[tour.id] ? 'Ocultar' : 'Ver'} Puntos ({tour.checkpoints.length})
+                                {t('monitoring.page.checkpointShowHide', { action: showCheckpoints[tour.id] ? t('monitoring.page.checkpointHide') : t('monitoring.page.checkpointShow'), count: tour.checkpoints.length })}
                               </span>
                             </button>
                           )}
@@ -755,7 +755,7 @@ const Monitoring = () => {
                           <div className="pt-3 mt-3 space-y-2 border-t sm:mt-4 sm:pt-4 sm:space-y-3">
                             <h5 className="flex items-center gap-1 text-xs font-medium text-gray-900 sm:text-sm">
                               <MapPinIcon className="w-3 h-3 text-purple-600 sm:w-4 sm:h-4" />
-                              Puntos de Control
+                              {t('monitoring.page.checkpointsHeader')}
                             </h5>
                             {tour.checkpoints.map((checkpoint, index) => {
                               const photoKey = `${tour.id}-${checkpoint.id}`;
@@ -790,12 +790,12 @@ const Monitoring = () => {
                                       <div className="flex flex-col flex-shrink-0 gap-1 sm:flex-row">
                                         {isRecommended && !hasPhoto && (
                                           <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">
-                                            Recomendado
+                                            {t('monitoring.page.recommended')}
                                           </span>
                                         )}
                                         {hasPhoto && (
                                           <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">
-                                            ✓ Completado
+                                            {t('monitoring.page.completedBadge')}
                                           </span>
                                         )}
                                       </div>
@@ -811,7 +811,7 @@ const Monitoring = () => {
                                     <div className="space-y-2">
                                       <img 
                                         src={capturedPhotos[photoKey].url}
-                                        alt={`Foto de ${checkpoint.name}`}
+                                        alt={t('monitoring.page.photoAlt', { name: checkpoint.name })}
                                         className="object-cover w-full h-24 border rounded sm:h-32"
                                       />
                                       <div className="flex items-center justify-between text-xs text-gray-500">
@@ -823,7 +823,7 @@ const Monitoring = () => {
                                           onClick={() => handleTakePhoto(tour.id, checkpoint.id)}
                                           className="px-2 py-1 text-xs text-purple-600 transition-colors rounded hover:text-purple-800 hover:bg-purple-50"
                                         >
-                                          Retomar
+                                          {t('monitoring.page.retake')}
                                         </button>
                                       </div>
                                     </div>
@@ -838,7 +838,7 @@ const Monitoring = () => {
                                       }`}
                                     >
                                       <PhotoIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                                      Tomar Foto
+                                      {t('monitoring.page.takePhoto')}
                                     </button>
                                   )}
                                 </div>
@@ -848,7 +848,7 @@ const Monitoring = () => {
                             {/* Resumen de progreso */}
                             <div className="p-2 mt-2 text-center bg-gray-100 rounded sm:mt-3">
                               <span className="text-xs text-gray-600">
-                                Fotos: {tour.checkpoints.filter(cp => capturedPhotos[`${tour.id}-${cp.id}`]).length} / {tour.checkpoints.length}
+                                {t('monitoring.page.photoSummary', { taken: tour.checkpoints.filter(cp => capturedPhotos[`${tour.id}-${cp.id}`]).length, total: tour.checkpoints.length })}
                               </span>
                             </div>
                           </div>

@@ -100,7 +100,7 @@ const Dashboard = () => {
         <div className="space-y-4 sm:space-y-6">
           <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Ingresos por Mes</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">{t('dashboard.incomeByMonth')}</h3>
               <CurrencyDollarIcon className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 flex-shrink-0" />
             </div>
             <div className="h-48 sm:h-64">
@@ -130,7 +130,7 @@ const Dashboard = () => {
                     domain={['auto', 'auto']}
                   />
                   <Tooltip
-                    formatter={(value) => [`S/${value.toLocaleString()}`, 'Ingresos']}
+                    formatter={(value) => [`S/${value.toLocaleString()}`, t('dashboard.incomeLegend')]}
                     labelStyle={{ color: '#374151' }}
                   />
                   <Line

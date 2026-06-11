@@ -60,9 +60,8 @@ const AppHeader = () => {
 
         {/* Right section */}
         <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-          <div className="hidden sm:block">
-            <LanguageToggle />
-          </div>
+          {/* Selector de idioma - visible en todas las resoluciones, incluido mobile */}
+          <LanguageToggle />
 
           {/* Separator */}
           <div className="hidden sm:block w-px h-6 bg-gray-200" />

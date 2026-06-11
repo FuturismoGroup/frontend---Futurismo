@@ -157,7 +157,7 @@ const ServicesManagement = () => {
             <button
               onClick={() => setCurrentView('list')}
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
-              aria-label="Volver"
+              aria-label={t('common.back')}
             >
               <ArrowLeftIcon className="h-5 w-5" />
             </button>
@@ -236,12 +236,12 @@ const ServicesManagement = () => {
             <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] flex flex-col">
               {/* Header */}
               <div className="flex items-center justify-between gap-2 px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-                <h2 className="text-base sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">Detalles del Servicio</h2>
+                <h2 className="text-base sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">{t('services.serviceDetails')}</h2>
                 <button
                   type="button"
                   onClick={handleFormCancel}
                   className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition-colors flex-shrink-0"
-                  aria-label="Cerrar"
+                  aria-label={t('common.close')}
                 >
                   <XMarkIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
@@ -278,12 +278,11 @@ const ServicesManagement = () => {
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <h3 className="text-lg leading-6 font-medium text-gray-900">
-                      Eliminar Servicio
+                      {t('services.deleteServiceTitle')}
                     </h3>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        ¿Estás seguro de que deseas eliminar el servicio <span className="font-semibold text-gray-900">"{serviceToDelete.code || serviceToDelete.name}"</span>?
-                        Esta acción cambiará el estado del servicio a inactivo.
+                        {t('services.deleteConfirmPrefix')} <span className="font-semibold text-gray-900">"{serviceToDelete.code || serviceToDelete.name}"</span>{t('services.deleteConfirmSuffix')}
                       </p>
                     </div>
                   </div>
@@ -294,14 +293,14 @@ const ServicesManagement = () => {
                     onClick={confirmDelete}
                     className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
                   >
-                    Eliminar
+                    {t('common.delete')}
                   </button>
                   <button
                     type="button"
                     onClick={cancelDelete}
                     className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
                   >
-                    Cancelar
+                    {t('common.cancel')}
                   </button>
                 </div>
               </div>
@@ -327,23 +326,23 @@ const ServicesManagement = () => {
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <h3 className="text-lg leading-6 font-medium text-gray-900">
-                      No se puede eliminar el servicio
+                      {t('services.conflictTitle')}
                     </h3>
                     <div className="mt-3 space-y-3">
                       <p className="text-sm text-gray-600">
-                        El servicio <span className="font-semibold text-gray-900">"{conflictInfo.serviceName}"</span> tiene
+                        {t('services.conflictServicePrefix')} <span className="font-semibold text-gray-900">"{conflictInfo.serviceName}"</span> {t('services.conflictHas')}
                         {conflictInfo.reservationCount
-                          ? <span className="font-semibold text-amber-600"> {conflictInfo.reservationCount} reserva(s) activa(s)</span>
-                          : <span className="font-semibold text-amber-600"> reservas activas</span>
-                        } asociadas.
+                          ? <span className="font-semibold text-amber-600"> {t('services.conflictActiveCount', { count: conflictInfo.reservationCount })}</span>
+                          : <span className="font-semibold text-amber-600"> {t('services.conflictActiveReservations')}</span>
+                        } {t('services.conflictAssociated')}
                       </p>
                       <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
                         <p className="text-sm text-amber-800">
-                          <strong>Para eliminar este servicio:</strong>
+                          <strong>{t('services.conflictHowToDelete')}</strong>
                         </p>
                         <ul className="mt-2 text-sm text-amber-700 list-disc list-inside space-y-1">
-                          <li>Completa o cancela las reservas pendientes</li>
-                          <li>Espera a que finalicen los tours programados</li>
+                          <li>{t('services.conflictStep1')}</li>
+                          <li>{t('services.conflictStep2')}</li>
                         </ul>
                       </div>
                     </div>
@@ -358,7 +357,7 @@ const ServicesManagement = () => {
                     }}
                     className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm"
                   >
-                    Entendido
+                    {t('services.understood')}
                   </button>
                 </div>
               </div>
@@ -380,18 +379,19 @@ const ServicesManagement = () => {
 
 // Componente para mostrar detalles del servicio
 const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
+  const { t } = useTranslation();
   if (!service) return null;
 
   const isAgency = userRole === 'agency';
 
   const formatCategory = (cat) => {
-    if (!cat) return 'Sin categoría';
+    if (!cat) return t('reservations.noCategory');
     return cat.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
   const langNames = {
-    es: 'Español', en: 'Inglés', pt: 'Portugués',
-    fr: 'Francés', de: 'Alemán', it: 'Italiano'
+    es: t('auth.spanish'), en: t('auth.english'), pt: t('auth.portuguese'),
+    fr: t('auth.french'), de: t('auth.german'), it: t('auth.italian')
   };
 
   // Base URL del servidor (sin /api) para archivos estáticos
@@ -404,7 +404,7 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
       <div className="bg-gradient-to-br from-white to-gray-50 p-4 sm:p-6 rounded-xl border border-gray-200">
         <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-5 flex items-center">
           <div className="w-1 h-5 sm:h-6 bg-blue-500 rounded mr-2 sm:mr-3"></div>
-          Información del Servicio
+          {t('services.serviceInfo')}
         </h3>
 
         {/* Header con imagen, nombre y precio */}
@@ -437,11 +437,11 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
               </span>
               {service.active !== false && (
                 <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 text-xs font-medium text-green-700 bg-green-100 rounded-lg">
-                  Activo
+                  {t('providers.status.active')}
                 </span>
               )}
             </div>
-            <h4 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mt-2 break-words">{service.name || 'Sin nombre'}</h4>
+            <h4 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mt-2 break-words">{service.name || t('reservations.comp.noName')}</h4>
             {(service.meetingPoint || service.meeting_point) && (
               <p className="flex items-start text-xs sm:text-sm text-gray-500 mt-1">
                 <MapPinIcon className="w-4 h-4 mr-1.5 flex-shrink-0 mt-0.5" />
@@ -452,7 +452,7 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
 
           {/* Precio */}
           <div className="text-center sm:text-right bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-gray-200 flex-shrink-0 w-full sm:w-auto">
-            <p className="text-xs text-gray-500 mb-0.5 sm:mb-1">Precio por persona</p>
+            <p className="text-xs text-gray-500 mb-0.5 sm:mb-1">{t('reservations.pricePerPerson')}</p>
             <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
               S/. {parseFloat(service.price || 0).toFixed(2)}
             </p>
@@ -462,21 +462,21 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
         {/* Grid de información */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Duración</label>
+            <label className="block text-xs text-gray-500 mb-1">{t('settings.tours.defaultDuration')}</label>
             <p className="text-sm font-medium text-gray-900 flex items-center">
               <ClockIcon className="w-4 h-4 mr-1.5 text-gray-400" />
-              {service.duration || '-'} horas
+              {service.duration || '-'} {t('services.hours')}
             </p>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Capacidad máxima</label>
+            <label className="block text-xs text-gray-500 mb-1">{t('settings.tours.maxCapacity')}</label>
             <p className="text-sm font-medium text-gray-900 flex items-center">
               <UsersIcon className="w-4 h-4 mr-1.5 text-gray-400" />
-              {service.maxCapacity || service.max_capacity || '-'} personas
+              {service.maxCapacity || service.max_capacity || '-'} {t('pdf.people')}
             </p>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Idiomas disponibles</label>
+            <label className="block text-xs text-gray-500 mb-1">{t('services.availableLanguages')}</label>
             <p className="text-sm font-medium text-gray-900 flex items-center">
               <GlobeAltIcon className="w-4 h-4 mr-1.5 text-gray-400" />
               {Array.isArray(service.languages) && service.languages.length > 0
@@ -485,7 +485,7 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
             </p>
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Fecha de creación</label>
+            <label className="block text-xs text-gray-500 mb-1">{t('services.creationDate')}</label>
             <p className="text-sm font-medium text-gray-900 flex items-center">
               <CalendarDaysIcon className="w-4 h-4 mr-1.5 text-gray-400" />
               {service.createdAt ? new Date(service.createdAt).toLocaleDateString('es-ES') : '-'}
@@ -499,7 +499,7 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
         <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <div className="w-1 h-6 bg-indigo-500 rounded mr-3"></div>
-            Descripción
+            {t('services.description')}
           </h3>
           <p className="text-sm text-gray-600 leading-relaxed">{service.description}</p>
         </div>
@@ -510,7 +510,7 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
         <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-5 flex items-center">
             <div className="w-1 h-6 bg-green-500 rounded mr-3"></div>
-            Servicios Incluidos
+            {t('services.includedServices')}
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -518,7 +518,7 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
               <div>
                 <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
                   <CheckCircleIcon className="w-4 h-4 mr-1.5 text-green-600" />
-                  Incluye
+                  {t('services.includes')}
                 </h4>
                 <ul className="space-y-2">
                   {service.includes.map((item, index) => (
@@ -534,7 +534,7 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
               <div>
                 <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
                   <XCircleIcon className="w-4 h-4 mr-1.5 text-red-500" />
-                  No Incluye
+                  {t('services.excludes')}
                 </h4>
                 <ul className="space-y-2">
                   {service.excludes.map((item, index) => (
@@ -555,7 +555,7 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
         <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <div className="w-1 h-6 bg-amber-500 rounded mr-3"></div>
-            Notas Adicionales
+            {t('services.additionalNotes')}
           </h3>
           <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap bg-amber-50 px-4 py-3 rounded-lg border border-amber-200">
             {service.notes}
@@ -571,14 +571,14 @@ const ServiceDetails = ({ service, onEdit, onDelete, userRole }) => {
             className="px-4 py-2.5 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 border border-red-200 rounded-lg transition-colors"
           >
             <TrashIcon className="w-4 h-4 inline mr-1.5" />
-            Eliminar
+            {t('common.delete')}
           </button>
           <button
             onClick={onEdit}
             className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <PencilSquareIcon className="w-4 h-4 inline mr-1.5" />
-            Editar Servicio
+            {t('services.editService')}
           </button>
         </div>
       )}

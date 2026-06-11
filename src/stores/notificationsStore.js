@@ -51,8 +51,13 @@ const useNotificationsStore = create((set, get) => ({
         throw new Error(result.error || i18next.t('errors.unexpectedError'));
       }
 
+      // El backend responde { data: [...], pagination: {...}, unreadCount }
+      // Se mantiene compatibilidad por si la forma fuese { notifications, page, ... }
+      const payload = result.data || {};
+      const backendNotifications = payload.data || payload.notifications || [];
+      const paginationData = payload.pagination || {};
+
       // Preservar notificaciones locales de chat que no están en el backend
-      const backendNotifications = result.data.notifications || [];
       const localChatNotifs = currentNotifications.filter(n =>
         n.category === 'chat' && !backendNotifications.some(bn => bn.id === n.id)
       );
@@ -60,12 +65,12 @@ const useNotificationsStore = create((set, get) => ({
 
       set({
         notifications: [...localChatNotifs, ...backendNotifications],
-        unreadCount: (result.data.unreadCount || 0) + unreadLocalChat,
+        unreadCount: (payload.unreadCount || 0) + unreadLocalChat,
         pagination: {
-          page: result.data.page,
-          pageSize: result.data.pageSize,
-          total: result.data.total,
-          totalPages: result.data.totalPages
+          page: paginationData.page ?? payload.page ?? 1,
+          pageSize: paginationData.pageSize ?? payload.pageSize ?? pagination.pageSize,
+          total: paginationData.total ?? payload.total ?? backendNotifications.length,
+          totalPages: paginationData.totalPages ?? payload.totalPages ?? 1
         },
         isLoading: false
       });

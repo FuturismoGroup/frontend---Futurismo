@@ -209,14 +209,14 @@ const RejectModal = ({ request, onConfirm, onCancel, isSubmitting, rejectMessage
 
           <div className="mb-5">
             <label htmlFor="reject-reason" className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
-              Motivo (opcional)
+              {t('marketplace.guideDashboardPage.reasonOptional')}
             </label>
             <textarea
               id="reject-reason"
               rows={3}
               value={rejectMessage}
               onChange={(e) => setRejectMessage(e.target.value)}
-              placeholder="Puedes indicar un motivo para la agencia..."
+              placeholder={t('marketplace.guideDashboardPage.reasonPlaceholder')}
               className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-400 focus:border-rose-300 resize-none bg-gray-50/50 placeholder:text-gray-400"
             />
           </div>
@@ -248,6 +248,7 @@ const RejectModal = ({ request, onConfirm, onCancel, isSubmitting, rejectMessage
  * Individual service request card.
  */
 const ServiceRequestCard = ({ request, onAccept, onReject, onViewDetail }) => {
+  const { t } = useTranslation();
   const statusCfg = getStatusConfig(request.status);
   const isPending = request.status === 'pending';
 
@@ -271,7 +272,7 @@ const ServiceRequestCard = ({ request, onAccept, onReject, onViewDetail }) => {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-display font-semibold text-gray-900 truncate text-xs sm:text-sm">
-                {request.agency?.businessName || 'Agencia'}
+                {request.agency?.businessName || t('marketplace.guideDashboardPage.agency')}
               </h3>
               {request.agency?.contactName && (
                 <p className="text-[10px] sm:text-xs text-gray-400 truncate">
@@ -294,7 +295,7 @@ const ServiceRequestCard = ({ request, onAccept, onReject, onViewDetail }) => {
           </div>
           <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
             <UserGroupIcon className="h-4 w-4 text-cyan-400 flex-shrink-0" />
-            <span className="text-xs text-gray-600 font-medium">{request.groupSize || 0} personas</span>
+            <span className="text-xs text-gray-600 font-medium">{t('marketplace.guideDashboardPage.peopleCount', { count: request.groupSize || 0 })}</span>
           </div>
           {request.location && (
             <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2 col-span-2">
@@ -309,8 +310,8 @@ const ServiceRequestCard = ({ request, onAccept, onReject, onViewDetail }) => {
           <div className="flex items-center justify-between">
             <div className="text-xs text-gray-400">
               {request.pricePerPerson
-                ? `Ref: S/. ${Number(request.pricePerPerson).toLocaleString()} / persona`
-                : 'Precio ofertado'}
+                ? t('marketplace.guideDashboardPage.refPricePerPerson', { price: Number(request.pricePerPerson).toLocaleString() })
+                : t('marketplace.guideDashboardPage.offeredPrice')}
             </div>
             <div className="text-right">
               <div className="text-lg font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent font-mono">
@@ -334,19 +335,19 @@ const ServiceRequestCard = ({ request, onAccept, onReject, onViewDetail }) => {
               onClick={() => onViewDetail(request.id)}
               className="px-3 py-2.5 text-xs font-medium text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors flex-shrink-0"
             >
-              Detalle
+              {t('marketplace.guideDashboardPage.detail')}
             </button>
             <button
               onClick={() => onReject(request)}
               className="flex-1 min-w-[100px] px-3 py-2.5 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl hover:bg-rose-100 transition-colors"
             >
-              Rechazar
+              {t('marketplace.guideDashboardPage.reject')}
             </button>
             <button
               onClick={() => onAccept(request)}
               className="flex-1 min-w-[100px] px-3 py-2.5 text-xs font-semibold text-white bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl hover:shadow-lg hover:shadow-violet-500/25 transition-all"
             >
-              Aceptar
+              {t('marketplace.guideDashboardPage.accept')}
             </button>
           </div>
         ) : (
@@ -354,7 +355,7 @@ const ServiceRequestCard = ({ request, onAccept, onReject, onViewDetail }) => {
             onClick={() => onViewDetail(request.id)}
             className="w-full px-3 py-2.5 text-xs font-semibold text-violet-600 bg-violet-50 border border-violet-200 rounded-xl hover:bg-violet-100 transition-colors flex items-center justify-center gap-1.5"
           >
-            Ver detalle
+            {t('marketplace.guideDashboardPage.viewDetail')}
             <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
             </svg>
@@ -371,6 +372,7 @@ const ServiceRequestCard = ({ request, onAccept, onReject, onViewDetail }) => {
 
 const GuideMarketplaceDashboard = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const {
     serviceRequests: storeRequests,
@@ -433,12 +435,12 @@ const GuideMarketplaceDashboard = () => {
       setLocalRequests(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('[GuideMarketplaceDashboard] Error loading service requests:', error);
-      setRequestsError('Error al cargar solicitudes');
+      setRequestsError(t('marketplace.guideDashboardPage.errorLoadingRequests'));
       setLocalRequests([]);
     } finally {
       setRequestsLoading(false);
     }
-  }, [fetchServiceRequests]);
+  }, [fetchServiceRequests, t]);
 
   useEffect(() => {
     loadServiceRequests();
@@ -581,7 +583,7 @@ const GuideMarketplaceDashboard = () => {
   const guideInfo = {
     fullName: guide?.user?.first_name
       ? `${guide.user.first_name} ${guide.user.last_name || ''}`
-      : user?.name || 'Guia',
+      : user?.name || t('marketplace.guideDashboardPage.fallbackGuideName'),
     avatar: guide?.profile_photo || guide?.avatar || null,
     rating: typeof rawRating === 'number' ? rawRating : parseFloat(rawRating) || 0,
     verified: guide?.verified || guide?.is_verified || false,
@@ -593,12 +595,12 @@ const GuideMarketplaceDashboard = () => {
   const tabs = [
     {
       key: 'requests',
-      label: 'Solicitudes',
+      label: t('marketplace.guideDashboardPage.tabs.requests'),
       count: pendingRequests.length,
       isPurple: true
     },
-    { key: 'upcoming', label: 'Proximos', count: upcomingRequests.length },
-    { key: 'completed', label: 'Completados', count: completedRequests.length }
+    { key: 'upcoming', label: t('marketplace.guideDashboardPage.tabs.upcoming'), count: upcomingRequests.length },
+    { key: 'completed', label: t('marketplace.guideDashboardPage.tabs.completed'), count: completedRequests.length }
   ];
 
   return (
@@ -621,22 +623,22 @@ const GuideMarketplaceDashboard = () => {
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-base sm:text-2xl font-bold text-gray-900 flex items-center gap-2 truncate">
-                  <span className="truncate">Panel de Guia Freelance</span>
+                  <span className="truncate">{t('marketplace.guideDashboardPage.panelTitle')}</span>
                   {guideInfo.verified && (
                     <CheckBadgeIcon className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-500 flex-shrink-0" />
                   )}
                 </h1>
-                <p className="text-xs sm:text-base text-gray-600 truncate">Bienvenido, {guideInfo.fullName}</p>
+                <p className="text-xs sm:text-base text-gray-600 truncate">{t('marketplace.guideDashboardPage.welcome', { name: guideInfo.fullName })}</p>
               </div>
             </div>
             <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
-              <button className="p-2 text-gray-400 hover:text-gray-600" aria-label="Notificaciones">
+              <button className="p-2 text-gray-400 hover:text-gray-600" aria-label={t('marketplace.guideDashboardPage.notifications')}>
                 <BellIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
               <button
                 onClick={() => navigate('/profile')}
                 className="p-2 text-gray-400 hover:text-gray-600"
-                aria-label="Configuración"
+                aria-label={t('marketplace.guideDashboardPage.settings')}
               >
                 <CogIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
@@ -650,27 +652,27 @@ const GuideMarketplaceDashboard = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
             <div className="flex items-center justify-between mb-1 sm:mb-2 gap-2">
-              <p className="text-xs sm:text-sm text-gray-500 truncate">Ingresos del mes</p>
+              <p className="text-xs sm:text-sm text-gray-500 truncate">{t('marketplace.guideDashboardPage.monthlyIncome')}</p>
               <CurrencyDollarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
             </div>
             <p className="text-base sm:text-2xl font-bold text-gray-900 truncate">
               S/. {localMonthlyIncome.toLocaleString()}
             </p>
-            <p className="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2 truncate">Solo servicios completados</p>
+            <p className="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2 truncate">{t('marketplace.guideDashboardPage.onlyCompletedServices')}</p>
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
             <div className="flex items-center justify-between mb-1 sm:mb-2 gap-2">
-              <p className="text-xs sm:text-sm text-gray-500 truncate">Tours completados</p>
+              <p className="text-xs sm:text-sm text-gray-500 truncate">{t('marketplace.guideDashboardPage.toursCompleted')}</p>
               <CheckCircleIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
             </div>
             <p className="text-base sm:text-2xl font-bold text-gray-900">{localToursCompleted}</p>
-            <p className="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2">Este mes</p>
+            <p className="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2">{t('marketplace.guideDashboardPage.thisMonth')}</p>
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
             <div className="flex items-center justify-between mb-1 sm:mb-2 gap-2">
-              <p className="text-xs sm:text-sm text-gray-500 truncate">Calificacion</p>
+              <p className="text-xs sm:text-sm text-gray-500 truncate">{t('marketplace.guideDashboardPage.rating')}</p>
               <StarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
@@ -694,11 +696,11 @@ const GuideMarketplaceDashboard = () => {
 
           <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
             <div className="flex items-center justify-between mb-1 sm:mb-2 gap-2">
-              <p className="text-xs sm:text-sm text-gray-500 truncate">Tours esta semana</p>
+              <p className="text-xs sm:text-sm text-gray-500 truncate">{t('marketplace.guideDashboardPage.toursThisWeek')}</p>
               <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
             </div>
             <p className="text-base sm:text-2xl font-bold text-gray-900">{localToursThisWeek}</p>
-            <p className="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2">Confirmados</p>
+            <p className="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2">{t('marketplace.guideDashboardPage.confirmed')}</p>
           </div>
         </div>
 
@@ -709,15 +711,15 @@ const GuideMarketplaceDashboard = () => {
               <ExclamationCircleIcon className="h-5 w-5 text-yellow-600 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-yellow-800">
-                  Completa la verificacion de tu perfil
+                  {t('marketplace.guideDashboardPage.completeVerification')}
                 </p>
                 <p className="text-sm text-yellow-700 mt-1">
-                  Los perfiles verificados reciben mas oportunidades de trabajo.
+                  {t('marketplace.guideDashboardPage.verifiedProfilesNote')}
                   <button
                     onClick={() => navigate('/profile')}
                     className="font-medium underline ml-1"
                   >
-                    Ir a mi perfil
+                    {t('marketplace.guideDashboardPage.goToMyProfile')}
                   </button>
                 </p>
               </div>
@@ -780,8 +782,8 @@ const GuideMarketplaceDashboard = () => {
                 onReject={handleRejectClick}
                 onRetry={loadServiceRequests}
                 onViewDetail={handleViewDetail}
-                emptyMessage="No tienes solicitudes pendientes"
-                emptySubMessage="Las agencias te enviaran solicitudes cuando necesiten tus servicios."
+                emptyMessage={t('marketplace.guideDashboardPage.empty.noPending')}
+                emptySubMessage={t('marketplace.guideDashboardPage.empty.noPendingSub')}
               />
             )}
 
@@ -794,8 +796,8 @@ const GuideMarketplaceDashboard = () => {
                 onReject={handleRejectClick}
                 onRetry={loadServiceRequests}
                 onViewDetail={handleViewDetail}
-                emptyMessage="No tienes servicios proximos"
-                emptySubMessage="Cuando aceptes solicitudes, apareceran aqui como servicios programados."
+                emptyMessage={t('marketplace.guideDashboardPage.empty.noUpcoming')}
+                emptySubMessage={t('marketplace.guideDashboardPage.empty.noUpcomingSub')}
               />
             )}
 
@@ -808,8 +810,8 @@ const GuideMarketplaceDashboard = () => {
                 onReject={handleRejectClick}
                 onRetry={loadServiceRequests}
                 onViewDetail={handleViewDetail}
-                emptyMessage="No tienes servicios finalizados"
-                emptySubMessage="Aqui veras tus servicios completados, rechazados o cancelados."
+                emptyMessage={t('marketplace.guideDashboardPage.empty.noCompleted')}
+                emptySubMessage={t('marketplace.guideDashboardPage.empty.noCompletedSub')}
               />
             )}
           </div>
@@ -821,12 +823,10 @@ const GuideMarketplaceDashboard = () => {
             <ExclamationCircleIcon className="h-5 w-5 text-blue-600 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-blue-800">
-                Panel de Guia Freelance
+                {t('marketplace.guideDashboardPage.panelTitle')}
               </p>
               <p className="text-sm text-blue-700 mt-1">
-                Aqui puedes ver tus estadisticas de ingresos (solo servicios completados),
-                tours asignados, solicitudes de marketplace y tu calificacion.
-                Para mas detalles, visita la seccion de Monitoreo.
+                {t('marketplace.guideDashboardPage.infoPanelDescription')}
               </p>
             </div>
           </div>
@@ -865,6 +865,7 @@ const GuideMarketplaceDashboard = () => {
  * Content for the "Solicitudes" tab.
  */
 const ServiceRequestsTab = ({ requests, loading, error, onAccept, onReject, onRetry, onViewDetail, emptyMessage, emptySubMessage }) => {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="flex justify-center py-12">
@@ -882,7 +883,7 @@ const ServiceRequestsTab = ({ requests, loading, error, onAccept, onReject, onRe
           onClick={onRetry}
           className="px-4 py-2 text-sm font-medium text-purple-700 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
         >
-          Reintentar
+          {t('marketplace.guideDashboardPage.retry')}
         </button>
       </div>
     );
@@ -892,9 +893,9 @@ const ServiceRequestsTab = ({ requests, loading, error, onAccept, onReject, onRe
     return (
       <div className="text-center py-12">
         <InboxIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-500">{emptyMessage || 'No tienes solicitudes de servicio'}</p>
+        <p className="text-gray-500">{emptyMessage || t('marketplace.guideDashboardPage.empty.noRequests')}</p>
         <p className="text-sm text-gray-400 mt-1">
-          {emptySubMessage || 'Las agencias te enviaran solicitudes cuando necesiten tus servicios.'}
+          {emptySubMessage || t('marketplace.guideDashboardPage.empty.noPendingSub')}
         </p>
       </div>
     );

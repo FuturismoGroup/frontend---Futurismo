@@ -138,7 +138,7 @@ const ServicesList = ({
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <div className="flex">
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-red-800">Error</h3>
+            <h3 className="text-sm font-medium text-red-800">{t('services.error')}</h3>
             <div className="mt-2 text-sm text-red-700">
               <p>{error}</p>
             </div>
@@ -218,9 +218,9 @@ const ServicesList = ({
                 className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">{t('search.allStatuses')}</option>
-                <option value="short">1-3h</option>
-                <option value="medium">4-6h</option>
-                <option value="long">7+h</option>
+                <option value="short">{t('services.durationShort')}</option>
+                <option value="medium">{t('services.durationMedium')}</option>
+                <option value="long">{t('services.durationLong')}</option>
               </select>
             </div>
 
@@ -232,7 +232,7 @@ const ServicesList = ({
                 type="text"
                 value={filters.search || ''}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
-                placeholder="Nombre del tour..."
+                placeholder={t('services.searchPlaceholder')}
                 className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>

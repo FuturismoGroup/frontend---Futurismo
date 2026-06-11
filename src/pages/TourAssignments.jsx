@@ -248,7 +248,7 @@ const TourAssignments = () => {
           break;
       }
     } catch {
-      toast.error(`Error al cargar ${type === 'driver' ? 'choferes' : 'vehiculos'} disponibles`);
+      toast.error(t('assignments.page.loadResourcesError', { type: type === 'driver' ? t('assignments.page.driversLower') : t('assignments.page.vehiclesLower') }));
       if (type === 'driver') {
         setAvailableDrivers([]);
       } else if (type === 'vehicle') {
@@ -314,7 +314,7 @@ const TourAssignments = () => {
       await fetchReservations({});
       setShowAssignModal(false);
     } catch (error) {
-      toast.error(error.message || 'Error en la asignación');
+      toast.error(error.message || t('assignments.page.assignmentError'));
     } finally {
       setIsAssigning(false);
     }
@@ -322,7 +322,7 @@ const TourAssignments = () => {
 
   // Remover asignacion
   const handleRemoveAssignment = async (reservationId, type = 'guide') => {
-    if (window.confirm('¿Está seguro de remover esta asignación?')) {
+    if (window.confirm(t('assignments.page.confirmRemoveAssignment'))) {
       try {
         const reservation = reservations.find(r => r.id === reservationId);
         const tourId = reservation?.tour_id || reservation?.tourId || reservation?.tour?.id;
@@ -348,7 +348,7 @@ const TourAssignments = () => {
       if (filter === 'pending') exportStatus = 'pending';
 
       await exportService.exportAssignments(format, exportStatus);
-      toast.success(`Reporte exportado exitosamente como ${format.toUpperCase()}`);
+      toast.success(t('assignments.page.exportSuccess', { format: format.toUpperCase() }));
     } catch {
       toast.error(t('assignments.page.exportError'));
     } finally {
@@ -361,10 +361,10 @@ const TourAssignments = () => {
     setDownloadingPdfId(reservation.id);
     try {
       await assignmentPdfService.downloadPDF(reservation.id);
-      toast.success('Ficha de asignación descargada exitosamente');
+      toast.success(t('assignments.page.pdfDownloadSuccess'));
     } catch (error) {
       console.error('Error descargando PDF:', error);
-      toast.error('Error al descargar la ficha de asignación');
+      toast.error(t('assignments.page.pdfDownloadError'));
     } finally {
       setDownloadingPdfId(null);
     }
@@ -614,7 +614,7 @@ const TourAssignments = () => {
                 {filteredReservations.map((reservation) => {
                   const assignmentData = getAssignmentData(reservation);
                   const isComplete = assignmentData.hasGuide && assignmentData.hasDriver && assignmentData.hasVehicle;
-                  const tourName = reservation.tour?.name || reservation.tourName || 'Tour sin nombre';
+                  const tourName = reservation.tour?.name || reservation.tourName || t('assignments.page.unnamedTour');
                   const reservationCode = reservation.code || `RES-${reservation.id?.substring(0, 8).toUpperCase()}`;
                   const timeDisplay = reservation.time ? (typeof reservation.time === 'string' ? reservation.time.substring(0, 5) : reservation.time) : '--:--';
                   const passengers = reservation.participants || ((reservation.adults || 0) + (reservation.children || 0));
@@ -637,44 +637,44 @@ const TourAssignments = () => {
                       <td className="px-4 py-3">
                         {assignmentData.hasGuide ? (
                           <div className="flex items-center space-x-1">
-                            <span className="text-sm text-green-700 font-medium truncate max-w-[120px]">{assignmentData.guideName || 'Asignado'}</span>
+                            <span className="text-sm text-green-700 font-medium truncate max-w-[120px]">{assignmentData.guideName || t('assignments.page.assignedStatus')}</span>
                             <button onClick={() => handleRemoveAssignment(reservation.id, 'guide')} className="text-red-400 hover:text-red-600 flex-shrink-0">
                               <XMarkIcon className="h-3.5 w-3.5" />
                             </button>
                           </div>
                         ) : (
-                          <span className="text-sm text-gray-400">Sin asignar</span>
+                          <span className="text-sm text-gray-400">{t('assignments.page.unassigned')}</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
                         {assignmentData.hasDriver ? (
                           <div className="flex items-center space-x-1">
-                            <span className="text-sm text-green-700 font-medium truncate max-w-[120px]">{assignmentData.driverName || 'Asignado'}</span>
+                            <span className="text-sm text-green-700 font-medium truncate max-w-[120px]">{assignmentData.driverName || t('assignments.page.assignedStatus')}</span>
                             <button onClick={() => handleRemoveAssignment(reservation.id, 'driver')} className="text-red-400 hover:text-red-600 flex-shrink-0">
                               <XMarkIcon className="h-3.5 w-3.5" />
                             </button>
                           </div>
                         ) : (
-                          <span className="text-sm text-gray-400">Sin asignar</span>
+                          <span className="text-sm text-gray-400">{t('assignments.page.unassigned')}</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
                         {assignmentData.hasVehicle ? (
                           <div className="flex items-center space-x-1">
-                            <span className="text-sm text-green-700 font-medium truncate max-w-[120px]">{assignmentData.vehiclePlate || 'Asignado'}</span>
+                            <span className="text-sm text-green-700 font-medium truncate max-w-[120px]">{assignmentData.vehiclePlate || t('assignments.page.assignedStatus')}</span>
                             <button onClick={() => handleRemoveAssignment(reservation.id, 'vehicle')} className="text-red-400 hover:text-red-600 flex-shrink-0">
                               <XMarkIcon className="h-3.5 w-3.5" />
                             </button>
                           </div>
                         ) : (
-                          <span className="text-sm text-gray-400">Sin asignar</span>
+                          <span className="text-sm text-gray-400">{t('assignments.page.unassigned')}</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${
                           isComplete ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {isComplete ? 'Asignado' : 'Pendiente'}
+                          {isComplete ? t('assignments.page.assignedStatus') : t('assignments.page.pendingStatus')}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -682,10 +682,10 @@ const TourAssignments = () => {
                           <button
                             onClick={() => handleOpenAssignModal(reservation)}
                             disabled={isLoading || reservation.status?.toLowerCase() === 'pending'}
-                            title={reservation.status?.toLowerCase() === 'pending' ? 'Debe confirmar la reserva antes de asignar recursos' : 'Asignar recursos'}
+                            title={reservation.status?.toLowerCase() === 'pending' ? t('assignments.page.mustConfirmFirst') : t('assignments.page.assignResourcesTooltip')}
                             className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            Asignar
+                            {t('assignments.page.assignBtn')}
                           </button>
                           {(assignmentData.hasGuide || assignmentData.hasDriver || assignmentData.hasVehicle) && (
                             <button
@@ -694,7 +694,7 @@ const TourAssignments = () => {
                               className={`p-1.5 rounded-lg transition-colors ${
                                 isComplete ? 'text-green-600 hover:bg-green-50' : 'text-yellow-600 hover:bg-yellow-50'
                               } disabled:opacity-50`}
-                              title={isComplete ? 'Descargar Ficha PDF' : 'Descargar PDF (Parcial)'}
+                              title={isComplete ? t('assignments.page.downloadPdfFull') : t('assignments.page.downloadPdfPartial')}
                             >
                               {downloadingPdfId === reservation.id ? (
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
@@ -720,7 +720,7 @@ const TourAssignments = () => {
           {filteredReservations.map((reservation) => {
             const assignmentData = getAssignmentData(reservation);
             const isComplete = assignmentData.hasGuide && assignmentData.hasDriver && assignmentData.hasVehicle;
-            const tourName = reservation.tour?.name || reservation.tourName || 'Tour sin nombre';
+            const tourName = reservation.tour?.name || reservation.tourName || t('assignments.page.unnamedTour');
             const reservationCode = reservation.code || `RES-${reservation.id?.substring(0, 8).toUpperCase()}`;
 
             return (
@@ -730,14 +730,14 @@ const TourAssignments = () => {
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">{tourName}</h3>
-                      <p className="text-sm text-gray-500">Codigo: {reservationCode}</p>
+                      <p className="text-sm text-gray-500">{t('assignments.page.codeLabel', { code: reservationCode })}</p>
                     </div>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                       isComplete
                         ? 'bg-green-100 text-green-800'
                         : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {isComplete ? 'Asignado' : 'Pendiente'}
+                      {isComplete ? t('assignments.page.assignedStatus') : t('assignments.page.pendingStatus')}
                     </span>
                   </div>
 
@@ -749,11 +749,11 @@ const TourAssignments = () => {
                     </div>
                     <div className="flex items-center text-sm text-gray-600">
                       <ClockIcon className="h-4 w-4 mr-2" />
-                      {reservation.time ? (typeof reservation.time === 'string' ? reservation.time.substring(0, 5) : reservation.time) : 'Sin hora'}
+                      {reservation.time ? (typeof reservation.time === 'string' ? reservation.time.substring(0, 5) : reservation.time) : t('assignments.page.noTime')}
                     </div>
                     <div className="flex items-center text-sm text-gray-600">
                       <UserGroupIcon className="h-4 w-4 mr-2" />
-                      {reservation.participants || ((reservation.adults || 0) + (reservation.children || 0))} pasajeros
+                      {reservation.participants || ((reservation.adults || 0) + (reservation.children || 0))} {t('assignments.page.passengers')}
                     </div>
                     {(reservation.pickupLocation || reservation.pickup_location) && (
                       <div className="flex items-center text-sm text-gray-600">
@@ -770,7 +770,7 @@ const TourAssignments = () => {
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center text-green-700">
                           <UserIcon className="h-4 w-4 mr-2" />
-                          <span>{assignmentData.guideName || 'Guia asignado'}</span>
+                          <span>{assignmentData.guideName || t('assignments.page.guideAssigned')}</span>
                         </div>
                         <button
                           onClick={() => handleRemoveAssignment(reservation.id, 'guide')}
@@ -782,7 +782,7 @@ const TourAssignments = () => {
                     ) : (
                       <div className="text-sm text-gray-500">
                         <UserIcon className="h-4 w-4 inline mr-2" />
-                        Sin guía asignado
+                        {t('assignments.page.noGuideAssigned')}
                       </div>
                     )}
 
@@ -791,7 +791,7 @@ const TourAssignments = () => {
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center text-green-700">
                           <UserIcon className="h-4 w-4 mr-2" />
-                          <span>{assignmentData.driverName || 'Chofer asignado'}</span>
+                          <span>{assignmentData.driverName || t('assignments.page.driverAssigned')}</span>
                         </div>
                         <button
                           onClick={() => handleRemoveAssignment(reservation.id, 'driver')}
@@ -803,7 +803,7 @@ const TourAssignments = () => {
                     ) : (
                       <div className="text-sm text-gray-500">
                         <UserIcon className="h-4 w-4 inline mr-2" />
-                        Sin chofer asignado
+                        {t('assignments.page.noDriverAssigned')}
                       </div>
                     )}
 
@@ -812,7 +812,7 @@ const TourAssignments = () => {
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center text-green-700">
                           <TruckIcon className="h-4 w-4 mr-2" />
-                          <span>{assignmentData.vehiclePlate || 'Vehículo asignado'}</span>
+                          <span>{assignmentData.vehiclePlate || t('assignments.page.vehicleAssigned')}</span>
                         </div>
                         <button
                           onClick={() => handleRemoveAssignment(reservation.id, 'vehicle')}
@@ -824,7 +824,7 @@ const TourAssignments = () => {
                     ) : (
                       <div className="text-sm text-gray-500">
                         <TruckIcon className="h-4 w-4 inline mr-2" />
-                        Sin vehiculo asignado
+                        {t('assignments.page.noVehicleAssigned')}
                       </div>
                     )}
                   </div>
@@ -835,9 +835,9 @@ const TourAssignments = () => {
                       onClick={() => handleOpenAssignModal(reservation)}
                       className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                       disabled={isLoading || reservation.status?.toLowerCase() === 'pending'}
-                      title={reservation.status?.toLowerCase() === 'pending' ? 'Debe confirmar la reserva antes de asignar recursos' : ''}
+                      title={reservation.status?.toLowerCase() === 'pending' ? t('assignments.page.mustConfirmFirst') : ''}
                     >
-                      Gestionar Asignaciones
+                      {t('assignments.page.manageAssignments')}
                       <ChevronRightIcon className="h-4 w-4 ml-2" />
                     </button>
 
@@ -855,12 +855,12 @@ const TourAssignments = () => {
                         {downloadingPdfId === reservation.id ? (
                           <>
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                            Generando PDF...
+                            {t('assignments.page.generatingPdf')}
                           </>
                         ) : (
                           <>
                             <DocumentArrowDownIcon className="h-4 w-4 mr-2" />
-                            {isComplete ? 'Descargar Ficha PDF' : 'Descargar PDF (Parcial)'}
+                            {isComplete ? t('assignments.page.downloadPdfFull') : t('assignments.page.downloadPdfPartial')}
                           </>
                         )}
                       </button>
@@ -878,12 +878,12 @@ const TourAssignments = () => {
         <div className="bg-white rounded-lg shadow-sm border p-8 text-center">
           <ExclamationTriangleIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No hay reservas pendientes de asignación
+            {t('assignments.page.noReservationsPending')}
           </h3>
           <p className="text-gray-500">
             {reservations.length === 0
-              ? 'No hay reservas registradas en el sistema. Cree una nueva reserva para comenzar.'
-              : 'Todas las reservas tienen sus asignaciones completas o no hay reservas que coincidan con los filtros.'}
+              ? t('assignments.page.noReservationsRegisteredDesc')
+              : t('assignments.page.allReservationsAssignedDesc')}
           </p>
         </div>
       )}
@@ -894,7 +894,7 @@ const TourAssignments = () => {
           <div className="modal-content max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
-                Asignar recursos a reserva
+                {t('assignments.page.assignResourcesToReservation')}
               </h3>
               <button
                 onClick={() => setShowAssignModal(false)}
@@ -908,16 +908,16 @@ const TourAssignments = () => {
             <div className="bg-gray-50 rounded-lg p-3 mb-4">
               <p className="font-medium text-gray-900">{selectedReservation.tour?.name || selectedReservation.tourName}</p>
               <p className="text-sm text-gray-600">
-                {formatters.formatDate(selectedReservation.date)} - {selectedReservation.participants || (selectedReservation.adults + selectedReservation.children)} pax
+                {formatters.formatDate(selectedReservation.date)} - {selectedReservation.participants || (selectedReservation.adults + selectedReservation.children)} {t('assignments.pax')}
               </p>
             </div>
 
             {/* Assignment Type Tabs */}
             <div className="grid grid-cols-3 gap-2 mb-6">
               {[
-                { key: 'guide', label: 'Guia', icon: UserIcon },
-                { key: 'driver', label: 'Chofer', icon: UserIcon },
-                { key: 'vehicle', label: 'Vehículo', icon: TruckIcon }
+                { key: 'guide', label: t('assignments.page.guideLabel'), icon: UserIcon },
+                { key: 'driver', label: t('assignments.page.driverLabel'), icon: UserIcon },
+                { key: 'vehicle', label: t('assignments.page.vehicleLabel'), icon: TruckIcon }
               ].map(({ key, label, icon: Icon }) => (
                 <button
                   key={key}
@@ -939,12 +939,12 @@ const TourAssignments = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Seleccionar Guia
+                    {t('assignments.page.selectGuide')}
                   </label>
                   {checkingAvailability ? (
                     <div className="text-center py-4">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                      <p className="text-sm text-gray-500 mt-2">Verificando disponibilidad...</p>
+                      <p className="text-sm text-gray-500 mt-2">{t('assignments.page.checkingAvailability')}</p>
                     </div>
                   ) : (
                     <select
@@ -952,7 +952,7 @@ const TourAssignments = () => {
                       onChange={(e) => setSelectedGuide(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                      <option value="">Seleccione un guía</option>
+                      <option value="">{t('assignments.page.selectAGuide')}</option>
                       {availableGuides.map((guide) => {
                         // Idiomas: soporta array de strings, array de {code, level}, o JSON string (incl. doble-codificado)
                         const rawLangs = parseJsonField(guide.languages);
@@ -985,7 +985,7 @@ const TourAssignments = () => {
                 {availableGuides.length === 0 && !checkingAvailability && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                     <p className="text-sm text-yellow-800">
-                      No hay guías disponibles para esta reserva en la fecha seleccionada.
+                      {t('assignments.page.noGuidesAvailableForReservation')}
                     </p>
                   </div>
                 )}
@@ -997,12 +997,12 @@ const TourAssignments = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Seleccionar Chofer
+                    {t('assignments.page.selectDriver')}
                   </label>
                   {checkingAvailability ? (
                     <div className="text-center py-4">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                      <p className="text-sm text-gray-500 mt-2">Verificando disponibilidad...</p>
+                      <p className="text-sm text-gray-500 mt-2">{t('assignments.page.checkingAvailability')}</p>
                     </div>
                   ) : (
                     <select
@@ -1010,10 +1010,10 @@ const TourAssignments = () => {
                       onChange={(e) => setSelectedDriver(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                      <option value="">Seleccione un chofer</option>
+                      <option value="">{t('assignments.page.selectADriver')}</option>
                       {availableDrivers.map((driver) => (
                         <option key={driver.id} value={driver.id}>
-                          {driver.name || driver.fullName} - Licencia: {driver.license_type || driver.licenseCategory || 'N/A'}
+                          {driver.name || driver.fullName} - {t('assignments.page.licenseLabel', { type: driver.license_type || driver.licenseCategory || 'N/A' })}
                         </option>
                       ))}
                     </select>
@@ -1023,7 +1023,7 @@ const TourAssignments = () => {
                 {availableDrivers.length === 0 && !checkingAvailability && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                     <p className="text-sm text-yellow-800">
-                      No hay choferes disponibles para esta reserva en la fecha seleccionada.
+                      {t('assignments.page.noDriversAvailableForReservation')}
                     </p>
                   </div>
                 )}
@@ -1035,12 +1035,12 @@ const TourAssignments = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Seleccionar Vehículo
+                    {t('assignments.page.selectVehicle')}
                   </label>
                   {checkingAvailability ? (
                     <div className="text-center py-4">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                      <p className="text-sm text-gray-500 mt-2">Verificando disponibilidad...</p>
+                      <p className="text-sm text-gray-500 mt-2">{t('assignments.page.checkingAvailability')}</p>
                     </div>
                   ) : (
                     <select
@@ -1048,10 +1048,10 @@ const TourAssignments = () => {
                       onChange={(e) => setSelectedVehicle(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                      <option value="">Seleccione un vehiculo</option>
+                      <option value="">{t('assignments.page.selectAVehicle')}</option>
                       {availableVehicles.map((vehicle) => (
                         <option key={vehicle.id} value={vehicle.id}>
-                          {vehicle.plate} - {vehicle.brand} {vehicle.model} ({vehicle.capacity} pax)
+                          {vehicle.plate} - {vehicle.brand} {vehicle.model} ({vehicle.capacity} {t('assignments.pax')})
                         </option>
                       ))}
                     </select>
@@ -1062,10 +1062,10 @@ const TourAssignments = () => {
                   <div className="flex items-start">
                     <InformationCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-2" />
                     <div className="text-sm text-blue-800">
-                      <p>Capacidad requerida: {selectedReservation.participants || ((selectedReservation.adults || 0) + (selectedReservation.children || 0))} pasajeros</p>
+                      <p>{t('assignments.page.requiredCapacityPassengers', { count: selectedReservation.participants || ((selectedReservation.adults || 0) + (selectedReservation.children || 0)) })}</p>
                       {selectedVehicle && availableVehicles.find(v => v.id === selectedVehicle) && (
                         <p className="mt-1">
-                          Vehículo seleccionado: {availableVehicles.find(v => v.id === selectedVehicle).capacity} plazas
+                          {t('assignments.page.selectedVehicle', { seats: availableVehicles.find(v => v.id === selectedVehicle).capacity })}
                         </p>
                       )}
                     </div>
@@ -1075,7 +1075,7 @@ const TourAssignments = () => {
                 {availableVehicles.length === 0 && !checkingAvailability && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                     <p className="text-sm text-yellow-800">
-                      No hay vehiculos disponibles con la capacidad requerida para esta reserva.
+                      {t('assignments.page.noVehiclesAvailableForReservation')}
                     </p>
                   </div>
                 )}
@@ -1089,7 +1089,7 @@ const TourAssignments = () => {
                 disabled={isAssigning}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Cancelar
+                {t('assignments.page.cancel')}
               </button>
               <button
                 onClick={handleAssign}
@@ -1103,12 +1103,12 @@ const TourAssignments = () => {
                 {isAssigning ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Asignando...
+                    {t('assignments.page.assigning')}
                   </>
                 ) : (
                   <>
                     <CheckIcon className="h-4 w-4 mr-2" />
-                    Asignar
+                    {t('assignments.page.assign')}
                   </>
                 )}
               </button>

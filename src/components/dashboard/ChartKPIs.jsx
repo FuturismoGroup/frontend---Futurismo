@@ -75,7 +75,7 @@ const ChartKPIs = ({ kpiData, timeRange, hideIncome = false }) => {
               {config.isPercentage && '%'}
             </p>
             <p className={`text-xs ${config.textClass}-600 mt-2 sm:text-sm`}>
-              vs.{config.showCurrency ? `S/${data.anterior.toLocaleString()}` : data.anterior.toLocaleString()}
+              {t('dashboard.chart.kpis.vs')}{config.showCurrency ? `S/${data.anterior.toLocaleString()}` : data.anterior.toLocaleString()}
               {' '}{getPreviousPeriodText()}
             </p>
             <div className={`absolute -right-3 -bottom-3 ${config.textClass}-100 opacity-20 sm:-right-4 sm:-bottom-4`}>
