@@ -59,9 +59,12 @@ const NotificationCenter = () => {
         onClick={handleClose}
       />
 
-      {/* Dropdown con animación */}
-      <div 
-        className="absolute right-0 top-full mt-2 w-full sm:w-96 max-w-[calc(100vw-2rem)] sm:max-w-96 bg-white rounded-lg shadow-xl z-50 flex flex-col max-h-[calc(100vh-5rem)] border border-gray-200 transition-all duration-200 ease-out"
+      {/* Dropdown con animación.
+          Móvil: hoja fija de ancho casi completo bajo el header (evita que w-full
+          colapse al ancho del botón de la campana, que era la "franja" angosta).
+          sm+: dropdown anclado a la campana. */}
+      <div
+        className="fixed left-2 right-2 top-14 w-auto max-h-[calc(100vh-4.5rem)] sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-96 sm:max-w-96 sm:max-h-[calc(100vh-5rem)] bg-white rounded-lg shadow-xl z-50 flex flex-col border border-gray-200 transition-all duration-200 ease-out"
         style={{
           animation: 'dropdownSlideIn 0.2s ease-out'
         }}

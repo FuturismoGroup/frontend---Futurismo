@@ -2402,6 +2402,12 @@
       "avanzado": "Advanced",
       "experto": "Expert",
       "nativo": "Native"
+    },
+    "pagination": {
+      "showing": "Showing {{from}} to {{to}} of {{total}} guides",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {{current}} of {{total}}"
     }
   },
   "adminReports": {

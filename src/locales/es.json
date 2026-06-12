@@ -3155,6 +3155,12 @@
       "avanzado": "Avanzado",
       "experto": "Experto",
       "nativo": "Nativo"
+    },
+    "pagination": {
+      "showing": "Mostrando {{from}} a {{to}} de {{total}} guías",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página {{current}} de {{total}}"
     }
   },
   "adminReports": {

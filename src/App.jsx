@@ -174,7 +174,31 @@ function App() {
             useNotificationsStore.getState().playNotificationSound();
           }
         } else {
-          useNotificationsStore.getState().addNotification(user?.id, data);
+          // El backend ya persistio la notificacion y la emitio por WebSocket.
+          // Solo hay que insertarla en el estado local. NO usar addNotification(),
+          // que haria un POST a un endpoint inexistente y duplicaria el registro.
+          useNotificationsStore.setState((state) => ({
+            unreadCount: state.unreadCount + 1,
+            notifications: [{
+              id: data.id,
+              type: data.type || 'info',
+              title: data.title,
+              message: data.message,
+              category: data.category || 'system',
+              actionUrl: data.actionUrl || null,
+              priority: data.priority,
+              referenceType: data.referenceType,
+              referenceId: data.referenceId,
+              read: false,
+              createdAt: data.createdAt || new Date().toISOString()
+            }, ...state.notifications]
+          }));
+
+          // Reproducir sonido si esta habilitado
+          const { soundEnabled } = useNotificationsStore.getState();
+          if (soundEnabled) {
+            useNotificationsStore.getState().playNotificationSound();
+          }
         }
       });
 

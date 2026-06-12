@@ -142,21 +142,24 @@ const useNotificationsStore = create((set, get) => ({
         throw new Error(result.error || i18next.t('errors.unexpectedError'));
       }
       
+      // El backend responde { success, unreadCount } (sin el objeto notificacion).
+      // Actualizamos el estado localmente marcando read: true en vez de reemplazar
+      // por result.data (que es undefined y rompia el render).
       set((state) => {
-        const notifications = state.notifications.map(notif => 
-          notif.id === notificationId ? result.data : notif
+        const notifications = state.notifications.map(notif =>
+          notif.id === notificationId ? { ...notif, read: true } : notif
         );
-        
+
         const unreadCount = notifications.filter(n => !n.read).length;
-        
-        return { 
-          notifications, 
+
+        return {
+          notifications,
           unreadCount,
           isLoading: false
         };
       });
-      
-      return result.data;
+
+      return true;
     } catch (error) {
       set({ 
         isLoading: false,

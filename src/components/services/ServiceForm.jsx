@@ -37,8 +37,8 @@ const getServiceSchema = (t) => yup.object({
     .required(t('validation.required')),
   description: yup
     .string()
-    .required(t('validation.descriptionRequired'))
-    .min(10, t('validation.minChars', { min: 10 }))
+    .transform((value) => (value?.trim() === '' ? undefined : value))
+    .notRequired()
     .max(500, t('validation.maxChars', { max: 500 })),
   duration: yup
     .number()
@@ -64,10 +64,19 @@ const getServiceSchema = (t) => yup.object({
     .of(
       yup.object({
         name: yup.string().required(t('validation.nameRequired')),
-        duration: yup.number().min(0),
-        description: yup.string()
+        // El backend puede devolver duration/description como null (campos vacios en BD).
+        // Sin .nullable() yup falla la validacion silenciosamente y el form no se envia.
+        duration: yup
+          .number()
+          .transform((value, originalValue) =>
+            originalValue === '' || originalValue === null ? null : value
+          )
+          .nullable()
+          .min(0),
+        description: yup.string().nullable()
       })
     )
+    .nullable()
 });
 
 const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) => {
@@ -219,6 +228,13 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
     return response.data.data?.url || response.data.url || response.data.path;
   };
 
+  // Si la validacion falla, react-hook-form NO ejecuta handleFormSubmit.
+  // Sin este callback el usuario no recibia ningun feedback (boton "no hacia nada").
+  const handleInvalidSubmit = (formErrors) => {
+    console.warn('Validacion del formulario de servicio fallida:', formErrors);
+    toast.error(t('validation.fixFormErrors'));
+  };
+
   const handleFormSubmit = async (data) => {
     setSaving(true);
     try {
@@ -249,7 +265,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
       // Mapeo de campos frontend -> API tours (API-010, API-011)
       const tourData = {
         name: data.title,
-        description: data.description,
+        description: data.description?.trim() ? data.description.trim() : null,
         category: data.serviceType,
         price: parseFloat(data.basePrice),
         duration: parseInt(data.duration),
@@ -317,7 +333,7 @@ const ServiceForm = ({ service = null, onSubmit, onCancel, isLoading = false }) 
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col flex-1 overflow-hidden">
+        <form onSubmit={handleSubmit(handleFormSubmit, handleInvalidSubmit)} className="flex flex-col flex-1 overflow-hidden">
           {/* Scrollable Content */}
           <div className="flex-1 overflow-y-auto px-6 py-6">
             <div className="space-y-6">

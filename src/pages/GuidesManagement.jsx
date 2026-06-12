@@ -23,6 +23,8 @@ const GuidesManagement = () => {
   const [selectedGuide, setSelectedGuide] = useState(null);
   const [viewMode, setViewMode] = useState('grid'); // grid, list, profile
   const [showLanguagesSettings, setShowLanguagesSettings] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12; // múltiplo de 1/2/3 columnas para llenar filas completas
 
   // Filtrar guías
   const filteredGuides = guides.filter(guide => {
@@ -49,6 +51,24 @@ const GuidesManagement = () => {
 
     return matchesSearch && matchesType && matchesMuseum;
   });
+
+  // Paginación (lado cliente): evita renderizar todas las guías a la vez
+  const totalPages = Math.max(1, Math.ceil(filteredGuides.length / itemsPerPage));
+
+  // Volver a la primera página cuando cambian los filtros o la búsqueda
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterType, filterMuseum]);
+
+  // Mantener la página dentro de rango (p. ej. tras eliminar una guía)
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedGuides = filteredGuides.slice(startIndex, startIndex + itemsPerPage);
 
   const handleEditGuide = (guide) => {
     setEditingGuide(guide);
@@ -349,7 +369,7 @@ const GuidesManagement = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredGuides.map(guide => (
+                {paginatedGuides.map(guide => (
                   <tr key={guide.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -442,13 +462,13 @@ const GuidesManagement = () => {
         </div>
       ) : (
         /* Vista de Grid/Cuadrícula */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-          {filteredGuides.map(guide => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          {paginatedGuides.map(guide => (
             <div
               key={guide.id}
-              className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200"
+              className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 h-full"
             >
-              <div className="p-4 sm:p-5 lg:p-6">
+              <div className="p-4 sm:p-5 lg:p-6 h-full flex flex-col">
                 {/* Header del guía */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
@@ -559,7 +579,7 @@ const GuidesManagement = () => {
                 </div>
 
                 {/* Acciones */}
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mt-auto pt-2">
                   <button
                     onClick={() => handleViewProfile(guide)}
                     className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2"
@@ -593,6 +613,39 @@ const GuidesManagement = () => {
           ))}
         </div>
       )}
+
+      {/* Paginación */}
+      {filteredGuides.length > 0 && totalPages > 1 && (
+        <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white rounded-lg border border-gray-200 shadow-sm px-4 py-3">
+          <div className="text-xs sm:text-sm text-gray-700 text-center sm:text-left">
+            {t('guidesManagement.pagination.showing', {
+              from: startIndex + 1,
+              to: Math.min(startIndex + itemsPerPage, filteredGuides.length),
+              total: filteredGuides.length
+            })}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+            >
+              {t('guidesManagement.pagination.previous')}
+            </button>
+            <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">
+              {t('guidesManagement.pagination.page', { current: currentPage, total: totalPages })}
+            </span>
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+            >
+              {t('guidesManagement.pagination.next')}
+            </button>
+          </div>
+        </div>
+      )}
+
       {renderModals()}
 
       {/* Modal de configuración de idiomas */}
