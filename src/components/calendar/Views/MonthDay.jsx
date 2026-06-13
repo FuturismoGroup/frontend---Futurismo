@@ -137,17 +137,28 @@ const MonthDay = ({
         )
       )}
 
-      {/* Admin available day indicator - mismo criterio: pequeño cuando hay eventos */}
-      {isAdmin && isCurrentMonth && indicators.hasAvailability && (
+      {/* Admin available day indicator - mismo criterio: pequeño cuando hay eventos.
+          Clicable para abrir directamente la asignación de tour desde la vista mes.
+          Se muestra en cualquier día del mes actual (igual que el overlay de no-admin
+          y que los slots "Disponible" de la vista semana): la disponibilidad real por
+          hora se gestiona en el modal de asignación. */}
+      {isAdmin && isCurrentMonth && (
         hasAnyEvent ? (
-          <div
-            className="absolute bottom-1 right-1 px-2 py-0.5 rounded-full bg-green-500 text-white text-[10px] font-semibold shadow opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onQuickAdd(date, e); }}
+            className="absolute bottom-1 right-1 px-2 py-0.5 rounded-full bg-green-500 text-white text-[10px] font-semibold shadow opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-green-600 cursor-pointer"
             title={t('calendar.assignTour')}
+            aria-label={t('calendar.assignTour')}
           >
             {t('calendar.assignTour')}
-          </div>
+          </button>
         ) : (
-          <div className="absolute inset-2 border-2 border-dashed border-green-300 rounded bg-green-50 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center pointer-events-none">
+          <div
+            onClick={(e) => onQuickAdd(date, e)}
+            className="absolute inset-2 border-2 border-dashed border-green-300 rounded bg-green-50 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center cursor-pointer hover:bg-green-100"
+            title={t('calendar.assignTour')}
+          >
             <div className="flex items-center space-x-1 text-green-600">
               <span className="text-sm font-medium">{t('calendar.assignTour')}</span>
             </div>

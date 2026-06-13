@@ -551,106 +551,188 @@ const GuideCard = ({ guide, t, onViewProfile }) => (
 );
 
 /* ========== Componente: Fila para vista Lista ========== */
-const GuideListRow = ({ guide, t, onViewProfile }) => (
-  <div
-    className="flex flex-col lg:grid lg:grid-cols-12 gap-3 lg:gap-4 items-center px-4 py-4 border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-200 transition-all bg-white cursor-pointer"
-    onClick={onViewProfile}
-  >
-    {/* Guía info */}
-    <div className="col-span-4 flex items-center gap-3 w-full">
-      <div className="relative flex-shrink-0">
-        <img
-          src={resolveFileUrl(guide.profileImage || guide.guidePhoto) || `https://ui-avatars.com/api/?name=${guide.name || guide.fullName}&background=3b82f6&color=fff&size=80`}
-          alt={guide.name || guide.fullName}
-          className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
-        />
-        <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white ${
-          guide.status === 'available' || guide.online ? 'bg-green-500' : 'bg-gray-400'
-        }`} />
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5">
-          <h4 className="text-sm font-semibold text-gray-900 truncate">
-            {guide.name || guide.fullName}
-          </h4>
-          {guide.licenseNumber && (
-            <CheckBadgeIcon className="w-4 h-4 text-green-500 flex-shrink-0" />
+const GuideListRow = ({ guide, t, onViewProfile }) => {
+  const specialties = Array.isArray(guide.specialties) ? guide.specialties : [];
+  const languages = Array.isArray(guide.languages) ? guide.languages : [];
+
+  return (
+    <div
+      className="border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-200 transition-all bg-white cursor-pointer"
+      onClick={onViewProfile}
+    >
+      {/* ===== Layout escritorio: tabla de 12 columnas ===== */}
+      <div className="hidden lg:grid lg:grid-cols-12 gap-4 items-center px-4 py-4">
+        {/* Guía info */}
+        <div className="col-span-4 flex items-center gap-3 min-w-0">
+          <div className="relative flex-shrink-0">
+            <img
+              src={resolveFileUrl(guide.profileImage || guide.guidePhoto) || `https://ui-avatars.com/api/?name=${guide.name || guide.fullName}&background=3b82f6&color=fff&size=80`}
+              alt={guide.name || guide.fullName}
+              className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+            />
+            <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white ${
+              guide.status === 'available' || guide.online ? 'bg-green-500' : 'bg-gray-400'
+            }`} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <h4 className="text-sm font-semibold text-gray-900 truncate">
+                {guide.name || guide.fullName}
+              </h4>
+              {guide.licenseNumber && (
+                <CheckBadgeIcon className="w-4 h-4 text-green-500 flex-shrink-0" />
+              )}
+            </div>
+            <p className="text-xs text-gray-500 truncate mt-0.5">
+              {guide.bio || t('marketplace.messages.noDescription')}
+            </p>
+          </div>
+        </div>
+
+        {/* Especialidades */}
+        <div className="col-span-2 min-w-0">
+          <div className="flex flex-wrap gap-1">
+            {specialties.slice(0, 2).map((spec, idx) => (
+              <span key={idx} className="px-2 py-0.5 text-[11px] bg-purple-50 text-purple-700 rounded-full">
+                {typeof spec === 'object' ? spec.name || spec.specialty : spec}
+              </span>
+            ))}
+            {specialties.length > 2 && (
+              <span className="px-1.5 py-0.5 text-[11px] bg-gray-100 text-gray-500 rounded-full">
+                +{specialties.length - 2}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Idiomas */}
+        <div className="col-span-2 min-w-0">
+          <div className="flex flex-wrap gap-1">
+            {languages.slice(0, 2).map((lang, idx) => (
+              <span key={idx} className="px-2 py-0.5 text-[11px] bg-blue-50 text-blue-700 rounded-full">
+                {getLanguageName(lang, t)}
+              </span>
+            ))}
+            {languages.length > 2 && (
+              <span className="px-1.5 py-0.5 text-[11px] bg-gray-100 text-gray-500 rounded-full">
+                +{languages.length - 2}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Rating */}
+        <div className="col-span-1 flex items-center justify-center gap-1">
+          <StarIcon className="w-4 h-4 text-yellow-500" />
+          <span className="text-sm font-semibold text-gray-900">
+            {parseFloat(guide.rating || 0).toFixed(1)}
+          </span>
+        </div>
+
+        {/* Experiencia */}
+        <div className="col-span-1 text-center">
+          <span className="text-sm text-gray-700">
+            {t('marketplace.guidesPage.yearsShort', { count: guide.yearsOfExperience || 0 })}
+          </span>
+        </div>
+
+        {/* Precio */}
+        <div className="col-span-1 text-right">
+          {guide.pricePerPerson ? (
+            <span className="text-sm font-bold text-gray-900">
+              S/ {parseFloat(guide.pricePerPerson).toFixed(0)}
+            </span>
+          ) : (
+            <span className="text-xs text-gray-400">--</span>
           )}
         </div>
-        <p className="text-xs text-gray-500 truncate mt-0.5">
-          {guide.bio || t('marketplace.messages.noDescription')}
-        </p>
-      </div>
-    </div>
 
-    {/* Especialidades */}
-    <div className="col-span-2 w-full">
-      <div className="flex flex-wrap gap-1">
-        {(Array.isArray(guide.specialties) ? guide.specialties : []).slice(0, 2).map((spec, idx) => (
-          <span key={idx} className="px-2 py-0.5 text-[11px] bg-purple-50 text-purple-700 rounded-full">
-            {typeof spec === 'object' ? spec.name || spec.specialty : spec}
-          </span>
-        ))}
-        {guide.specialties?.length > 2 && (
-          <span className="px-1.5 py-0.5 text-[11px] bg-gray-100 text-gray-500 rounded-full">
-            +{guide.specialties.length - 2}
-          </span>
+        {/* Acción */}
+        <div className="col-span-1 flex justify-end">
+          <button
+            onClick={(e) => { e.stopPropagation(); onViewProfile(); }}
+            className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            {t('marketplace.guidesPage.view')}
+          </button>
+        </div>
+      </div>
+
+      {/* ===== Layout móvil/tablet: tarjeta compacta ===== */}
+      <div className="lg:hidden p-4">
+        {/* Encabezado: avatar + nombre + rating */}
+        <div className="flex items-start gap-3">
+          <div className="relative flex-shrink-0">
+            <img
+              src={resolveFileUrl(guide.profileImage || guide.guidePhoto) || `https://ui-avatars.com/api/?name=${guide.name || guide.fullName}&background=3b82f6&color=fff&size=80`}
+              alt={guide.name || guide.fullName}
+              className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+            />
+            <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white ${
+              guide.status === 'available' || guide.online ? 'bg-green-500' : 'bg-gray-400'
+            }`} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <h4 className="text-sm font-semibold text-gray-900 truncate">
+                {guide.name || guide.fullName}
+              </h4>
+              {guide.licenseNumber && (
+                <CheckBadgeIcon className="w-4 h-4 text-green-500 flex-shrink-0" />
+              )}
+            </div>
+            <p className="text-xs text-gray-500 line-clamp-2 mt-0.5">
+              {guide.bio || t('marketplace.messages.noDescription')}
+            </p>
+          </div>
+          <div className="flex items-center gap-1 flex-shrink-0 bg-yellow-50 px-2 py-1 rounded-lg">
+            <StarIcon className="w-4 h-4 text-yellow-500 fill-current" />
+            <span className="text-sm font-semibold text-gray-900">
+              {parseFloat(guide.rating || 0).toFixed(1)}
+            </span>
+          </div>
+        </div>
+
+        {/* Etiquetas: especialidades + idiomas */}
+        {(specialties.length > 0 || languages.length > 0) && (
+          <div className="flex flex-wrap gap-1 mt-3">
+            {specialties.slice(0, 2).map((spec, idx) => (
+              <span key={`s-${idx}`} className="px-2 py-0.5 text-[11px] bg-purple-50 text-purple-700 rounded-full">
+                {typeof spec === 'object' ? spec.name || spec.specialty : spec}
+              </span>
+            ))}
+            {languages.slice(0, 2).map((lang, idx) => (
+              <span key={`l-${idx}`} className="px-2 py-0.5 text-[11px] bg-blue-50 text-blue-700 rounded-full">
+                {getLanguageName(lang, t)}
+              </span>
+            ))}
+          </div>
         )}
+
+        {/* Pie: experiencia + precio + acción */}
+        <div className="flex items-center justify-between gap-3 mt-3 pt-3 border-t border-gray-100">
+          <span className="text-xs text-gray-600 flex-shrink-0">
+            {t('marketplace.guidesPage.yearsShort', { count: guide.yearsOfExperience || 0 })}
+          </span>
+          <div className="flex items-center gap-3 min-w-0">
+            {guide.pricePerPerson ? (
+              <span className="text-sm font-bold text-gray-900 truncate">
+                S/ {parseFloat(guide.pricePerPerson).toFixed(0)}
+              </span>
+            ) : (
+              <span className="text-xs text-gray-400">--</span>
+            )}
+            <button
+              onClick={(e) => { e.stopPropagation(); onViewProfile(); }}
+              className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex-shrink-0"
+            >
+              {t('marketplace.guidesPage.view')}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-
-    {/* Idiomas */}
-    <div className="col-span-2 w-full">
-      <div className="flex flex-wrap gap-1">
-        {(Array.isArray(guide.languages) ? guide.languages : []).slice(0, 2).map((lang, idx) => (
-          <span key={idx} className="px-2 py-0.5 text-[11px] bg-blue-50 text-blue-700 rounded-full">
-            {getLanguageName(lang, t)}
-          </span>
-        ))}
-        {guide.languages?.length > 2 && (
-          <span className="px-1.5 py-0.5 text-[11px] bg-gray-100 text-gray-500 rounded-full">
-            +{guide.languages.length - 2}
-          </span>
-        )}
-      </div>
-    </div>
-
-    {/* Rating */}
-    <div className="col-span-1 flex items-center justify-center gap-1">
-      <StarIcon className="w-4 h-4 text-yellow-500" />
-      <span className="text-sm font-semibold text-gray-900">
-        {parseFloat(guide.rating || 0).toFixed(1)}
-      </span>
-    </div>
-
-    {/* Experiencia */}
-    <div className="col-span-1 text-center">
-      <span className="text-sm text-gray-700">
-        {t('marketplace.guidesPage.yearsShort', { count: guide.yearsOfExperience || 0 })}
-      </span>
-    </div>
-
-    {/* Precio */}
-    <div className="col-span-1 text-right">
-      {guide.pricePerPerson ? (
-        <span className="text-sm font-bold text-gray-900">
-          S/ {parseFloat(guide.pricePerPerson).toFixed(0)}
-        </span>
-      ) : (
-        <span className="text-xs text-gray-400">--</span>
-      )}
-    </div>
-
-    {/* Acción */}
-    <div className="col-span-1 flex justify-end">
-      <button
-        onClick={(e) => { e.stopPropagation(); onViewProfile(); }}
-        className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        {t('marketplace.guidesPage.view')}
-      </button>
-    </div>
-  </div>
-);
+  );
+};
 
 export default GuidesMarketplace;
